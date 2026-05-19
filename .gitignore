@@ -1,0 +1,14 @@
+# Obsidian ephemeral state (per-window layout, caches)
+.obsidian/workspace
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+
+# Obsidian plugin data — often holds API keys / private keys (e.g. Local REST API)
+.obsidian/plugins/*/data.json
+
+# Trash
+.trash/
+
+# macOS
+.DS_Store
