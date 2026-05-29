@@ -12,7 +12,7 @@ When editing notes, preserve the frontmatter block and keep `[[wikilinks]]` inta
 
 The vault is the design/context index for **Project Prime — Single Particle Agentic Workflow**: an internship project that uses the **OpenClaw** agent framework to automate explicit-solvent **Molecular Dynamics (MD)** simulations in **AMBER**, dispatched to HPC via **DPDispatcher**, with post-processing through **CPPTRAJ** and **PLIP**. `Project Prime.md` is the canonical entry point and lists the phased roadmap and SOPs.
 
-A critical, unresolved context flag from `Project Prime.md`: it is **not yet confirmed** whether AMBER is pre-configured on a remote cluster or must be compiled locally. Be prepared for either Scenario A (local compilation, dependency hell) or Scenario B (API-driven dispatch to a Single Particle staging server).
+A critical, unresolved context flag from `Project Prime.md`: it is **not yet confirmed** whether AMBER is pre-configured on a remote cluster or must be compiled locally. Be prepared for either Scenario A (local compilation, dependency hell) or Scenario B (API-driven dispatch to a Single Particle staging server). Development currently proceeds local (Scenario A), but the production-backend question stays open — tracked in `Gap_Remote_HPC_Backend`.
 
 ## Note Taxonomy (filename prefixes)
 
@@ -25,6 +25,11 @@ The vault uses a prefix convention to indicate the role of each note. Match it w
 - `Workflow_*` — Cross-cutting procedural loops (error recovery).
 - `Design_*` — Cross-cutting design principles (memory providence, contextual reasoning, skill decomposition).
 - `Research_*` — Raw research materials and primary-source notes (e.g., the user's Phase 1 market survey). The `Arch_*`/`Skill_*`/`Design_*` notes are *distilled* from these; cross-link back to the source.
+- `Gap_*` — Open problems the vault has identified but not resolved (e.g., `Gap_Remote_HPC_Backend`). Frontmatter `status: open | partially-filled | filled`. Surface these when a question touches the unresolved area; they are where the interesting decisions still live.
+
+## Controlled Vocabulary
+
+`vocabulary.md` is the canonical term list. **Before introducing a new term for an existing concept, check it first** — vocabulary drift silently breaks cross-note reasoning and `[[wikilink]]` traversal. If a concept already has a name, reuse it; if it is genuinely new, add it to `vocabulary.md` before using it elsewhere. Note confidence is carried by the existing **tier badges** (`✅`/`🟡`/`⚪`) and rule trust by **Memory Provenance** (4 labels) — do not add parallel `confidence:` frontmatter.
 
 ## Architectural Big Picture
 

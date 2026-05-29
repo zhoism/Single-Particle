@@ -53,6 +53,8 @@ This project implements a decoupled, hybrid OpenClaw architecture. Instead of ha
 
 ## 5. Phased Execution Roadmap
 
+> **Status (2026-05-23):** Phase 1 ✅ done · Phase 2 ✅ done (AMBER fully wrapped — AmberTools 24.8 via conda + `pmemd`/`pmemd.MPI` built from source locally and test-suite-passing; see [[Dev_Log]] 2026-05-22) · **Phase 3 → NEXT: install OpenClaw + wire Gemini, then build skills.** · Phase 4 pending. Golden path (T4L L99A + benzene, `181L`) is the validated known-good recipe the skills will automate.
+
 ### Phase 1: Technical Market Research (Agentic AI)
 * **Objective:** Survey the landscape of OpenClaw and multi-agent systems in U.S. pharma/biotech.
 * **Focus:** Usage patterns, hybrid automation (LLMs + standardized calculators like ASE), and proving ROI by reducing "boilerplate friction" in biomolecular simulations.
@@ -60,9 +62,9 @@ This project implements a decoupled, hybrid OpenClaw architecture. Instead of ha
 ### Phase 2: Environment Setup & Agent Configuration
 * **Objective:** Establish the foundational pipeline between OpenClaw and AMBER.
 * **Tasks:**
-    * Resolve system dependencies (gcc, cmake) and configure environment variables (`~/.bashrc`).
-    * Install and verify AMBER core modules (`make test`, `cpptraj --help`).
-    * Initialize OpenClaw and verify it can execute basic local or remote commands.
+    * ✅ Resolve system dependencies (gcc@11, cmake, open-mpi) and configure environment variables (`amber.sh` in `~/.zshrc`).
+    * ✅ Install and verify AMBER core modules — AmberTools 24.8 via conda + `pmemd`/`pmemd.MPI` from source; `make test.serial`/`test.parallel` pass.
+    * ⏭️ **NEXT:** Initialize OpenClaw and verify it can execute basic local commands + a Gemini-backed `llm-task`.
 
 ### Phase 3: Skill-Based Explicit Solvent MD (The Logic)
 * **Objective:** Build OpenClaw Skills to control simulation behavior dynamically.
