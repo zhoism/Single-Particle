@@ -9,6 +9,164 @@ type: log
 
 ---
 
+## 2026-06-03 (cont., branch) — El Agente Q paper assessed; multi-agent scope decided 📄🦞
+
+**Context:** Side-branch session. User flagged arXiv:2505.02484v2 (Zou et al., Aspuru-Guzik group; "El Agente: An Autonomous Agent for Quantum Chemistry") asking whether its 22-agent hierarchical architecture transfers to Project Prime. Read pages 1–6 of the PDF directly; cross-checked against today's substrate findings.
+
+**Their architecture:** 22 specialized LLM agents (top-level computational-chemistry planner → 3 module heads geometry/quantum/I/O → 18 specialists including 9 ORCA-block experts). Built on CoALA + Soar substrate. Hierarchical procedural memory; working memory with 4 components (global, agent-conversation, grounding-via-FS, long-term). Markov-style context filtering between levels. Jupyter-notebook action trace export. Reported >87% task success on university-level DFT exercises.
+
+**Where it corroborates our discipline:** hierarchical context filtering, specialized-context-per-role, cybernetic feedback retries, action-trace audit, and grounding-via-filesystem all match what our wrapper architecture + [[Workflow_Error_Recovery_Loop]] + Dev_Log already do — typically with stricter LLM/deterministic separation. Strongest published peer for [[Arch_Taskboard_Manifest]] discipline.
+
+**Where it doesn't transfer:** DFT inputs have 200+ flags across 50+ ORCA blocks with subtle cross-block constraints. AMBER `&cntrl` has ~30 keywords in 5 clusters; the [[phase3-advisor-demo]] 11-stage protocol already encodes best practices end-to-end. Their 9 block-expert agents map to **one** wrapper-internal namelist-heuristics dictionary for us. Also, each inter-agent call ≈ ~100s on Flash (Stage 1c empirical); 22-agent multi-hop = 8–16 min/task. Unusable for demo cadence.
+
+**Architectural decision banked:** Project Prime stays at **max 3 named OpenClaw agents** — `main` (today) + future `planner` (when Stage 7 lands) + future `recovery` (when Stage 8 lands). Dynamic sub-agents only if we ever expand to high-throughput virtual screening (Stage 9+, out of current manifest scope). Skills already absorb most of El Agente's agent-side decomposition; pay the multi-agent latency cost only where there's genuine context-separation benefit (different model, different prompt, different thinking level).
+
+**Worth borrowing later (not blocking):** their action-trace-to-Jupyter export as a future reproducibility deliverable; their imaginary-frequency-removal-agent as the conceptual pattern for our Stage 8 recovery sub-skills.
+
+**Artifacts:**
+- `Research_El_Agente_Q.md` — full source note with paper summary, architecture diagram, idea-by-idea evaluation, BibTeX.
+- `OpenClaw_CLI_Map.md` — cross-link added in Related Notes pointing to the assessment.
+- Memory `multi_agent_scope` — decision banked so future sessions don't re-litigate; MEMORY.md index updated.
+
+**Next:** unchanged. Stage 2 (Skill_Antechamber_LigandPrep) is the next concrete work. Multi-agent expansion deferred until Stages 7/8 land and earn their way.
+
+---
+
+## 2026-06-03 (cont.) — Deep doc-read, upstream re-assessment, Stage 2 step 1 applied 📚🔧
+
+**Context:** Same session as the Stage 1 entry below. After substrate verification landed (3/3 PASS), user requested deep familiarity with OpenClaw from primary sources before Stage 2 starts. Three deliverables shipped + step 1 of Stage 2 applied; no chemistry skill scaffolding yet.
+
+**Deep-read of the LOCAL docs/ tree** at `~/.nvm/versions/node/v24.14.1/lib/node_modules/openclaw/docs/` — about 4000 lines across `concepts/{agent-loop, model-failover, retry}.md`, `tools/{exec, exec-approvals, skills, creating-skills, llm-task, lobster, thinking, loop-detection}.md`, `reference/prompt-caching.md`, `agent-runtime-architecture.md`, the bundled `skill-creator/SKILL.md`. Primary-source confirmation of every empirical Day 1–3 finding plus 8 non-obvious facts we hadn't surfaced: the 120s timeout is documented and configurable via `models.providers.<id>.timeoutSeconds`; cooldown is exponential 1m→5m→25m→1h; `metadata` MUST be single-line JSON in SKILL.md frontmatter (embedded parser quirk); `llm-task` plugin gives schema-validated JSON without retry loops; Lobster is linear pipelines not DAGs; 6 skill-loading precedence layers with extraDirs as the right registration path for git-tracked source; agent loop exposes rich plugin hooks (`before_tool_call`, `before_agent_reply`, etc.); OpenClaw has its own memory subsystem (`openclaw memory search/promote`).
+
+**[[openclaw-canonical-paths]] memory rewritten** with 16 sections covering CLI essentials, agent-loop envelope, exec tool, SKILL.md authoring, skill loading + registration, model failover, idle timeout, optional plugins, loop detection, prompt caching, full dead-end catalog. Old Day 2 content preserved + extended. Human-readable companion shipped as vault note **`OpenClaw_CLI_Map.md`** (591 lines) with cross-links to manifest/dev-log/Skill_*/Design_*. Both are graph-aware (memory for Claude session priming; vault for human navigation).
+
+**Upstream library re-assessment** (`computational-chemistry-agent-skills`) against today's substrate understanding — confirmed the paper user flagged ("Automating Computational Chemistry Workflows via OpenClaw and Domain-Specific Skills", Ding et al., arXiv:2603.25522) IS the OpenClaw substrate paper and our cloned repo IS its companion. We've already extracted the architectural lessons; the 4 additional patterns worth adopting now: (1) **iterative one-sub-task-at-a-time planning discipline** from their `agent-taskboard-manifest` skill — Stage 7 planner should adopt this interaction pattern, not just the validation-gate discipline; (2) **dry-run-before-submit** from `dpdisp-submit` — Stage 4 sander/pmemd wrapper should support `--dry-run` for Tier 2 recovery validation; (3) **`${ENV_VAR}` + envsubst** env-injection pattern — solves the path-mismatch portability gotcha [[phase3-advisor-demo]] hit; (4) the upstream **`.schema/skill-frontmatter.schema.json`** as our SKILL.md validation authority (with caveat: schema allows multi-line metadata, but OpenClaw embedded parser prefers single-line JSON; use single-line JSON for safety, validate against schema for portability). Market_Landscape_Report positioning thesis intact — Day 3 findings reinforce rather than contradict the runtime-failure-recovery niche claim.
+
+**Stage 2 step 1 applied:** `skills.load.extraDirs` patched into `openclaw.json` via `openclaw config patch --file /tmp/openclaw-skills-extradir-patch.json5` — adds `/Users/kevinzhou/Downloads/Single Particle/project-prime/skills` as a skills root with `watch: true, watchDebounceMs: 250`. Gateway restarted. Verified via `openclaw config get skills.load`. Next: when SKILL.md lands in that dir, watcher picks it up without restart. **DO NOT re-apply this patch next session — it's persisted in `~/.openclaw/openclaw.json`.**
+
+**Architectural intuition for Stage 2 (the carry-forward):** the manifest's "wrapper does the work, SKILL.md describes the goal" design isn't just preference — Day 3 made it triply load-bearing. (a) Latency: each LLM round-trip costs ~100s on Flash, so chains must be wrapper-internal. (b) Reliability: explicit "use N tool calls" wording triggers 120s idle stalls; SKILL.md prose must be goal-oriented. (c) Determinism: LLM out of the deterministic path = no hallucination corruption. The five-level scaling pattern is articulated in `OpenClaw_CLI_Map.md` §Stage 2 design intuition: Stages 2–6 are Level 0/1 atomic skills; Stage 7 is Level 2 (planner + deterministic executor — Python orchestrator preferred over Lobster for routine runs); Stage 8 is Level 3 (recovery — LLM as classifier within bounded action space + Lobster approval gate for Tier 2 mutation).
+
+**Outstanding for next session ([[Next_Session_Prompt_OpenClaw_Day4]] starter prompt to be drafted):** scaffold `project-prime/skills/antechamber-ligandprep/` with SKILL.md (single-line JSON metadata, requires.bins = antechamber/parmchk2/obabel/pdb4amber, goal-oriented description), `scripts/wrapper.py` (obabel→antechamber→parmchk2 chain, `--dry-run` flag, returns JSON envelope), `references/` (adapted heuristics from upstream antechamber/SKILL.md with LGPL-3.0 attribution), `test_acceptance.sh` (golden-path benzene from PDB 181L + unrelated ligand + malformed input for error path). Acceptance per [[Phase3_Taskboard_Manifest]] Stage 2.
+
+---
+
+## 2026-06-03 — OpenClaw Phase 3 Stage 1 substrate verification: 3/3 PASS, two real design signals for Stage 2 🧪✅
+
+**Context:** Day 3 of OpenClaw. Stage 1 of [[Phase3_Taskboard_Manifest]] — three substrate probes (structured JSON output, bash tool execution, multi-tool chain) against the gateway-routed `google/gemini-3-flash-preview` substrate. No skills built; no chemistry yet. The exercise was capability verification before Stage 2 design decisions ride on assumptions about the substrate.
+
+**1a — Structured JSON output: 3/3 PASS clean.** Three difficulty-graded clinical-extraction prompts (flat 3-field, nested objects, array field) all returned parseable JSON, correct schemas, correct types, no markdown fences. Envelope shape is canonical: `{ok, capability, transport, provider, model, attempts, outputs:[{text, mediaUrl}]}` — inner LLM payload lives in `outputs[0].text` and is a JSON-string when the prompt demands it. **Stage 7 planner can rely on `--json` + a "no fences, no prose" prompt suffix** without a schema-validation retry loop for simple shapes.
+
+**1b — Bash tool execution: PASS.** Prompt: "list the 5 newest files in ~/Downloads." Agent emitted **one tool call to a tool named `exec`** (NOT `bash` — this is a canonical-paths correction; [[openclaw-canonical-paths]] needs updating). 0 failures. Agent's reply enumerated the 5 paths in identical order to `ls -ta ~/Downloads/ | head -5` (including `.DS_Store` — the prompt didn't exclude hidden files, so the agent correctly included it). No hallucination — every path matches reality.
+
+**1c — Multi-tool chain: PASS, but only after 3 failures and a prompt softening.** Strict prompt ("use separate bash tool calls — one to identify, one to measure") triggered **Flash 120s LLM-idle-stream timeout repeatedly** (attempts 1, 2, 3 — including with `--thinking minimal`). Each Flash failure puts the AI Studio auth profile into a 1-minute cooldown that ALSO blocks the Pro fallback (auth profile is per-provider, not per-model). Attempt 4 (cooldown cleared, instruction softened to natural phrasing) succeeded: **2 exec calls, 0 failures, 311s duration.** Final reply named `.DS_Store` at `40K` — the agent could only know the filename from call #1, so the chain carried state correctly into call #2. Size discrepancy reconciled: file is 40,964 bytes → 40K (logical bytes/1024) or 44K (`du -h` allocated blocks); both correct readings.
+
+**Three substrate findings for [[openclaw-canonical-paths]] (memory update next session):**
+1. The shell tool is named **`exec`**, not `bash`. Prompts and skill docs should reference `exec`.
+2. `--json` mode surfaces `toolSummary.calls/tools/failures` + `finalAssistantVisibleText` but **does NOT expose raw exec args or stdout**. Skills that need to log exact tool I/O must do it inside the wrapper, not rely on the agent trace.
+3. AI Studio auth-profile cooldown is **per-provider** — a Flash idle-timeout takes Pro out of rotation for ~1 minute. Fallback chains within the same provider don't add resilience against this failure mode.
+
+**Two design signals for Stage 2 (antechamber-ligandprep):**
+- **Latency budget**: a 2-step chain at default thinking took 311s. Real chemistry skills with 5–10 stages cannot afford 5min per turn. Either (a) bundle the whole skill into one `exec` call from a Python wrapper (the architecture the manifest already calls for — "lobster-like" hardened-deterministic discipline), or (b) tune `--thinking off` for routing turns and reserve thinking for genuinely hard decisions. Option (a) is the right call; this confirms the design.
+- **Strict-instruction triggers stall**: explicit "use N tool calls" demands push Flash into a long-deliberation state that the gateway kills at 120s. SKILL.md prose should describe the goal, NOT prescribe the tool-call topology. Wrappers enforce the topology deterministically.
+
+**Operational note** (the cooldown gotcha): after a Flash idle timeout, wait ≥60s before retrying or the auth profile blocks even Pro. `openclaw models status | grep cooldown` is the fastest diagnostic. **Did NOT need to touch `openclaw approvals`** — bash/exec is in-profile under `tools.profile: "coding"` and fires without prompting.
+
+**Artifacts:** 35 files in `project-prime/runs/substrate-verification/` (cmd/out/stderr/verdict per case, plus 1c's 4 attempts and a baseline_ls snapshot). All four `.verdict.txt` files report PASS. Transcripts gitignored — they capture point-in-time substrate behavior, not source.
+
+**Manifest:** [[Phase3_Taskboard_Manifest]] Stage 1 flipped from PENDING to COMPLETE.
+
+**Stage 0 cleanup** still outstanding from Day 2 (gateway token rotation, plaintext-secrets migration, plugin allowlist hygiene) — non-blocking, deferred.
+
+**Next:** Confirm Stage 2 scope before starting. The latency signal above changes nothing in the manifest's planned design (one wrapper.py per skill, SKILL.md describes goals not topology) — it just validates that the design was already correct. Optional vault note `OpenClaw_CLI_Map.md` queued; design decision = include `exec`-not-`bash` correction + cooldown gotcha + 311s observation.
+
+---
+
+## 2026-06-02 — OpenClaw Stage 0 unblocked: AI Studio key works, default model swap, Discord wiring, persona side-quest ⚙️✅
+
+**Context:** Day 2 of OpenClaw setup. Goal: clear Day 1's UNRESOLVED LLM auth + security debt + get the bot actually responsive. All three landed.
+
+**LLM auth resolved:**
+- AI Studio key (`AQ.<~53chars>` format — newer Google AI Studio key style, NOT the legacy `AIzaSy<33chars>`) curl-verified against `generativelanguage.googleapis.com/v1beta/models?key=$KEY` → returns model list including gemini-2.5-flash + 2.5-pro + 2.0-flash. **Format is fine** — user's account is on the newer enrollment.
+- Wired into OpenClaw via `openclaw models auth paste-api-key --provider google`. `models status` shows `api_key=1` for `google`. Cosmetic "Missing auth" warning ignored (counts OAuth specifically, not API keys).
+- BUT first smoke test failed: `Unknown model: google/gemini-2.5-flash`. Root cause: the **OpenClaw 2026.5.28 `google` provider plugin only catalogs `gemini-3-flash-preview` and `gemini-3.1-pro-preview`** — verified via `infer model providers` + `infer model list`. Not a tier/key issue — plugin catalog limit.
+- Swapped default + fallback to cataloged models: `openclaw models set google/gemini-3-flash-preview` + `openclaw models fallbacks add google/gemini-3.1-pro-preview` (removed stale `gemini-2.5-pro` fallback).
+- Final twist: `infer model run` defaults to `--local` which fails with the same `Unknown model` UNLESS the model is duplicated into `models.providers.google.models[]` in user config. **`--gateway` uses the catalog directly and just works.** End-to-end smoke test passed: `openclaw infer model run --prompt "ok" --gateway` returns Gemini's response. All real work routes through the gateway anyway, so `--local` is irrelevant.
+
+**Discord:**
+- Token rotated at discord.com/developers/applications → Bot → Reset Token; `openclaw config set channels.discord.token "<new>"` + gateway restart. `channels status --probe` confirms `connected, transport:just now, bot:@Single Particle, token:config, works`.
+- `intents:content=limited` is a LABEL, not a defect — OpenClaw's word for "under 100 servers, no Discord verification needed, fully functional." Confirmed in gateway logs: *"Discord Message Content Intent is limited; bots under 100 servers can use it without verification."* The `channels.discord.intents` schema accepts only `presence`, `guildMembers`, `voiceStates` — there is **no `messageContent` field**.
+- Bot was in server but silent because `groupPolicy: "allowlist"` + empty `guilds: {}` = ignore everything. Patched config with server `1511130058306228311` + user `370013420013223937` under `channels.discord.guilds`, `requireMention: true`. After restart, `@Single Particle <msg>` in any channel of that server reaches OpenClaw and routes through Gemini. **First @ working: confirmed end-to-end.**
+
+**Bonus side-quest — persona experiment:**
+- Discovered the agent workspace already has stock-template identity files: `~/.openclaw/workspace/{IDENTITY.md, SOUL.md, BOOTSTRAP.md, AGENTS.md, USER.md, TOOLS.md, HEARTBEAT.md}`. The bot's "Hey, I just came online — who am I?" first-message script came verbatim from `BOOTSTRAP.md`.
+- Wrote a temporary joke persona (Haibin Peng — adult gay Chinese guy, bad flirt, suggestive-not-explicit, "out of character" escape hatch in SOUL). Snapshot taken at `~/.openclaw/snapshots/pre-persona-20260602-234723.json` + the three workspace files. Tested 3–4 messages in Discord, reverted cleanly via one-line `cp` chain + gateway restart. Workspace files back to stock — bot will re-run BOOTSTRAP conversation on next message (correct pre-persona behavior).
+
+**Decisions logged (do not re-litigate):**
+- All real OpenClaw inference (skills, agent turns) goes through **`--gateway`**, not `--local`. Local mode requires duplicating the catalog into user config — not worth it.
+- Default model is **`google/gemini-3-flash-preview`** with `gemini-3.1-pro-preview` fallback. Skills + tests pin to these names.
+- For inference smoke tests, use `openclaw infer model run --prompt "..." --gateway` — there is **no `openclaw models test` verb**.
+- New canonical-CLI memory created: [[openclaw-canonical-paths]] — read FIRST in new OpenClaw sessions to skip rediscovery.
+
+**Stage 0 cleanup outstanding (non-blocking, low priority):**
+- Gateway token rotation — `openclaw doctor --generate-gateway-token` (loopback-only).
+- Plaintext secrets migration — `openclaw secrets configure` + `apply` + `audit --check`.
+- Plugin allowlist hygiene — `plugins.allow` is empty; logs warn discovered non-bundled plugins may auto-load.
+
+**Next:** Phase 3 Stage 1 (substrate verification — JSON output, bash tool, tool-chain tests). Also queued: write `OpenClaw_CLI_Map.md` vault note synthesizing today's CLI/intents/identity findings. Resume in `Next_Session_Prompt_OpenClaw_Day3.md`.
+
+---
+
+## 2026-06-01 (evening) — OpenClaw substrate installed; upstream library found; LLM auth blocked 🦞
+
+**Context:** First OpenClaw session — install + provider auth attempt. Substrate is in; LLM auth path is unresolved; upstream library discovered (not in prior research).
+
+**Substrate (working):**
+- OpenClaw **2026.5.28** installed via `npm install -g openclaw@latest` (Node 24.14.1 via nvm, no sudo needed). Gateway running as LaunchAgent at `~/Library/LaunchAgents/ai.openclaw.gateway.plist`, loopback `127.0.0.1:18789`, token auth, dashboard at `http://127.0.0.1:18789`.
+- Config at `~/.openclaw/openclaw.json`, workspace `~/.openclaw/workspace`, per-agent auth store `~/.openclaw/agents/main/agent/auth-profiles.json`.
+- `openclaw doctor` clean except cosmetic warnings (nvm Node, plaintext secrets in config, no command-owner, 42 unused bundled skills now disabled).
+- gcloud + ADC installed and minting tokens (`brew install --cask google-cloud-sdk` → `gcloud auth application-default login` → `set-quota-project`).
+
+**Upstream library DISCOVERED — not in any prior research pass:**
+- `jinzhezenggroup/computational-chemistry-agent-skills` (LGPL-3.0) is the paper authors' open code repo — the actual code home of arXiv:2603.25522. **Research_Source_Manifest verified only the paper, never reached the code library.** Cloned read-only to `~/Downloads/Single Particle/upstream-reference/` (sibling to vault + project-prime).
+- 66 SKILL.md files across `molecular-dynamics/`, `quantum-chemistry/`, `agent-workflow/`, `tools/`, etc. Their `molecular-dynamics/antechamber/SKILL.md` is 12.7 KB of instruction text + parameter heuristics (zero deterministic code — pure "LLM constructs the call" pattern). Their `tools/dpdisp-submit/SKILL.md` is 12 KB of DPDispatcher patterns. Their `agent-workflow/agent-taskboard-manifest/SKILL.md` is the upstream of our planning-layer design (wraps third-party `light-cyan/AgentTaskboardManifest`).
+- **Contribution boundary now sharper**: their skills are *documentation-skills* (LLM-as-CLI-constructor); ours will be *hardened-deterministic-skills* (LLM picks the skill, the wrapper script does the work). That contrast IS the "lobster-like" disciplinary distinction `Actionable_Recommendations.md` already named.
+- `.schema/skill-frontmatter.schema.json` is the authoritative SKILL.md schema — use when authoring our own.
+
+**LLM auth — UNRESOLVED, multiple dead-ends:**
+- **Vertex-Gemini is broken in OpenClaw 2026.5.28.** No provider plugin claims `google-vertex/*`; stock extensions list shows `anthropic-vertex` (Claude only) but no `google-vertex`. `openclaw models auth login --provider google-vertex` → "No provider plugins found." Model catalog entry `google-vertex/gemini-2.5-flash` is orphaned. Configure wizard for "Google Vertex" provider silently writes no credential. ADC tokens are minting fine on the GCP side — OpenClaw just has no plugin to consume them.
+- **AI Studio path tried but credential format suspect.** Generated AI Studio key against project `single-XXXXXX`; key prefix is `AQ.Ab8R...` not the canonical `AIzaSy...`. Wired into OpenClaw via `models auth paste-api-key --provider google`. Smoke test failed with `Unknown model: google/gemini-2.5-flash (model_not_found)` for BOTH Flash and Pro despite the catalog showing both with `Auth: yes`. Could be (a) wrong credential type pasted, (b) free-tier model access limitation, or (c) Google API rejecting the key. **Direct curl verification of the key against `generativelanguage.googleapis.com/v1beta/models` is the definitive next step — deferred to tomorrow.**
+- **$300 GCP credit EXCLUSION verified** (user's prior memory was correct). As of March 2026 the free trial credit is explicitly excluded from AI Studio Gemini API usage. Vertex remains credit-eligible but Vertex is broken in OpenClaw — credit-eligibility is moot until OpenClaw ships a Vertex-Gemini plugin. Pragmatic call: accept ~$1–10 out-of-pocket AI Studio dev cost in the interim; the credit is preserved for non-AI-Studio GCP services.
+
+**Security debt — address tomorrow before resuming skill work:**
+- **Discord bot token was pasted into the assistant's chat context** during config inspection. Rotate at discord.com/developers/applications → Bot → Reset Token → `openclaw config set channels.discord.token "<new>"` + gateway restart.
+- Gateway token (loopback-only, blast-radius minimal) also leaked; rotate with `openclaw doctor --generate-gateway-token` for hygiene.
+- `openclaw doctor` confirms `openclaw.json` stores secrets in plaintext. Migration: `openclaw secrets configure`; defer until after Discord rotation.
+
+**Decisions logged (will not be re-litigated tomorrow):**
+- **Upstream reuse strategy**: clone as read-only reference (done); BUILD our own hardened skills per `Actionable_Recommendations.md` §1 ("Build: ligand-prep skill" + recovery + planning). Borrow their instruction text + parameter heuristics into our SKILL.md bodies; do NOT depend on their package at runtime.
+- **Gemini key storage**: NOT in `~/.zshrc`, NOT in `project-prime/.env`. Lives in OpenClaw's per-agent auth store `~/.openclaw/agents/main/agent/auth-profiles.json` (outside project tree, can't be `git add`ed).
+- **Discord channel + chat-channel skills**: out of scope for skill dev. Already configured but the `coding` tool profile strips `message`; doctor warnings about missing messaging tools are non-blocking and being ignored.
+
+**Next:** Phase 3 stages captured as `Phase3_Taskboard_Manifest.md` (Stage 0 LLM auth resolution → Stage 1 substrate verification → Stage 2 first skill `Skill_Antechamber_LigandPrep`). Resume sequence in `Next_Session_Prompt_OpenClaw_Day2.md`. First action tomorrow: curl-verify a regenerated AI Studio key BEFORE any OpenClaw config touches.
+
+---
+
+## 2026-06-01 — Phase 3 inputs received from advisor; pre-OpenClaw orientation 📥
+
+**Context:** advisor handed off `phase3-explicit-solvent-md/` (pre-prepared complex MD demo) and `Amber26.pdf` (1104-page Amber 2026 reference manual). No execution yet — user explicitly scoped this session to bookkeeping + OpenClaw briefing prep.
+
+**Demo shape (canonical recipe the OpenClaw skill chain must reproduce):** 11 sequential `pmemd` stages — `min1 → min2 → heat-1 → press-1 → heat-2 → press-2 → heat-3 → press-3 → relax → prod` — Langevin thermostat (`ntt=3, gamma_ln=2.0`), MC barostat (`barostat=2`), SHAKE on (`ntc=2, ntf=2`), `dt=0.002`, `cut=9.0`, restraint mask `!:WAT,Cl-,K+,Na+ & !@H=` released only at relax. Production = 10 ns (`nstlim=5,000,000`). Details in memory [[phase3-advisor-demo]].
+
+**Two gotchas to fix before any local run:**
+1. `submit.sh` exports `AMBERHOME=/Application/software/Amber26/pmemd26` — advisor's path, not ours (local `pmemd` is `~/Downloads/pmemd26/`). The wrapping skill should resolve `pmemd` from PATH instead of hardcoding.
+2. `heat-3.in`: `cntrl temp0=300.0` but `&wt value2=310.0` — Langevin follows TEMP0 (set by &wt), so system ramps to 310 K then would clamp toward 300 K if extended. Minor; flag to advisor next conversation.
+
+**Manual coverage check:** Amber26.pdf section map saved in memory [[amber26-pdf-section-map]] for targeted reads — sander §23.6 (p.429) is the keyword source-of-truth, pmemd §24.3 (p.499) for engine overrides, atom-mask syntax in ch.25 (p.509) for parsing the restraint masks.
+
+**Next:** brief user on OpenClaw (what it is as installable software, vault's verified vs. unverified claims, install entry point), then move into the [[Next_Session_Prompt_OpenClaw]] flow.
+
+---
+
 ## 2026-05-28 — Market research consolidated into "Market Landscape" reports → SUBMITTED to advisor 📝✅
 
 **Context:** advisor wanted a high-level, plain-language read on where AI is taking MD. Reframed the Phase-1 survey into a clean supervisor-facing set (three trends: skip-the-sim / ML force fields / agentic orchestration) and **dropped the "Project Prime" codename** per user (see [[feedback-project-prime-name]]). **Submitted 2026-05-28.**
