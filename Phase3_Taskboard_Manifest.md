@@ -1,13 +1,15 @@
 ---
 tags: [phase-3, openclaw, planning, manifest, execution-plan]
 type: manifest
-status: stage-2-built
+status: stages-3-5-built
 created: 2026-06-01
 ---
 
 # Phase 3 Taskboard Manifest — OpenClaw Substrate + First Skill
 
-> **Status (2026-06-03):** Substrate install ✅, upstream reference cloned ✅, LLM auth ✅ (Day 2), Stage 1 substrate verification ✅ (Day 3 — 3/3 PASS, see [[Dev_Log]] 2026-06-03), skill authoring not yet started.
+> **Status (2026-06-05):** Substrate ✅, LLM auth ✅, Stage 1 ✅, Stage 2 (antechamber-ligandprep) ✅, **Stages 3–5 BUILT ✅** (tleap-build, amber-md-run, cpptraj-analysis) — the full local AMBER MD happy path now runs end-to-end on 1L2Y via `project-prime/run_happy_path.sh` (antechamber → tleap → MD → 10-analysis suite + MM-GBSA). Each skill has a 3-case acceptance test passing. This replicates the baifan-wang amber-md happy path on our OpenClaw deterministic-wrapper architecture (see [[Research_amber_md_skill]]). Differentiators (PLIP, planner, bounded recovery, remote HPC) remain deferred. See [[Dev_Log]] 2026-06-05.
+> 
+> **Prior status (2026-06-03):** Substrate install ✅, upstream reference cloned ✅, LLM auth ✅ (Day 2), Stage 1 substrate verification ✅ (Day 3 — 3/3 PASS, see [[Dev_Log]] 2026-06-03), skill authoring not yet started.
 > 
 > This note is the execution plan for Phase 3. Stages have explicit inputs, outputs, and validation conditions per the [[Arch_Taskboard_Manifest]] discipline — no stage proceeds without validation pass. The LLM is NOT in the loop for any of the deterministic validations below; all checks are bash/regex/file-existence/numeric-bound assertions.
 
@@ -129,18 +131,47 @@ OpenClaw is the substrate we run inside. The "framework" the report describes is
 
 ---
 
-## Stages 3–6 — Queued (not in this manifest's execution scope)
+## Stages 3–5 — BUILT 2026-06-05 (local happy path complete)
 
-These are the remaining BUILD items per [[Actionable_Recommendations]] §1 and the remaining stages of the golden-path pipeline:
+Built as deterministic-wrapper skills in `project-prime/skills/`, each with a
+3-case acceptance test (golden + unrelated/subset + malformed) passing, and all
+four chained green by `project-prime/run_happy_path.sh` on the 1L2Y fixture.
 
-- **Stage 3 — Skill_Tleap_Build** — combine protein + ligand .frcmod into a solvated topology. Acceptance: golden-path Stage 3 outputs (`system.prmtop`, `system.inpcrd`).
-- **Stage 4 — Skill_Sander_Run** — MD execution (minimize → heat → equilibrate → produce). Will likely use `tools/dpdisp-submit/SKILL.md` from upstream as DPDispatcher integration reference (local Shell+LocalContext mode). Acceptance: golden-path Stage 4 outputs (`*.nc`, `*.out` with no NaN, prod temp = 300 ± 2 K).
-- **Stage 5 — Skill_Cpptraj_Analysis** — RMSD/RMSF/RoG extraction. Acceptance: golden-path Stage 5 outputs (`rmsd_backbone.dat`, `rmsf.dat`, ligand-RMSD).
-- **Stage 6 — Skill_PLIP_Postprocess** — non-covalent interaction profiling. Acceptance: PLIP fingerprint matches golden-path PLIP output for 181L (6 hydrophobic contacts in the L99A cavity).
-- **Stage 7 — Skill_Planning_Manifest** — the planner skill that orchestrates Stages 2–6 with validation gates between them. This is the [[Arch_Taskboard_Manifest]] in skill form.
-- **Stage 8 — Skill_Bounded_Recovery_AMBER** — the differentiator. Tier 1 (checkpoint-restore) → Tier 2 (bounded parameter mutation: lower `dt`, disable SHAKE, etc.). Wraps Stage 4. Acceptance: deliberate failure injection (corrupt a frame, set bad `dt`) triggers correct recovery escalation.
+- **Stage 3 — `tleap-build`** ✅ — protein PDB + ligand (mol2+frcmod) → solvated
+  neutralized topology. Generates a correct `leap.in` (saves `comp_dry` BEFORE
+  `solvateoct` — fixing the upstream bug; saves `protein.top`/`ligand.top` for
+  MM-GBSA). Validation: `leap.log` no ERROR, dry<solvated atoms, protein+ligand==dry
+  combine invariant, neutral. 1L2Y: 306 dry / ~5986 solvated atoms.
+- **Stage 4 — `amber-md-run`** (was "Skill_Sander_Run") ✅ — generates the 6-step
+  chain (min1/2/3, heat, density, product), `md-param-check`-clean namelists,
+  portable `run.sh`, runs to completion. **Engine seam** (Gap_Remote_HPC_Backend):
+  serial `pmemd` default (~15.6 ns/day on this Mac), `pmemd.MPI`/`sander` opt-in;
+  `--sim-ps` parameterizes production. DPDispatcher deferred (not needed for local;
+  the seam is where it plugs in later).
+- **Stage 5 — `cpptraj-analysis`** (was "Skill_Cpptraj_Analysis") ✅ — full
+  10-analysis suite + free-energy landscape + MM-GBSA, each → .dat + .png. Fixes
+  the upstream cpptraj footguns (two-call PCA, single-command clustering,
+  hbond-empty-is-a-finding), auto-detects residue masks, strips with the SOLVATED
+  topology. 1L2Y/indole MM-GBSA ΔG ≈ −14 kcal/mol (short run; article ≈ −16).
 
-Each later stage gets its own manifest entry when its turn comes; do not pre-author them speculatively.
+**See/do/verify:** `--dry-run` on any wrapper prints the generated inputs (SEE);
+`run_happy_path.sh [sim_ps]` runs the chain (DO); per-skill `test_acceptance.sh` +
+the harness assertions (4 ok:true envelopes, ≥12 analyses, ≥10 PNGs, ΔG<0) VERIFY.
+
+## Stages 6–8 — Queued (the deferred differentiators)
+
+- **Stage 6 — Skill_PLIP_Postprocess** — non-covalent interaction profiling.
+  Acceptance: PLIP fingerprint matches golden-path PLIP output.
+- **Stage 7 — Skill_Planning_Manifest** — the planner skill orchestrating Stages
+  2–6 with validation gates. [[Arch_Taskboard_Manifest]] in skill form.
+- **Stage 8 — Skill_Bounded_Recovery_AMBER** — the differentiator. Tier 1
+  checkpoint-restore → Tier 2 bounded mutation. Wraps Stage 4 (the
+  `MD_CRASH[stage]` hook in amber-md-run is the seam it acts on).
+
+Also deferred: **Discord orchestration** of the happy path (Phase B — bot is live;
+the long-MD-vs-120s-idle wrinkle is the only open design point), and the
+**memsearch / mempalace** semantic-memory spike (see [[Research_amber_md_skill]]
+deferred note). Each later stage gets its own manifest entry when its turn comes.
 
 ---
 

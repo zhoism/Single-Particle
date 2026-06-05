@@ -9,6 +9,31 @@ type: log
 
 ---
 
+## 2026-06-05 — OpenClaw Day 5/6: Stages 3–5 BUILT, local AMBER MD happy path GREEN end-to-end on 1L2Y 🦞🧬✅
+
+**Context:** Goal was to replicate the baifan-wang amber-md *happy path* (see [[Research_amber_md_skill]]) on our OpenClaw deterministic-wrapper stack — "get what he did on our setup" — then make it see/do/verify-able. Discord orchestration deferred (user call); full 10-analysis suite, ~100 ps verification run. Built three skills (Stages 3–5) + an end-to-end harness, all chained green.
+
+**Built — three deterministic-wrapper skills** in `project-prime/skills/`, each mirroring the Stage-2 `antechamber-ligandprep` shape (single-line JSON metadata SKILL.md + `scripts/wrapper.py` with `--dry-run` + one JSON envelope + the reused `envelope`/`resolve_bin`/`preflight`/`run_step` helper block + `references/heuristics.md` + `test_acceptance.sh`):
+- **`tleap-build` (Stage 3)** — protein PDB + ligand mol2/frcmod → solvated neutralized topology. Generates a correct `leap.in` saving `comp_dry` **before** `solvateoct` (fixes the upstream bug), saves `protein.top`/`ligand.top` for MM-GBSA, loads ligand as mol2 so `combine` auto-renumbers (no `sed` hack). Validation: leap.log no ERROR, **dry<solvated atoms**, **protein+ligand==dry** invariant, neutral. 1L2Y: 306 dry / 5986 solvated.
+- **`amber-md-run` (Stage 4)** — generates the 6-step chain (min1/2/3, heat, density, product) with [[md-param-check]]-clean namelists + portable `run.sh`, runs to completion. Engine seam (serial `pmemd` default ~15.6 ns/day; `pmemd.MPI`/`sander` opt-in; `--sim-ps`). Scans `.out` for `vlimit`/`SHAKE` → `MD_CRASH[stage]` (Stage 8 hook).
+- **`cpptraj-analysis` (Stage 5)** — full 10-analysis suite + FEL + MM-GBSA, each → .dat + .png (inline matplotlib). Fixes upstream footguns: two-call PCA, single-command kmeans `repout`, hbond-empty-is-a-finding, strip with SOLVATED topology, auto-detected masks, evecs.dat hand-parse.
+
+**Verified — full 100 ps happy path GREEN** via `project-prime/run_happy_path.sh` (agent-free verification spine; the OpenClaw agent runs the same chain conversationally). End-to-end on 1L2Y: 4 ok:true envelopes, **12/12 analyses, 0 failures, 15 PNGs, MM-GBSA ΔG = −13.29 kcal/mol** (favorable; article ≈ −16 on 1 ns), production wall 626 s. Per-skill `test_acceptance.sh` (golden + unrelated/subset + malformed) all PASS.
+
+**Real bugs caught + fixed (the value over copying amber-md):** (1) upstream `leap.in` saves comp_dry AFTER solvation → ours before, with a dry<solvated regression gate; (2) project path has a SPACE (`Single Particle`) and tleap/cpptraj/MMPBSA tokenize input lines on whitespace → copy inputs in under bare names + reference relatively; (3) protein PDB-v2 H-names (`1HB`) rejected by ff19SB → `pdb4amber --nohyd`, LEaP rebuilds; (4) upstream PCA/cluster/strip `.in` files are the buggy "before" versions → corrected.
+
+**See/Do/Verify (the user's explicit ask):** SEE = `--dry-run` prints generated leap.in/`*.in`; DO = `bash run_happy_path.sh [sim_ps]`; VERIFY = per-skill tests + harness asserts (4 envelopes ok, ≥12 analyses, ≥10 PNGs, ΔG<0).
+
+**Deferred (user call / differentiators):** Discord orchestration (Phase B — bot live; long-MD-vs-120s-idle the only open design point), PLIP (Stage 6), planner (Stage 7), bounded recovery (Stage 8), remote HPC/DPDispatcher ([[Gap_Remote_HPC_Backend]]). Engine + dispatch seams kept swappable.
+
+**Memory ideas evaluated this session (all deferred):** memsearch + mempalace (semantic memory — [[memory-system-options]]) and the LLM Wiki pattern (verdict: it's the methodology the vault already runs; the design-vault question is separate from OpenClaw *runtime* memory — banked to memory `llm-wiki-pattern`).
+
+**Artifacts:** `project-prime/skills/{tleap-build,amber-md-run,cpptraj-analysis}/` (full 4-file each); `project-prime/golden-path/1L2Y/{1L2Y-1.pdb,ligand.pdb}`; `project-prime/run_happy_path.sh`; `project-prime/happy-path-run/` (gitignored run output + 15 PNGs). Vault: [[Phase3_Taskboard_Manifest]] Stages 3–5 → BUILT; new [[Skill_Tleap_Build]], [[Skill_AMBER_MD_Run]], [[Skill_CPPTraj_Analysis]]. Not yet committed to git (awaiting user).
+
+**Next:** Day 6 = EVALUATION + Discord — starter at [[Next_Session_Prompt_OpenClaw_Day6]]. User manually tests the happy path, then we drive the skills through the OpenClaw agent (the still-outstanding live agent-turn check, same as Stage 2's 1f) and attempt Discord orchestration. Stage 6 (PLIP) and the other differentiators remain deferred.
+
+---
+
 ## 2026-06-04 — OpenClaw Day 4: Stage 2 antechamber-ligandprep built, acceptance 3/3 PASS, substrate ✓ Ready; live agent turn deferred 🦞🧪✅
 
 **Context:** Day 4 of OpenClaw. Resumed from a paused Day 4 attempt (handoff log at top of [[Next_Session_Prompt_OpenClaw_Day4]]) that had landed scaffold + populate + validate + acceptance dry-run before pausing on a Case 3 design question. This session resolved that design call, ran full acceptance to 3/3 PASS, brought the skill to ✓ Ready under the OpenClaw substrate, and ran into a sustained upstream Google 503 outage on the agent payload that blocked the live agent-turn verification.

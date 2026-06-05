@@ -1,9 +1,11 @@
 ---
 tags: [project-prime, openclaw, session-handoff, day-5, stage-3, skills]
 type: handoff
-status: ready
+status: consumed
 created: 2026-06-04
 ---
+
+> **Outcome — consumed 2026-06-05.** Day 5 went beyond its Stage-3 scope: built Stages 3, 4, AND 5 (`tleap-build`, `amber-md-run`, `cpptraj-analysis`) and ran the full local AMBER MD happy path green end-to-end on 1L2Y (MM-GBSA ΔG −13.29 kcal/mol). See [[Dev_Log]] 2026-06-05 and the successor handoff [[Next_Session_Prompt_OpenClaw_Day6]] (evaluation + Discord). The live agent-turn verification (pre-flight 1f below) was NOT done — carried forward to Day 6 as the Discord prerequisite.
 
 # Next Session Starter — OpenClaw Day 5 / Phase 3 Stage 3 (tleap-build)
 
