@@ -32,6 +32,14 @@ created: 2026-06-05
 - **Stages 6–8 + remote HPC** — PLIP, planner, bounded recovery, DPDispatcher. Untouched by design.
 - **Not committed:** older `golden-path/*` 181L recipes, `smoke-test/`, `docs/` in project-prime remain untracked (pre-date Day 5); the vault's `Amber26.pdf` + `phase3-explicit-solvent-md*` remain untracked (large binaries).
 
+## Optional tooling improvements (assessed 2026-06-05 — BUILDS, not eval; only if user opts in)
+
+Assessed at end of Day 5; noted here so they aren't rediscovered. All three are small *builds* — Day 6 is an evaluation session, so do these only if the user explicitly wants them, and treat as out-of-scope otherwise.
+
+- **md-param-check assertion in `amber-md-run/test_acceptance.sh` (highest value).** The Stage-4 namelists are md-param-check-clean *by construction*, but there's no INDEPENDENT check in the tests — a future edit to the generator could break a limit silently. Add a one-line call to the `md-param-check` validator (`.claude/skills/md-param-check/checks/check_amber.py`) over the generated `*.in` and assert it passes. **Do NOT do this as a Claude Code PostToolUse hook** — a hook only fires for Claude-Code-initiated actions, so it wouldn't protect manual or OpenClaw-driven runs (wrong layer); and the `.in` files are written by wrapper.py via Python I/O inside exec, invisible to Write/Edit matchers anyway. Belt-and-suspenders, engine-agnostic.
+- **`verify` subagent (`.claude/agents/*.md`).** Low priority. The acceptance scripts already ARE the deterministic gate; a subagent only adds failure-diagnosis + clean main-context + scoped read-only perms. Confirm the current `.claude/agents/` frontmatter format before authoring (unverified as of 2026-06-05).
+- **`/loop` Curator pass for vault upkeep.** Periodic vocab-drift / orphan-note / gap review — the "lint" habit from the LLM-Wiki verdict ([[llm-wiki-pattern]]). Separate from the chemistry pipeline; do whenever, not necessarily Day 6.
+
 ## The prompt to paste
 
 ```
@@ -69,6 +77,8 @@ Immediate sequence (EVALUATION + Discord ONLY — do NOT build Stage 6+/PLIP/rec
    a. Update Phase3_Taskboard_Manifest.md (flip Stage 2/3–5 live-agent-turn status if verified; note Discord findings).
    b. devlog-append skill: log the evaluation + Discord outcome.
    c. next-session-prompt skill: Day 7 starter (likely Phase B Discord hardening OR Stage 6 PLIP) — or note none needed.
+
+Optional (only if the user opts in — these are BUILDS, not eval): see "Optional tooling improvements" section of Next_Session_Prompt_OpenClaw_Day6.md — the highest-value one is adding an independent md-param-check assertion to amber-md-run/test_acceptance.sh (NOT a Claude Code hook — wrong layer). Treat as out-of-scope unless asked.
 
 Stop conditions:
 - If a validation gate fails, STOP and investigate the cause; do NOT weaken the gate.
