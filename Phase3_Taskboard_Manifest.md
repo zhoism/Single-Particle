@@ -1,7 +1,7 @@
 ---
 tags: [phase-3, openclaw, planning, manifest, execution-plan]
 type: manifest
-status: stage-1-complete
+status: stage-2-built
 created: 2026-06-01
 ---
 
@@ -94,7 +94,7 @@ OpenClaw is the substrate we run inside. The "framework" the report describes is
 
 ## Stage 2 — Skill_Antechamber_LigandPrep (First Real Skill)
 
-**Status:** PENDING (gated on Stage 1).
+**Status:** BUILT 2026-06-04 (acceptance 3/3 PASS; substrate ✓ Ready, visible to model; live agent-turn verification deferred to Day 5 pre-flight check 1f due to upstream Google 503 outage on agent payload). See [[Dev_Log]] 2026-06-04 entry. Artifacts at `project-prime/skills/antechamber-ligandprep/` (4 git commits in `project-prime/`: `f2307db` → `29a99ce`). Will flip to COMPLETE once the live agent turn lands.
 
 **Depends on:** Stage 1 complete + `prime-amber` conda env active.
 
