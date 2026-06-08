@@ -9,6 +9,65 @@ type: log
 
 ---
 
+## 2026-06-08 — OpenClaw Day 8: Discord orchestration gate PASSED; QC caught + fixed a silent aromatic ligand mis-typing (Stage 2) 🔧
+
+**Context:** Day 8 = Phase B (drive a skill through the Discord bot; user @-mentions, can't be automated). The small-task gate passed — then heavy QC of the returned ligand exposed a silent scientific bug in `antechamber-ligandprep` that had been wrong since the skill was built.
+
+**Phase B Discord gate — PASSED.** User @-mentioned the bot (guild `1511130058306228311`) with a goal-shaped prompt; the agent (free Cerebras `gpt-oss-120b`) picked `antechamber-ligandprep`, ran the wrapper, and replied in-channel with the result envelope — $0. Two false starts first, both cleanly diagnosed from the gateway log (`/tmp/openclaw/`): attempt 1 filtered with `reason: no-mention` (the `@Single Particle` was typed as text, not a real Discord mention); a later attempt failed when the model explored skill files instead of one-shotting and hit a Cerebras 429 → google-fallback 429 (free-tier wall). Discord→agent→skill→reply is proven; the long-MD-vs-~120s-idle async path stays the deferred Phase-B *build*.
+
+**🚩 Silent bug caught — aromatic ligand mis-typed across ALL prior runs.** The 1L2Y test ligand is indole (aromatic), yet the skill typed it as a non-aromatic conjugated polyene (`c2/c5/ce/cf/ne`, no `ca/cc/cd/na`, no `hn`) and **dropped the ring N–H**. Root cause: the PDB path ran `pdb4amber --nohyd` (strip H) → `obabel -p 7.4` (re-add H), forcing obabel to re-perceive bonds from a heavy-atom-only skeleton → `Failed to kekulize aromatic bonds`; antechamber, fed the obabel mol2 (`-fi mol2`), trusted the broken bonds. All four output gates passed → a silent failure. Confirmed byte-identical in the overnight + happy-path runs, so the published MM-GBSA ΔG (≈ −13) was computed on a mis-parameterized ligand. The benzene-only acceptance fixture never exercised it (benzene kekulizes trivially). See [[amber-md-prior-art]] — this is precisely the silent-chemistry-error class the deterministic-wrapper thesis targets, and our gates had a hole.
+
+**🔧 Fix (Stage-2 skill).** H-aware routing: a PDB that already carries hydrogens is fed straight to `antechamber -fi pdb -j 4` (antechamber's own bond perception kekulizes correctly, acdoctor stays ON — verified, so no `-dr no`), skipping pdb4amber/obabel; H-absent PDB / sdf / SMILES keep the obabel path. New deterministic **fatal** gate `AROMATIC_PERCEPTION_FAILED` scans obabel stderr for the kekulize failure so it can never pass silently again. Added acceptance **Case 4** (indole) asserting `{ca,cc,cd,na,hn}` present and `{c2,ce,cf,ne}` absent — the regression guard the benzene fixture lacked.
+
+**Verified.** 4/4 acceptance cases pass (benzene/methane unchanged); negative control (H-stripped indole → obabel path) now returns `ok:false AROMATIC_PERCEPTION_FAILED` instead of silently passing; corrected happy path (20 ps) GREEN — Stage-2 types `ca,cc,cd,h4,ha,hn,na` (NE1→`na`, HE1→`hn` restored), **MM-GBSA ΔG −17.18 kcal/mol** (vs broken −13.11 @20 ps; now *closer* to the article's ≈ −16 — fixing aromaticity restored the indole's π-stacking in the pocket).
+
+**Artifacts:** `skills/antechamber-ligandprep/{scripts/wrapper.py, test_acceptance.sh, SKILL.md, references/heuristics.md}` (fix + gate + Case 4 + docs); `happy-path-fixed-run/` (corrected 20 ps run, gitignored), old `happy-path-run/` kept for before/after; plan at `.claude/plans/implement-it-and-take-lovely-stearns.md`. Memories: [[project-prime-status]] (ΔG retraction + fix), new [[antechamber-aromatic-kekulize-bug]]. Vault [[Phase3_Taskboard_Manifest]] updated (Phase B Discord PASSED; prior ΔG superseded). NOT committed (awaiting user).
+
+**Next:** optional/user-driven — re-@-mention the bot to see the corrected reply; `git commit` the fix; a full-length (100 ps) corrected-ΔG run. Deferred unchanged: Phase-B async/long-run build, Stage 6 PLIP, Stage 7/8, remote HPC.
+
+---
+
+## 2026-06-07 — OpenClaw Day 7: Cerebras (free) runs the FULL multi-turn pipeline end-to-end; Google free-tier ceiling bypassed 🦞
+
+**Context:** Google AI Studio's free tier throttles the preview model to ~1 agent turn/day (token-budget 429s), blocking the *conversational* 4-skill pipeline (Phase A). Per a free-LLM-API survey (GitHub `cheahjs/free-llm-api-resources`) + the discovery that OpenClaw natively supports `cerebras/*`, pivoted the agent to **Cerebras** (free ≈ 1M tokens/day). User pasted a Cerebras key and enabled `sudo pmset -c disablesleep 1` for a lid-closed overnight run.
+
+**Done — Phase A achieved on a FREE provider.** Switched default model to `cerebras/gpt-oss-120b`; a detached overnight runner verified tool-calling, then drove the full chain ×2:
+- **Verify:** PASS — gpt-oss-120b makes clean `exec` tool-calls (`toolSummary calls=1`, served by cerebras, not the google fallback). Resolves the "do open models tool-call reliably?" unknown.
+- **Full pipeline RUN #1: SUCCESS (science).** The agent chained all 4 skills correctly (prep→build→MD 5 ps→full cpptraj), threading artifacts across the space-in-path: **12/12 analyses, 15 PNGs, MM-GBSA ΔG = −12.84 kcal/mol** (matches the gemini runs' ~−13.1). Outputs at `/tmp/agent-full-chain-1`. **$0** (free tier).
+
+**Caveats (mechanics, not science):** the ~15-min turn hit the 900s agent `--timeout` on its *final summary* call (envelope not returned though outputs were complete) → raise timeout to ~1500s; run #2 stalled on a 120s idle timeout right after the heavy run #1 (likely Cerebras 60k-tokens/min rate/capacity) → space heavy runs out. The runner's auto-verdict mislabelled run #1 "FAIL" by keying on the (timed-out) envelope instead of the on-disk artifacts — corrected in `/tmp/cerebras-overnight-result.txt`.
+
+**Cost reference:** measured gemini turn ≈ $0.005 (gemini-3-flash-preview $0.50/$3 per 1M, cache-read $0.05); Cerebras free = $0. LLM only orchestrates (MD/analysis local = $0), so API cost scales with # agent turns, not sim length.
+
+**Artifacts:** default model now `cerebras/gpt-oss-120b` (revert: `openclaw models set google/gemini-3-flash-preview`); `/tmp/cerebras-overnight-result.txt`, `/tmp/cerebras_overnight.sh`, `/tmp/agent-full-chain-1`. New memory [[revert-disablesleep-reminder]] (⚠️ user must run `sudo pmset -c disablesleep 0` first thing); [[project-prime-status]] updated. **OPEN ACTION: remind the user to revert disablesleep.**
+
+**Next:** Phase B (Discord) — needs the user to @-mention the bot, so do it together when they're up. Optional: bump agent `--timeout` so the closing envelope returns. Stage 6 (PLIP) still queued. Starter for the fresh chat: [[Next_Session_Prompt_OpenClaw_Day8_Discord]].
+
+---
+
+## 2026-06-05 (cont.) — OpenClaw Day 6: local AMBER MD happy path re-verified GREEN + deep QC; live-agent-turn gate still 503-blocked, auto-retry armed 🔍
+
+**Context:** Day 6 = the EVALUATION session promised by [[Next_Session_Prompt_OpenClaw_Day6]] — not a build. User asked for the "safe block" (pre-flight → manual eval → live agent-turn) done thoroughly with **heavy QC**. Scope-fenced: no Stage 6+/PLIP/recovery/Discord.
+
+**Verified — happy path re-ran GREEN + deep output QC.** `run_happy_path.sh 20` on 1L2Y: 4/4 `ok:true`, dry/solvated 306/5986, MD wall 167 s, **12 analyses, 15 PNGs, MM-GBSA ΔG −13.11 kcal/mol** (vs −13.29 at 100 ps Day 5 — expected with shorter sampling). The QC went *past* `ok:true` to the artifacts: comp_dry saved before `solvateoct` (leap.in L12<L13), combine invariant 290+16=306, `pdb4amber --nohyd`, path-with-space bare-name refs; **independent [[md-param-check]] `check_amber.py` over the generated `md/` → VERDICT PASS** (dt=0.002+SHAKE, cut=9, ntt=3 γ=2.0, heat `temp0=300`==`&wt value2=300` — no heat-3 bug, portable run.sh); product.in ntp=1/barostat=2/iwrap=1; PCA two-call (pca_evecs+pca_proj), cluster `repout` rep.c0..c4, hbond reported as a finding. `--dry-run` SEE is honest (emits full leap.in inline in `planned_steps`, executes nothing; minor cosmetic — the envelope names a `leap_in` path that isn't written on a dry-run).
+
+**Verified — all 4 acceptance suites exit 0.** antechamber / tleap-build / amber-md-run / cpptraj-analysis, each golden + unrelated/subset + malformed; **every malformed case fails gracefully** (structured `ok:false`, not a crash) — 12 PASS-groups, 0 FAIL. Re-confirms the negative paths the happy path can't exercise.
+
+**Built — `/eval-happy-path` command** (`.claude/commands/eval-happy-path.md`): bundles pre-flight + `run_happy_path.sh` + envelope/analysis/ΔG asserts + the `check_amber.py` probe into one repeatable, evaluation-shaped command (touches no pipeline guardrail). The other assessed options (md-param-check-in-test, verify subagent, PostToolUse hook) stay out-of-scope builds; the hook is confirmed **wrong-layer** (PostToolUse fires only on Claude-Code tool calls — blind to manual + OpenClaw runs; the `.in` files are written by wrapper.py Python I/O inside `exec`, invisible to Write/Edit matchers).
+
+**Open — live-agent-turn gate STILL blocked by Google 503 (3rd occurrence).** Drove `antechamber-ligandprep` through `openclaw agent --json` (goal-shaped) → Google AI Studio 503 ("high demand"/UNAVAILABLE) on both `gemini-3-flash-preview` and the `gemini-3.1-pro-preview` fallback; retry after the 1 m cooldown → same (escalated to 5 m tier). **Our side is proven healthy** — the gateway accepted, routed `main`, and reached Google for a clean provider-side 503; only Google availability is missing (no alternate provider; Vertex non-functional in OpenClaw 2026.5.28 per [[openclaw-vertex-gap]]). Same outage class that deferred Stage 2 (Day 4) and Day 5. Per user call, a **bounded background auto-retry** is armed (`/tmp/live_turn_retry.sh`, ≤12 attempts @10 min, ~2 h) that re-fires the same turn and stops the instant Google responds; on success the gate flips to COMPLETE. **Update (~18:44 PT):** the auto-retry (extended to 30 attempts / ~5 h) **exhausted without flipping** — and partway through the error shifted **503→429** (attempts 1–2 = 503 capacity; attempts 3–30 = mostly `429 RESOURCE_EXHAUSTED`), i.e. the **free-tier daily quota** became the wall, not just Google capacity. This partly revises the earlier "not your plan" read: the 503s were capacity, but the 429s are the free tier. Fix = enable AI Studio billing (paid tier → higher limits + priority) **or** drive one turn after the free-tier quota resets (~midnight Pacific). **✅ Resolved 2026-06-06 00:38 PT — GATE FLIPPED:** the quota reset on the new day; a single `openclaw agent --json` turn (run to measure token cost) drove antechamber-ligandprep as **exactly ONE exec call** (`toolSummary calls=1, failures=0`) → `LIG.mol2`+`LIG.frcmod`. The live-agent-turn gate — open since Day 4 — is now COMPLETE; the local AMBER MD pipeline is verified end-to-end *as an agent*, not just via the harness. **Cost (measured):** ~28.8k input (24.6k cached) + 477 output per turn ≈ **$0.005/turn** on gemini-3-flash-preview ($0.50/$3.00 per 1M in/out, cache-read $0.05). Because the LLM only orchestrates (MD + analysis run locally for $0), API cost scales with the number of agent turns, NOT simulation length — a 100 ns run costs the same orchestration tokens as a 1 ns run. Full conversational pipeline ≈ 4–5 turns ≈ a few cents. **Free-tier test (16:38–16:48, user staying on free for now):** attempted Phase A (full pipeline via one agent turn, 5 ps) → repeated `429 "exceeded quota"` in ~25 s, while tiny one-shot inferences still succeed → the free tier allows **≈1 agent-sized turn/day** for this preview model (token-budget throttle, not money). Verdict: free tier covers the deterministic local pipeline + single-skill agent proofs (incl. today's gate flip); the full conversational chain + Discord (Phase B) need paid — parked until billing is enabled.
+
+**Artifacts:**
+- `.claude/commands/eval-happy-path.md` — new repeatable QC command (evaluation-shaped).
+- `/tmp/live_turn_retry.sh` — bounded live-turn auto-retry (ephemeral).
+- [[Phase3_Taskboard_Manifest]] — Day-6 evaluation status block added; Stage 2 live-agent-turn note updated (still BUILT, not COMPLETE).
+- `project-prime/happy-path-run/` — gitignored 20 ps run output (4 envelopes, 15 PNGs).
+- No `project-prime/` code changes (evaluation only).
+
+**Next:** When the auto-retry lands, flip Stage 2 live-agent-turn → COMPLETE in [[Phase3_Taskboard_Manifest]] + memory `project-prime-status`. Day 7 frontier = Discord orchestration (Phase B) and/or Stage 6 PLIP — see [[Next_Session_Prompt_OpenClaw_Day6]] §Discord for the long-MD-vs-120s-idle design point.
+
+---
+
 ## 2026-06-05 — OpenClaw Day 5/6: Stages 3–5 BUILT, local AMBER MD happy path GREEN end-to-end on 1L2Y 🦞🧬✅
 
 **Context:** Goal was to replicate the baifan-wang amber-md *happy path* (see [[Research_amber_md_skill]]) on our OpenClaw deterministic-wrapper stack — "get what he did on our setup" — then make it see/do/verify-able. Discord orchestration deferred (user call); full 10-analysis suite, ~100 ps verification run. Built three skills (Stages 3–5) + an end-to-end harness, all chained green.
