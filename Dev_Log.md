@@ -9,6 +9,26 @@ type: log
 
 ---
 
+## 2026-06-08 (cont.) — OpenClaw Day 8: Phase B EXPANDED — async pipeline skill + 429 self-alert (notify via LLM-free `message send`) 🦞
+
+**Context:** With the small-task Discord gate passed + the aromatic bug fixed/committed, expanded Phase B to its real target: run the FULL ~10-15 min pipeline from a Discord @-mention (impossible synchronously — 120s model-idle limit) and self-alert the channel on usage-limit (429) failures so a silent bot doesn't need human diagnosis. User-scoped: fixed 1L2Y demo + `--sim-ps`, per-stage pings, manual-start watcher.
+
+**Key mechanism (verified read-only):** `openclaw message send --channel discord --target channel:<id> --message … [--media] [--dry-run]` posts via OpenClaw's own bot connection — **LLM-free**, so it delivers even during a 429 (the limit is on the LLM providers, not the Discord link). No webhook, no raw-token handling. `--dry-run` → `dryRun:true`, posts nothing (confirmed safe for tests). No native error-delivery flag and no agent-failure hook exist (hook events stop at `message:sent`), so the 429 alert is a log watcher.
+
+**Built (all in `project-prime/`):**
+- **`scripts/notify_discord.sh`** — thin LLM-free Discord post helper (NOTIFY_DRYRUN-aware). Shared primitive.
+- **`run_happy_path.sh` notify mode** — opt-in `NOTIFY_CHANNEL`: per-stage pings (prep/topology/MD/analysis) + final ΔG with the RMSD png via `--media` + an EXIT-trap failure notice. Unset = byte-identical verification spine (DRY: one chain, no async fork — the duplication that let the aromatic bug hide).
+- **`skills/pipeline-async/`** — new skill (**✓ ready** in OpenClaw): wrapper launches `run_happy_path.sh` detached (`start_new_session=True`, survives the agent's `exec`) and returns `status:launched`+run-id in <1s; the agent replies "started", the detached job notifies. `scripts/env.sh` bootstraps the toolchain for the detached job (single overridable source of truth).
+- **`scripts/watch_ratelimits.sh`** — manual-start log watcher: greps the Discord rate-limit signature, 60s-cooldown dedup, extracts the failing channel, posts the alert. The feasible stand-in for the absent native/hook path.
+
+**Verified (dry-run, $0):** full notify-mode run (`NOTIFY_DRYRUN=1`, 5 ps) GREEN — all **6 notifications fired** with correct data (12 analyses, ΔG −19.00, `rmsd.png` resolved), **0 messages actually posted** (channel read confirms). pipeline-async fast acceptance PASS (dry-run plans / spawns nothing; malformed → graceful `ok:false`). Watcher signature replay matched today's real 14:01 429 burst exactly (2 lines → 1 alert; channel extracted). **Live e2e (real @-mention → real posts) + the `LIVE=1` full launch are user-driven next.**
+
+**Artifacts:** `project-prime/{scripts/{notify_discord.sh,watch_ratelimits.sh,env.sh}, run_happy_path.sh, .gitignore, skills/pipeline-async/*}`. Vault: [[Phase3_Taskboard_Manifest]] Phase B updated; [[Next_Session_Prompt_OpenClaw_Day8_Discord]] flipped consumed. Plan at `.claude/plans/`. Committed this session (project-prime + vault).
+
+**Next:** user @-mentions "run the full pipeline at N ps" for the live e2e; `bash scripts/watch_ratelimits.sh &` to catch 429s. Deferred: arbitrary-ligand parsing, always-on watcher LaunchAgent, Stage 6 PLIP. Handoff: [[Next_Session_Prompt_OpenClaw_Day9]].
+
+---
+
 ## 2026-06-08 — OpenClaw Day 8: Discord orchestration gate PASSED; QC caught + fixed a silent aromatic ligand mis-typing (Stage 2) 🔧
 
 **Context:** Day 8 = Phase B (drive a skill through the Discord bot; user @-mentions, can't be automated). The small-task gate passed — then heavy QC of the returned ligand exposed a silent scientific bug in `antechamber-ligandprep` that had been wrong since the skill was built.
