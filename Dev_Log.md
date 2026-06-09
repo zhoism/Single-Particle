@@ -9,6 +9,27 @@ type: log
 
 ---
 
+## 2026-06-09 — mdin-edit Track 1 done: `--submit` built + live NL drive byte-verified through the agent ✅
+
+**Context:** The two deferred `mdin-edit` tails (`Next_Session_Prompt_Advisor_LiveDrive_PhaseB.md`, Track 1). Built `--submit` (prove the edited set runs locally) and drove the editor live through `openclaw agent`. Track 2 (Discord full-pipeline e2e) stays user-gated on the paid Google key — not started.
+
+**Track 1a — `--submit` (productizes `tests/smoke_edit_run.sh` into a skill flag):**
+- New mode on `scripts/wrapper.py` (separate from the editor; `--stage/--param/--value` not required). Scratch-copies `--md-dir` (**never mutated**) → rewrites the advisor's hardcoded `AMBERHOME` → `source scripts/env.sh` + asserts foreign-path-clean (vendored detector) → reduces `nstlim` via this same engine (subprocess-to-self) → smoke-accelerates the out-of-scope `maxcyc`/`&wt istep2` → runs the `min1..prod` pmemd chain restart-chained, asserting per stage `rc==0` / no abnormal / non-empty `.rst7`. Structured envelope (`mode:submit`, per-stage `rc`+`normal_termination`, `final_rst7`). `--submit --dry-run` plans without pmemd (no toolchain; CI-safe).
+- New `tests/submit_acceptance.sh`: dry-run plan + a real 10/10-stage run with `--md-dir` left byte-untouched. `smoke_edit_run.sh` kept as the independent run oracle. Engine stays **py3.11-safe** (`open(newline="")`).
+- **Verified:** real `--submit` 10/10 stages to normal termination (`final_rst7` produced); full harness green under **py3.14** (oracle 38/38, mutation 8/8, fuzz 241,339/0, smoke 10/10, submit-accept) and the **engine under conda py3.11** (oracle 38/38, fuzz-quick 6318/0, submit-accept full 10/10). (`mutation_test.py` itself stays 3.14-only by design — uses `Path.read_text(newline=)`; the *engine* is what's 3.11-safe.)
+
+**Track 1b — live NL drive (byte-verified, $0 on cerebras):**
+- `openclaw agent` (cerebras `gpt-oss-120b`) drove `mdin-edit` from goal-phrased English; each agent edit **byte-compared to the deterministic CLI baseline**.
+  - **Prompt 1** "set the timestep to 1 fs in the first heating stage" → `--stage heat-1 --param dt --value 0.001`; `heat-1.in` **byte-identical** to CLI, 9 others untouched. `toolSummary calls=2, failures=0`.
+  - **Prompt 3** "ramp the target temperature to 310 K across the later stages" → `--stage group:third-onward --param temp0 --value 310`; the **`&wt` coupling fired through the agent** (heat-3 `temp0=310.0` + `value2=310.0`, `value1=200.0` preserved); all 4 third-onward stages **byte-identical** to CLI, 6 others untouched. `calls=3, failures=0`.
+- **Notes/gotchas caught:** (1) provider flakiness is real — first attempt hit a **429 on both cerebras and the Google fallback**; a later attempt **provider-timed-out** at 300s (cerebras idle-stall). (2) The agent floundered when handed SKILL.md's unresolved `{baseDir}` placeholder (quoted-`~` `ls` fails → it hunts the FS). Supplying the absolute wrapper path in the prompt (infra, not the chemistry mapping) → clean one-shot edits. (3) `calls` was 2–3 not 1 because cerebras added a defensive path-check before the wrapper call; the **edit itself was one deterministic wrapper invocation**, `failures=0`.
+
+**Commit (project-prime `master`, not pushed):** `b2d97fd` (`--submit` + acceptance + SKILL.md). Skill doc updated (Submit section, Inputs, metadata gate `submit_amberhome_rewrite_foreign_path_clean`). Pointers: `skills/mdin-edit/{SKILL.md, scripts/wrapper.py, tests/submit_acceptance.sh}`.
+
+**Open report decision (deferred, not urgent):** which protocol is canonical for the end-to-end demo — our generated 6-step `amber-md-run` chain vs the advisor's 10-stage chain driven by `mdin-edit + --submit`. They coexist as two modes; be explicit in the report which is "the demo." Next frontier after this: **Track 2 Discord e2e** (paid key, user-present) then **Stage 6 PLIP**.
+
+---
+
 ## 2026-06-08 (cont. 3) — mdin-edit overnight rigorous testing: 5 engine bug classes found + fixed; mutation 8/8 🧪
 
 **Context:** Overnight autonomous testing pass on the just-built `mdin-edit` skill — deterministic + self-verifying, the ideal unattended target. Decided with the user: fix-and-reverify on bug-find; full toolchain depth (Tier 1 deterministic + Tier 2 looped suites + Tier 3 edit→run smoke).
