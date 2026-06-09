@@ -9,6 +9,35 @@ type: log
 
 ---
 
+## 2026-06-08 (cont. 3) — mdin-edit overnight rigorous testing: 5 engine bug classes found + fixed; mutation 8/8 🧪
+
+**Context:** Overnight autonomous testing pass on the just-built `mdin-edit` skill — deterministic + self-verifying, the ideal unattended target. Decided with the user: fix-and-reverify on bug-find; full toolchain depth (Tier 1 deterministic + Tier 2 looped suites + Tier 3 edit→run smoke).
+
+**Built — `project-prime/skills/mdin-edit/tests/` (stdlib only):**
+- **`oracle.py`** — an INDEPENDENT oracle (never reuses the engine's render/regex): byte-level structural check + `Decimal` value equality + a from-scratch namelist scanner + a spec decision-function (the desired contract) re-verified against the demo files at startup.
+- **`oracle_selftest.py`** (38) — proves the oracle REJECTS known-corrupt edits (appended line, wrong value, collateral/sibling change, eaten comment) — not a rubber stamp.
+- **`fuzz_mdin_edit.py`** — Tier-0 anchor (spec agrees with `test_acceptance.sh`) + exhaustive matrix (in-process AND subprocess, asserted equal) + property fuzz + synthetic style-variant fuzz (comments/CRLF/spacing/dup-keys) + crash-class (inverted) + fault-injection + coverage gate + format-equivalence. ~240k assertions, fixed seed.
+- **`mutation_test.py`** — injects 8 semantic engine mutants; **all 8 killed (100%)**.
+- **`smoke_edit_run.sh`** (Tier 3) — mdin-edit cuts `nstlim` → AMBERHOME rewrite → full `min1..prod` pmemd chain to normal termination (**10/10**) on the advisor's topology. **`overnight.sh`** + **`summarize.py`** — gate-once + wall-clock-capped robustness loop.
+
+**🐞 Found + fixed 5 engine bug classes (NONE caught by the 11-case acceptance suite):**
+1. **Crash class** — `nstlim` `inf`/`nan`/`1e999` → uncaught `int()` crash, NO JSON envelope (also `restraint_wt inf` crashed in render).
+2. **Silent non-ASCII/underscore acceptance** — `０.００２`→0.002, `1_000`→1000 silently accepted **and written**. (1+2 fixed by an ASCII `_VAL_ASCII` grammar + `math.isfinite` input gate before any `float()`/`int()`.)
+3. **CRLF normalization** (LF rewrite, not byte-minimal) → `open(newline="")`.
+4. **Precision loss** — tiny dt `%.12f`-truncated → `Decimal` rendering.
+5. **Python 3.11 incompatibility** — the CRLF fix first used `Path.read_text(newline=)` (3.13+); OpenClaw runs **conda 3.11** → would crash in production. The harness's cross-version checks caught it → builtin `open(newline="")`. **This one would have shipped a broken skill.**
+Plus a harness/spec bug it caught about *itself* (temp0 "at-target" must include the coupled `&wt value2` — heat-3 `temp0=300` still edits `value2` 310→300).
+
+**Verified (after fixes):** oracle 38/38; Tier-1 ~240k assertions, 0 failures, full status+error-code coverage; mutation 8/8; edit→run smoke 10/10; full acceptance green under **both** conda 3.11 and system 3.14.
+
+**Commits (project-prime `master`, not pushed):** `4edc8a0` (input gate/CRLF/precision), `4f080a9` (deterministic harness), `c71f9a1` (3.11-compat fix), `107105b` (Tier-2/3 harness), `be84bd7` (README). Harness doc: `skills/mdin-edit/tests/README.md`.
+
+**Running overnight:** `overnight.sh` under `caffeinate` (7 h, started 23:30) — fuzz(fresh seeds)+edit→run smoke every iter, fast suites every 5, cpptraj+happy_path every 10; gates on success+sanity to catch flakiness. Results → `test-runs/overnight-*/summary.json`; morning summary + commit to follow.
+
+**⚠️ Reminder:** revert the overnight sleep override — `sudo pmset -c disablesleep 0` (the run uses `caffeinate`, so reverting is safe anytime). See [[revert-disablesleep-reminder]].
+
+---
+
 ## 2026-06-08 (cont. 2) — Advisor task: `mdin-edit` parameter-editor skill BUILT (deterministic core) ✏️
 
 **Context:** The advisor set a specific task we hadn't built — a natural-language **parameter-EDITOR** over his pre-prepared mdin set (`phase3-explicit-solvent-md/`), distinct from `amber-md-run` (which *generates* its own namelists). Built the deterministic core this session; the `--submit` smoke + live-agent NL drive were scoped out by the user (runtime-dependent tail).
