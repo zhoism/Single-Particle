@@ -7,6 +7,8 @@ created: 2026-06-01
 
 # Phase 3 Taskboard Manifest — OpenClaw Substrate + First Skill
 
+> **Status (2026-06-08, Advisor task — `mdin-edit` parameter editor):** Built a NEW OpenClaw skill **`mdin-edit`** (`project-prime/skills/mdin-edit/`, ✓ ready) for the advisor's natural-language **parameter-EDITING** task over his pre-prepared `phase3-explicit-solvent-md/` mdin set — distinct from `amber-md-run` (which *generates*). The agent maps NL → `--stage/--param/--value`; the wrapper does an **idempotent, byte-minimal parse-replace** (numeric-token-only, never appends, re-run byte-identical), **bounds-checked** (`dt≤0.002`, `temp0≤400`, `restraint_wt≥0`, `nstlim>0`, `6≤cut≤12` with advisory WARN <8 so the advisor's `cut=7.0` passes; shared `check_amber.py` validator untouched), **stage-aware** (`group:third-onward`={heat-3,press-3,relax,prod}, `group:all`; refuses params not in a stage; `restraint_wt` skipped where `ntr=0`), with **`temp0`↔`&wt value2` coupling** that auto-fixes the heat-3 `temp0=300`/`value2=310` mismatch, an **atomic write + post-edit self-check** (independent parser), and a change log. Validation logic is **vendored** from `md-param-check` (self-contained). Deliverables: the Amber26 **§23.6** write-up (`references/mdin-params.md`, advisor Task 1) + an 11-case `test_acceptance.sh` (asserts file BYTES) all green (full + dry-run). Committed project-prime `fd5ae2b`. **Deferred (user-scoped):** `--submit` reduced-`nstlim` smoke + live `openclaw agent` NL drive. See [[Dev_Log]] 2026-06-08 (cont. 2) + the skill's SKILL.md.
+> 
 > **Status (2026-06-08, Day 8 — Discord orchestration + Stage-2 correctness fix):** **Phase B Discord small-task gate PASSED** — a user @-mention drove `antechamber-ligandprep` through the bot (free Cerebras `gpt-oss-120b`) → in-channel reply, $0 (the long-MD-vs-~120s-idle async path remains a deferred *build*). **Plus a silent bug caught + fixed during QC:** the 1L2Y indole ligand was being mis-typed as **non-aromatic** (`c2/c5/ce/cf/ne`, ring **N–H dropped**) because the PDB path ran `pdb4amber --nohyd` (strip H) → `obabel -p 7.4` (re-add H), forcing obabel to re-perceive bonds from a heavy-atom-only skeleton where it `Failed to kekulize aromatic bonds`; antechamber (fed the obabel mol2) trusted the broken bonds; **all four output gates passed → a silent failure** present identically in the overnight + happy-path runs, so the prior MM-GBSA ΔG (≈ −13) was computed on a mis-parameterized ligand. **Fix:** H-present PDBs now route straight to `antechamber -fi pdb -j 4` (antechamber's own perception kekulizes correctly, acdoctor kept ON); new **fatal** `AROMATIC_PERCEPTION_FAILED` gate on obabel kekulize failures; acceptance **Case 4** (indole) added as the regression guard the benzene-only fixture lacked. Corrected happy path (20 ps) GREEN: Stage-2 types `ca/cc/cd/h4/ha/hn/na` (NE1→na, HE1→hn restored), **MM-GBSA ΔG −17.18 kcal/mol** (closer to the article's ≈ −16). **Prior ΔG figures (−12.84 / −13.11 / −13.29) are SUPERSEDED — computed on the mis-typed ligand.** See [[Dev_Log]] 2026-06-08 + [[antechamber-aromatic-kekulize-bug]]. **Phase B async (2026-06-08 cont.):** built the `pipeline-async` skill (detached full-run launcher; agent replies "started" then the detached job posts per-stage progress + final ΔG via the LLM-free `openclaw message send`) + a manual-start 429 self-alert watcher (`scripts/watch_ratelimits.sh`). Dry-run-verified end-to-end (6/6 notifications, $0); live e2e is user-driven. Deferred: arbitrary-ligand parsing, always-on watcher LaunchAgent.
 > 
 > **Status (2026-06-07, Day 7 — Cerebras free provider):** Phase A now PROVEN on a FREE provider. Pivoted the agent to `cerebras/gpt-oss-120b` (Google free tier = ~1 agent turn/day; Cerebras free ≈ 1M tokens/day; OpenClaw natively supports `cerebras/*`). An overnight run drove the **full 4-skill pipeline end-to-end via the agent**: 12/12 analyses, **MM-GBSA ΔG −12.84 kcal/mol**, $0. Caveats: ~15-min turns brushed the 900s agent `--timeout` (raise it); back-to-back heavy turns can 120s-idle-stall (Cerebras 60k tok/min). Live-agent-turn gate (Day 6) **and** full multi-turn orchestration (Day 7) both ✅. ⚠️ user set `pmset disablesleep 1` overnight — must revert. Discord (Phase B) needs the user awake. See [[Dev_Log]] 2026-06-07.
@@ -163,6 +165,27 @@ four chained green by `project-prime/run_happy_path.sh` on the 1L2Y fixture.
 **See/do/verify:** `--dry-run` on any wrapper prints the generated inputs (SEE);
 `run_happy_path.sh [sim_ps]` runs the chain (DO); per-skill `test_acceptance.sh` +
 the harness assertions (4 ok:true envelopes, ≥12 analyses, ≥10 PNGs, ΔG<0) VERIFY.
+
+## Parameter-editor skill — `mdin-edit` BUILT 2026-06-08 (advisor task)
+
+A deterministic NL parameter-editor over the advisor's pre-prepared mdin set
+(`phase3-explicit-solvent-md/`) — the EDITOR counterpart to the Stage-4 generator
+`amber-md-run`. Skill at `project-prime/skills/mdin-edit/` (✓ ready), committed `fd5ae2b`.
+
+- **Interface:** `--md-dir <copy> --stage <stage|group:third-onward|group:all> --param
+  <dt|cut|temp0|restraint_wt|nstlim> --value <n> [--dry-run]`. Work on a COPY; the LLM
+  parses NL, the wrapper does the edit.
+- **Guarantees:** idempotent parse-replace (never appends; re-run byte-identical), bounds +
+  stage-aware targeting (refuses absent params; `restraint_wt` skipped where `ntr=0`),
+  `temp0`↔`&wt value2` coupling (fixes the heat-3 mismatch), all-or-nothing atomic write +
+  post-edit self-check, change log. Validation logic vendored from `md-param-check`.
+- **Tested:** `test_acceptance.sh` 11 cases asserting actual file bytes (golden, idempotency,
+  out-of-bounds, no-append, the 3 advisor extensions, ntr=0 skip/fail, malformed) — all green
+  full + dry-run.
+- **Deliverables:** §23.6 write-up (`references/mdin-params.md`, Task 1); guarantees summary in
+  SKILL.md (Task 4).
+- **Deferred (user-scoped):** `--submit` (copy + `AMBERHOME` rewrite via `scripts/env.sh` +
+  reduced-`nstlim` smoke) and the live `openclaw agent` NL drive.
 
 ## Stages 6–8 — Queued (the deferred differentiators)
 

@@ -9,6 +9,25 @@ type: log
 
 ---
 
+## 2026-06-08 (cont. 2) — Advisor task: `mdin-edit` parameter-editor skill BUILT (deterministic core) ✏️
+
+**Context:** The advisor set a specific task we hadn't built — a natural-language **parameter-EDITOR** over his pre-prepared mdin set (`phase3-explicit-solvent-md/`), distinct from `amber-md-run` (which *generates* its own namelists). Built the deterministic core this session; the `--submit` smoke + live-agent NL drive were scoped out by the user (runtime-dependent tail).
+
+**Built — new OpenClaw skill `project-prime/skills/mdin-edit/` (✓ ready in `openclaw skills list`):**
+- **`scripts/wrapper.py`** — idempotent, byte-minimal parse-replace engine. Numeric-token-only regex + index-slice (never `re.sub`, never line-greedy, **never appends**); value rendering pure in `(param, value)` → re-runs byte-identical. Stage→file map incl. `group:third-onward`={heat-3,press-3,relax,prod} + `group:all`. Bounds: `0<dt≤0.002`, `0<temp0≤400`, `restraint_wt≥0`, `nstlim>0` int, `6≤cut≤12` (advisory WARN `6≤cut<8` so the advisor's `cut=7.0` is accepted; shared validator untouched). **`temp0`↔`&wt value2` coupling** for `nmropt=1` heating stages (auto-fixes the heat-3 `temp0=300`/`value2=310` mismatch; `value1` preserved). Applicability keys off `ntr` (restraint_wt skipped where ntr=0; skip-in-group / fail-single). All-or-nothing batch, atomic write, **post-edit self-check** via an independent parser, append-only change log.
+- **`scripts/check_amber_vendored.py`** — verbatim vendored copy of `.claude/skills/md-param-check/checks/check_amber.py` (provenance header), reused for the self-check parse + advisory findings. Vendored, not imported (the OpenClaw skill must be self-contained).
+- **`references/mdin-params.md`** — the Amber26 **§23.6** per-stage write-up (advisor **Task 1**). **`references/heuristics.md`** — design rationale + provenance. **`SKILL.md`** — single-line JSON metadata, goal-oriented, with a "how mistakes are avoided" summary (advisor **Task 4**).
+
+**Ground-truth correction (verified against the files, not the onboarding doc):** `restraint_wt` is present in **all 10** stages — `0.0`/`ntr=0` in min2/relax/prod, `5.0`/`ntr=1` elsewhere. The onboarding's "absent in min2/relax/prod" was wrong; applicability keys off `ntr`, not line presence.
+
+**Verified — `test_acceptance.sh` 11 cases on FRESH copies, asserting actual file BYTES (not just `ok:true` — the [[antechamber-aromatic-kekulize-bug]] lesson):** golden `dt→0.001`; idempotency (byte-identical re-run + `unchanged` + newline intact); out-of-bounds rejected (file untouched); wrong-param `dt` on min1 (no append); `temp0→310 group:third-onward` (heat-3 `value2` coupled, value1 preserved, relax/prod no `&wt`, heat-1/2+press-1 untouched, mismatch WARN gone) + coupling-rewrite sub-case; `cut→7.0` deliberate-WARN; `restraint_wt 5.0→1.0` (mask intact) + ntr=0 skip/fail; malformed. All PASS (full + `--dry-run`). Scaffold validate-skill + py-compile + metadata-JSON-parse all clean; skill shows ✓ ready.
+
+**Artifacts:** `project-prime/skills/mdin-edit/*` — committed **`fd5ae2b`** (project-prime `master`; not pushed). Plan at `.claude/plans/next-session-prompt-advisor-mdin-editor-parallel-puddle.md`. Starter [[Next_Session_Prompt_Advisor_mdin_Editor]] flipped consumed.
+
+**Next (deferred, user-scoped):** `--submit` path (copy + `AMBERHOME` rewrite via `scripts/env.sh` + reduced-`nstlim` smoke) and the live `openclaw agent` NL drive (goal-phrased prompts → `--stage/--param/--value`).
+
+---
+
 ## 2026-06-08 (cont.) — OpenClaw Day 8: Phase B EXPANDED — async pipeline skill + 429 self-alert (notify via LLM-free `message send`) 🦞
 
 **Context:** With the small-task Discord gate passed + the aromatic bug fixed/committed, expanded Phase B to its real target: run the FULL ~10-15 min pipeline from a Discord @-mention (impossible synchronously — 120s model-idle limit) and self-alert the channel on usage-limit (429) failures so a silent bot doesn't need human diagnosis. User-scoped: fixed 1L2Y demo + `--sim-ps`, per-stage pings, manual-start watcher.
