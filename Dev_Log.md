@@ -32,7 +32,7 @@ Plus a harness/spec bug it caught about *itself* (temp0 "at-target" must include
 
 **Commits (project-prime `master`, not pushed):** `4edc8a0` (input gate/CRLF/precision), `4f080a9` (deterministic harness), `c71f9a1` (3.11-compat fix), `107105b` (Tier-2/3 harness), `be84bd7` (README). Harness doc: `skills/mdin-edit/tests/README.md`.
 
-**Running overnight:** `overnight.sh` under `caffeinate` (7 h, started 23:30) — fuzz(fresh seeds)+edit→run smoke every iter, fast suites every 5, cpptraj+happy_path every 10; gates on success+sanity to catch flakiness. Results → `test-runs/overnight-*/summary.json`; morning summary + commit to follow.
+**Overnight outcome (23:30→06:43, 7.2 h, 161 iters):** **491 checks, 0 failures** (`tests/last-overnight-summary.json`). 161 fuzz runs with fresh seeds (~97k extra unique assertions) + **161 full edit→run pmemd chains (≈1,610 MD stage runs, all to normal termination)** + the existing suites (mdin/antechamber/tleap/amber-md-run ×33, cpptraj ×17) + happy_path ×17 — **no flakiness, no nondeterminism, no regressions.** The engine and the broader pipeline are robust under sustained repetition.
 
 **⚠️ Reminder:** revert the overnight sleep override — `sudo pmset -c disablesleep 0` (the run uses `caffeinate`, so reverting is safe anytime). See [[revert-disablesleep-reminder]].
 
