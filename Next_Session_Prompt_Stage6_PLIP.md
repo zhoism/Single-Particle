@@ -1,7 +1,7 @@
 ---
 tags: [project-prime, openclaw, session-handoff, stage6, plip, interaction-profiling]
 type: handoff
-status: ready
+status: consumed
 created: 2026-06-09
 ---
 
@@ -77,3 +77,7 @@ Scope-fence: Stage 6 PLIP ONLY. Do NOT start bounded recovery, the planner/Taskb
 - [[Dev_Log]] 2026-06-09 (cont.) — "Track (b) DONE: arbitrary-target input" — the session that produced this handoff.
 - `Next_Session_Prompt_ArbitraryTarget.md` (consumed) — the prior handoff.
 - memories: [[project-prime-status]], [[amber-md-prior-art]], [[antechamber-aromatic-kekulize-bug]], [[openclaw-canonical-paths]].
+
+## Outcome
+
+**Consumed 2026-06-10.** Stage 6 DONE — built `project-prime/skills/plip-profile/` (deterministic PLIP interaction profiler: cpptraj medoid frame → AMBER resname normalization → PLIP → structured 8-category interaction envelope). The resname footgun was handled AND proven load-bearing (raw 3HTB frame → PLIP phantoms His31 as a ligand; normalized → only JZ4). Green: engine oracle 55/55 (py3.9 + py3.11), acceptance 18/18 (1L2Y + 3HTB goldens, determinism, phantom control, frame policies), NL-drive byte-verified on live gemini-3-flash-preview, wired non-fatally into `run_happy_path.sh` (fresh 1L2Y GREEN, ΔG −18.63, regression unperturbed). Adversarial review found + I fixed a HIGH-severity silent-pass (unmapped non-standard residues → phantom while `ok:true`; now a loud `UNMAPPED_NONSTANDARD_RESIDUES` gate). Commit local-not-pushed. Next handoff: `Next_Session_Prompt_BoundedRecovery.md`. See [[Dev_Log]] 2026-06-10.
