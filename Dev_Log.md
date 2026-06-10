@@ -9,6 +9,23 @@ type: log
 
 ---
 
+## 2026-06-09 (cont.) — Track 2 DONE: Discord live full-pipeline e2e working (+ a node/notify bug found & fixed) 💬
+
+**Context:** With the user present + a paid Google AI Studio key added, ran the long-blocked Track 2 — driving the FULL pipeline from a Discord @-mention, end-to-end, with live progress. Decided to make the updates **verbose** ("every step", per the user).
+
+**Setup (config changes, all reversible):**
+- Paid Google key pasted (user-run `openclaw models auth paste-api-key --provider google`); **default model set to `google/gemini-3-flash-preview`** (fast, ~½¢/run) via `openclaw models set`. Confirmed live with a tiny inference (no 429).
+- **Gateway restart was required** — the Discord websocket had been flapping (1001/1006) and inbound @-mentions weren't reaching the agent (bot could SEND via REST but not RECEIVE events). `openclaw gateway restart` → clean reconnect (`gateway ready`, guild resolved, bot probe @Single Particle). The per-guild `users` allowlist is the working inbound gate; **`channels.discord.groupAllowFrom` is NOT a valid schema key in 2026.5.28** (doctor suggests it but it aborts the gateway — reverted).
+- `run_happy_path.sh` NOTIFY mode made **verbose**: a `▶️ starting` ping before each stage + **live per-step MD progress** (min1·min2·min3·heat·density·production as each `.rst` lands) + 2-min heartbeats on the long steps. Guarded by `NOTIFY_CHANNEL` (silent spine unchanged).
+
+**🐞 The notify bug (the live detached-notify path had NEVER been exercised — only dry-run-verified):** first real run posted nothing — every `openclaw message send` failed silently. Root cause: the detached job inherits the gateway **exec tool's PATH**, where a stale `/usr/local/bin/node` **v20.12.2** sits ahead of nvm → `openclaw` resolves but aborts with *"Node.js v22.19+ is required"*, and `notify_discord.sh` swallowed the error behind a generic "send failed". **Fix:** `scripts/env.sh` prepends an nvm bin with node ≥22 + openclaw (version-agnostic glob); `notify_discord.sh` now surfaces the CLI's real error. Proven by reconstructing the exact failing env (node → v24, real send SUCCEEDED). Committed **`f3524aa`** (local).
+
+**Proven e2e:** `@Single Particle run the full pipeline at 5 ps` → agent replied "Pipeline started" + run-id → detached run → **all notifications streamed live** (run `pa-20260609-214553`, **0 send failures**, 🚀→stages→6 MD steps→✅ ΔG **−18.49 kcal/mol** + RMSD plot). Earlier 30 ps run = ΔG −17.60. Run-to-run ΔG spread (−17.18/−17.60/−18.49) is the single-trajectory MM-GBSA noise; shorter production = noisier. **Note:** `sim_ps` only scales *production* (~42 s at 5 ps); total run (~14 min) is dominated by the fixed heat+density equilibration.
+
+**Verdict:** Track 2 (Discord-driven full pipeline with live updates) is DONE and validated — the agentic + orchestration thesis is proven end-to-end on a real chat trigger. **Next: Track (b) — arbitrary-target input** (generalize past the hardcoded 1L2Y), see `Next_Session_Prompt_ArbitraryTarget.md`. Then Stage 6 PLIP / recovery / the HPC backend decision (`Gap_Remote_HPC_Backend`).
+
+---
+
 ## 2026-06-09 — mdin-edit Track 1 done: `--submit` built + live NL drive byte-verified through the agent ✅
 
 **Context:** The two deferred `mdin-edit` tails (`Next_Session_Prompt_Advisor_LiveDrive_PhaseB.md`, Track 1). Built `--submit` (prove the edited set runs locally) and drove the editor live through `openclaw agent`. Track 2 (Discord full-pipeline e2e) stays user-gated on the paid Google key — not started.
