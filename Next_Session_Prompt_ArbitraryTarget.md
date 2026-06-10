@@ -1,7 +1,7 @@
 ---
 tags: [project-prime, openclaw, session-handoff, arbitrary-target, phase-b]
 type: handoff
-status: ready
+status: consumed
 created: 2026-06-09
 ---
 
@@ -57,10 +57,14 @@ Stop conditions:
 Scope-fence: arbitrary-target INPUT ONLY. Do NOT start Stage 6 (PLIP), bounded recovery, the planner, or HPC/DPDispatcher without confirming.
 ```
 
+## Outcome
+
+**Consumed 2026-06-09.** Track (b) DONE — `run_happy_path.sh` + `pipeline-async` parameterized with `--protein/--ligand/--charge/--name` (default 1L2Y, no-target launch byte-identical); proven on the **1L2Y regression** (ΔG −18.16, unchanged) AND a **NEW target 3HTB (T4 lysozyme + 2-propylphenol JZ4)** end-to-end GREEN (2636/27512 atoms, ΔG −27.41, ligand H-handled correctly), with the **NL drive** verified on live `google/gemini-3-flash-preview`. Commit project-prime `95f20ed`. Next handoff: `Next_Session_Prompt_Stage6_PLIP.md`. See [[Dev_Log]] 2026-06-09 (cont.) — "Track (b) DONE: arbitrary-target input".
+
 ## After the session — update this file
 
-1. Flip frontmatter `status: ready` → `status: consumed`.
-2. Add an `## Outcome` footer: consumed YYYY-MM-DD, 1-sentence outcome, link to the [[Dev_Log]] entry.
+1. ~~Flip frontmatter `status: ready` → `status: consumed`.~~ ✓
+2. ~~Add an `## Outcome` footer.~~ ✓
 
 ## Cross-links
 

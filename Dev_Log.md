@@ -9,6 +9,27 @@ type: log
 
 ---
 
+## 2026-06-09 (cont.) — Track (b) DONE: arbitrary-target input — pipeline runs ANY protein+ligand, proven on a 2nd system 🧪
+
+**Context:** The last open item from `Next_Session_Prompt_ArbitraryTarget.md` — generalize the local happy path past the hardcoded 1L2Y fixture. Banked correctly: the four pipeline skills were already system-agnostic; the 1L2Y hardcoding lived ONLY in `run_happy_path.sh` (`FIX=golden-path/1L2Y` + fixed Stage-2/3 input args) and `skills/pipeline-async`.
+
+**Done — parameterized the two hardcoded files (default to 1L2Y, so existing runs/tests stay byte-green):**
+- `run_happy_path.sh`: new `--protein/--ligand/--charge/--name` flags (mirrors the existing `NOTIFY_CHANNEL`/`RUN_ID` env idiom but as flags); **legacy positional `SIM_PS`/`OUTDIR` preserved** (overnight.sh calls `run_happy_path.sh 2`; pipeline-async passes `<ps> <outdir>`). bash-3.2-safe parse (no arrays under `set -u`; every `shift 2` guarded). **Up-front validation** → clean `die`: bad charge/name, missing protein, typo'd ligand path with a known molecular ext (else antechamber silently treats it as SMILES and fails cryptically in obabel). **Input staging** under bare names in `$OUT/inputs/` to neutralize spaces/odd chars. Ligand routing matches antechamber's classifier: `.pdb/.mol2/.sdf` → file (must exist); anything else → inline SMILES passthrough.
+- `skills/pipeline-async/{scripts/wrapper.py,SKILL.md}`: same flags threaded into the detached `bash -c` launch — **only appended when non-default**, so a no-target launch is byte-identical to before. Structured `ok:false` on a bad protein/ligand/name path (fails as a JSON envelope, not a cryptic obabel error inside the detached job).
+
+**Verified GREEN (both via the agent-free verification spine, `--sim-ps 5`):**
+- **1L2Y regression** — `HAPPY PATH GREEN`, 12 analyses / 15 PNGs / MM-GBSA ΔG **−18.16** (in line with the prior −17.18/−17.60/−18.49 spread → staging did NOT perturb the chemistry; the no-target launch command is byte-identical).
+- **NEW target — 3HTB (T4 lysozyme L99A/M102Q + 2-propylphenol JZ4)**, downloaded from RCSB and split into protein-only + JZ4-only PDBs. End-to-end `HAPPY PATH GREEN`: 2636/27512 dry/solvated atoms, 12 analyses / 15 PNGs, ΔG **−27.41** (a *sanity number*, not a precise affinity; different system → different ΔG is correct). **Ligand H-handled correctly** (no `--nohyd`; obabel added 12 H; GAFF2 types sane — aromatic ring `ca`/`ha`, propyl `c3`/`hc`, phenol `oh`/`ho`; the `antechamber-aromatic-kekulize-bug` path re-exercised clean on a genuinely different aromatic). Crystal pocket coords **preserved** through antechamber (so MM-GBSA is meaningful).
+- **NL drive** — one `openclaw agent` turn on live paid `google/gemini-3-flash-preview` (0 tool failures): goal-phrased English → `pipeline-async --dry-run` whose planned launch carried `--protein .../protein.pdb --ligand .../ligand.pdb --name JZ4` (correctly omitted `--charge 0` = default). Dry-run, so nothing launched.
+
+**🔧 Latent quirk noted (NOT fixed — out of scope):** `scripts/env.sh` line 23-25 globs (`v[3-9]*` etc.) trip **zsh's `nomatch`** when sourced from an interactive zsh shell → abort. Production is unaffected (pipeline-async always uses non-login `bash -c`; `run_happy_path.sh` is `bash`). Only bites a human sourcing it under zsh. Candidate one-line hardening for a future pass.
+
+**Commit (project-prime `master`, not pushed):** `95f20ed`. Pointers: `run_happy_path.sh`, `skills/pipeline-async/{scripts/wrapper.py,SKILL.md}`. New-target artifacts (untracked, gitignored-by-content) under `new-target-3HTB/` + `new-target-run/`; 1L2Y regression under `regression-1L2Y/`.
+
+**Next:** **Stage 6 — PLIP** (protein-ligand interaction profiling on the production trajectory) is the next differentiator. Then bounded error recovery (`Workflow_Error_Recovery_Loop`), the planner / `Arch_Taskboard_Manifest` layer, and the production-scale gate `Gap_Remote_HPC_Backend`. Handoff: `Next_Session_Prompt_Stage6_PLIP.md`. Memory `[[project-prime-status]]` updated.
+
+---
+
 ## 2026-06-09 (cont.) — Track 2 DONE: Discord live full-pipeline e2e working (+ a node/notify bug found & fixed) 💬
 
 **Context:** With the user present + a paid Google AI Studio key added, ran the long-blocked Track 2 — driving the FULL pipeline from a Discord @-mention, end-to-end, with live progress. Decided to make the updates **verbose** ("every step", per the user).
