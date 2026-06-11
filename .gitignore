@@ -12,3 +12,10 @@
 
 # macOS
 .DS_Store
+
+# Claude Code local/runtime state (skills + commands ARE tracked)
+.claude/settings.local.json
+.claude/*.lock
+
+# Redundant archive — extracted dir phase3-explicit-solvent-md/ is tracked instead
+phase3-explicit-solvent-md.zip
