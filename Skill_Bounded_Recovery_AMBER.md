@@ -4,6 +4,8 @@ tags: [amber, error-handling, runtime, mdout, shake, dt]
 # Skill: AMBER Bounded Runtime Recovery
 
 > **Vault tier: ✅ Paper-cited (strongest in the vault)** — arXiv:2603.25522 *explicitly* supports "bounded recovery from runtime failures" and demonstrates it in a **methane-oxidation reactive MD case study**. NotebookLM-verified 2026-05-19. Quote this case study in the report when defending the bounded-recovery approach.
+>
+> **✅ BUILT 2026-06-10 — realized as the `amber-recover` skill** (project-prime `8a1e849`): deterministic mdout crash detector (NaN/Infinity sticky, SHAKE-fail, non-finite final block; transient overflow/finite-vlimit tolerated) → **Tier 1** checkpoint-restore as-is → **Tier 2** bounded dt-lower/SHAKE-off stabilize-then-restore (every mutated namelist re-gated by vendored `check_amber`) → bounded **HALT** `needs_human`. Wired into `run_happy_path.sh` via the opt-in, **detector-authoritative** `scripts/recover_hook.sh` (catches the silent NaN/Infinity-with-banner class amber-md-run's own check misses). See [[Dev_Log]] 2026-06-10 (cont.).
 
 **The User Pain Point:** MD simulations require constant babysitting. They can crash at any time (e.g., massive temperature spikes, coordinate overflows). The researcher must manually parse the `mdout` file, diagnose the failure, and manually edit the `mdin` configuration to salvage the run.
 

@@ -1,7 +1,7 @@
 ---
 tags: [phase-3, openclaw, planning, manifest, execution-plan]
 type: manifest
-status: stages-3-5-built
+status: "stages 3-8 built — full local pipeline + planner + recovery; only Gap_Remote_HPC_Backend open"
 created: 2026-06-01
 ---
 
@@ -187,15 +187,34 @@ A deterministic NL parameter-editor over the advisor's pre-prepared mdin set
 - **Deferred (user-scoped):** `--submit` (copy + `AMBERHOME` rewrite via `scripts/env.sh` +
   reduced-`nstlim` smoke) and the live `openclaw agent` NL drive.
 
-## Stages 6–8 — Queued (the deferred differentiators)
+## Stages 6–8 — all BUILT 2026-06-10
 
-- **Stage 6 — Skill_PLIP_Postprocess** — non-covalent interaction profiling.
-  Acceptance: PLIP fingerprint matches golden-path PLIP output.
-- **Stage 7 — Skill_Planning_Manifest** — the planner skill orchestrating Stages
-  2–6 with validation gates. [[Arch_Taskboard_Manifest]] in skill form.
-- **Stage 8 — Skill_Bounded_Recovery_AMBER** — the differentiator. Tier 1
-  checkpoint-restore → Tier 2 bounded mutation. Wraps Stage 4 (the
-  `MD_CRASH[stage]` hook in amber-md-run is the seam it acts on).
+- **Stage 6 — `plip-profile`** ✅ BUILT 2026-06-10 — non-covalent interaction
+  profiling (cpptraj medoid frame → resname-normalize → PLIP → 8-category
+  envelope). Wired non-fatally into `run_happy_path.sh`. See [[Dev_Log]] 2026-06-10.
+- **Stage 7 — `md-planner`** ✅ BUILT 2026-06-10 (project-prime `76e9fef`) —
+  [[Arch_Taskboard_Manifest]] in skill form. The main agent maps a goal → a JSON
+  **plan manifest** (selects/parameterizes/wires stages from the known catalog);
+  the wrapper is a **pure deterministic** validator (G0–G6: known-catalog, DAG-
+  acyclic, inputs-satisfied-vs-registry, imported `check_amber` bounds, typed
+  params, unknown-param reject) + compiler (byte-inspectable plan) + executor
+  (gates each transition, HALT on failure — recovery stays Stage 8's; calls the
+  wrappers directly, never touches `run_happy_path.sh`). Validator oracle
+  (py3.9+3.11), registry drift guard, real-pmemd acceptance + **LIVE full chain
+  manifest-first** (ΔG −17.94), live NL-drive, adversarial-reviewed+fixed (crash-
+  on-malformed, two false-negatives, dt-to-CLI, degraded signal). See [[Dev_Log]]
+  2026-06-10 (cont. 2) + `references/plan-manifest.md` (🟡 our framing of plan-and-
+  execute — cite Plan-and-Solve / LangGraph, NOT "Taskboard Manifest").
+- **Stage 8 — `amber-recover`** ✅ BUILT 2026-06-10 (project-prime `8a1e849`) —
+  the differentiator, the vault's strongest paper-cited element. Deterministic
+  mdout crash detector → **Tier 1** checkpoint-restore as-is → **Tier 2** bounded
+  SHAKE-off + tiny-dt stabilize-then-restore (every mutated namelist gated by
+  vendored `check_amber`) → bounded **HALT** `needs_human`. Acts on the
+  `MD_CRASH[stage]` seam via the opt-in `scripts/recover_hook.sh` in
+  `run_happy_path.sh` (guarded, non-fatal). Acceptance 7/7 real pmemd + detector
+  oracle (py3.9+3.11) + live NL-drive byte-verified + adversarial review
+  (PASS-WITH-CONCERNS → fixed Infinity silent-pass + original-namelist bounds gate
+  → PASS). See [[Dev_Log]] 2026-06-10 + [[Skill_Bounded_Recovery_AMBER]].
 
 Also deferred: **Discord orchestration** of the happy path (Phase B — bot is live;
 the long-MD-vs-120s-idle wrinkle is the only open design point), and the

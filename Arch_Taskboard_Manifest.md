@@ -4,6 +4,8 @@ tags: [architecture, planning, planner-agent, design-idea]
 # Architecture: Taskboard Manifest (design idea — planner-agent pattern)
 
 > **Vault tier: 🟡 Design idea / our framing** — *not* a paper-cited mechanism. Stripped of the OpenClaw branding, this is the standard **plan-and-execute / planner-agent** pattern. Kept as the architectural slot where a planner skill will live, not as a novel contribution. NotebookLM-verified 2026-05-19: arXiv:2603.25522 supports the general concept ("planning skills externalize task descriptions into executable task specifications") but does not coin "Taskboard Manifest" or specify the lazy-load / validation-gate mechanics — those are vault framing.
+>
+> **✅ BUILT 2026-06-10 — realized as the `md-planner` skill** (project-prime `76e9fef`), keeping this 🟡 framing intact: the main agent maps a goal → a JSON **plan manifest** over the known skill catalog; the wrapper is a pure deterministic validate (G0–G6) / compile / execute, gating each transition and never touching `run_happy_path.sh`. **Report wording: cite plan-and-execute literature (Plan-and-Solve / LangGraph), NOT "Taskboard Manifest".** See `project-prime/skills/md-planner/references/plan-manifest.md` + [[Dev_Log]] 2026-06-10 (cont. 2).
 
 ## What it is, honestly
 

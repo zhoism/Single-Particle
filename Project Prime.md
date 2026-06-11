@@ -53,7 +53,9 @@ This project implements a decoupled, hybrid OpenClaw architecture. Instead of ha
 
 ## 5. Phased Execution Roadmap
 
-> **Status (2026-05-23):** Phase 1 ✅ done · Phase 2 ✅ done (AMBER fully wrapped — AmberTools 24.8 via conda + `pmemd`/`pmemd.MPI` built from source locally and test-suite-passing; see [[Dev_Log]] 2026-05-22) · **Phase 3 → NEXT: install OpenClaw + wire Gemini, then build skills.** · Phase 4 pending. Golden path (T4L L99A + benzene, `181L`) is the validated known-good recipe the skills will automate.
+> **⚠️ This roadmap banner is a 2026-05-23 snapshot — for LIVE status see [[Phase3_Taskboard_Manifest]] + memory `project-prime-status`.** As of 2026-06-10 Phase 3 is essentially DONE: **9 OpenClaw skills built** (antechamber-ligandprep, tleap-build, amber-md-run, cpptraj-analysis, plip-profile, mdin-edit, pipeline-async, amber-recover, md-planner), the full local AMBER MD happy path is GREEN end-to-end, and both the bounded-recovery (Stage 8) and planner (Stage 7) layers are built. The Phase-4 PLIP deliverable is also done. Only [[Gap_Remote_HPC_Backend]] and the written report remain.
+>
+> **Status (2026-05-23, original):** Phase 1 ✅ done · Phase 2 ✅ done (AMBER fully wrapped — AmberTools 24.8 via conda + `pmemd`/`pmemd.MPI` built from source locally and test-suite-passing; see [[Dev_Log]] 2026-05-22) · **Phase 3 → NEXT: install OpenClaw + wire Gemini, then build skills.** · Phase 4 pending. Golden path (T4L L99A + benzene, `181L`) is the validated known-good recipe the skills will automate.
 
 ### Phase 1: Technical Market Research (Agentic AI)
 * **Objective:** Survey the landscape of OpenClaw and multi-agent systems in U.S. pharma/biotech.
