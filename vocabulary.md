@@ -52,6 +52,8 @@ This list is *adopted selectively* from the "Knowledge Network" CLAUDE.md patter
 - **GAFF2** — general AMBER force field for small molecules.
 - **AM1-BCC** — semi-empirical charge method used by antechamber.
 - **TIP3P** — explicit water model.
+- **machine-learned force field (MLFF)** — a force field whose potential energy surface (or whose parameters) is *learned*, typically from QM reference data, rather than assigned from fixed atom-typing tables. Three flavors, do not conflate: (1) full NN potentials (ANI / MACE-OFF / AIMNet2) — QM-accurate but 10²–10⁴× MM cost; (2) ML/MM hybrids (ligand on MLFF, rest classical); (3) **espaloma**-style ML *parameterization* feeding the classical functional form (drop-in, same MM cost). Status: candidate future work, **NOT used**. Canonical: [[Gap_MachineLearned_ForceFields]]. Distinct from the *surrogate-model* approach ([[Arch_Iambic_NeuralPLexer]]) which replaces the simulation entirely.
+- **espaloma** — a graph-NN that assigns classical-form FF parameters (charges/torsions); the lightest-touch MLFF option, compatible with the existing GAFF2/AM1-BCC machinery. See [[Gap_MachineLearned_ForceFields]].
 
 ## MD physics parameters (hard limits are non-negotiable)
 

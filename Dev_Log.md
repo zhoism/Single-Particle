@@ -9,6 +9,35 @@ type: log
 
 ---
 
+## 2026-06-17 — Maintenance pass: Dev_Log catch-up, report condensed, MLFF gap captured 🧹
+
+**Context:** User asked for a full bookkeeping sweep — review both repos, bring the Dev_Log current, prune consumed files, surface the planned next tasks. No build; housekeeping + two small vault additions.
+
+**Done:**
+- **Report condensed.** The user's `Implementation_Summary_Report.md` (the 9-skill project writeup — this **fills the goal-critical M8 gap** "no written report" from 2026-06-10; now `status: draft`, the user finalizes it himself per [[phase1-report-format]] + [[feedback-project-prime-name]]) was distilled into `Implementation_Summary_Condensed.md` (~⅓ length; preserves the coverage-line framing, the four-flavors-of-green section, future work, attributions). Both kept.
+- **MLFF assessment → gap note.** User asked whether machine-learned force fields would help. Verdict: full MLFF MD is not a near-term win (cost on solvated boxes, immature tooling, and it dissolves the cheap-deterministic-gate thesis — failure mode shifts from atom-typing to silent OOD extrapolation); BUT ML-*parameterization* (espaloma-style charges/torsions into the existing classical core) is an architecture-preserving experiment worth banking. Captured as [[Gap_MachineLearned_ForceFields]] + a `vocabulary.md` entry. Distinct from [[Arch_Iambic_NeuralPLexer]] (that = replace the simulation; this = a better force field *inside* it).
+- **Pruned consumed handoff:** `Next_Session_Prompt_ReportWalkthrough.md` (the A→K walkthrough ran 2026-06-12; the report it fed was drafted 2026-06-17) → removed.
+- **project-prime hygiene:** removed stray `fort.116` (Fortran scratch at repo root). Code unchanged since the 2026-06-10 full review (HEAD `7b89568`, GREEN); remaining untracked items are correctly-gitignored run artifacts. project-prime still has NO remote (publishing the code = an undecided user call).
+
+**Forward queue after this pass (four banked threads + deferred):** [[Gap_Remote_HPC_Backend]] (the big one) · Hermes-Agent eval · AMBER failure-mode sweep · outer proposer-agent (candidate) — plus deferred semantic-memory, mid-run watchdog, and the new MLFF gap.
+
+**Next:** user's call among the four threads; report finalization is the user's own writing task. Vault committed + pushed.
+
+---
+
+## 2026-06-12 — Report-walkthrough teaching session → three forward threads captured 📚
+
+**Context:** Per the 2026-06-10 plan, a *teaching* walkthrough (not a build): work the pipeline A→K intuitively — theory → goal → failure mode → how our architecture remedies it — so the user could write the report himself. Spanned 2026-06-11/12 (a Hermes-Agent tangent on 06-11 fed in). Markers + pointers below; the handoff artifacts hold the detail.
+
+**The walkthrough surfaced gaps that became forward work:**
+- **Hermes Agent eval** (seeded 06-11) — Nous Research's self-hosted "OpenClaw alternative." Framing worked out (same determinism pole as us, but bets on the self-evolution we deliberately *don't*; the one genuine win = first-class local-LLM support → could kill the 429 rate-limit dependency on our cheap, boundary-only launch turn). Banked as RESEARCH+EVAL, **not** a migration. → `Next_Session_Prompt_HermesAgent_Eval.md` (`status: ready`).
+- **AMBER failure-mode sweep** (06-12) — the user's sharp question: *"have we genuinely mined the field's accumulated AMBER footguns, or only encoded what we crashed into?"* Honest answer: the latter (reactive, not systematic). Banked as RESEARCH→BACKLOG: survey the mailing-list / manual known-limitations / GAFF mis-typing corpus → a prioritized, gate-discipline-vetted backlog (**not** a bulk build). → `Next_Session_Prompt_AMBER_FailureMode_Sweep.md` (`status: ready`).
+- **Outer proposer-agent** (06-12, Kevin's proposal) — generalize the propose-then-verify pattern (already in [[md-planner]] + [[Skill_Bounded_Recovery_AMBER|recovery]]) into ONE standing supervisory agent that proposes sweeps / run-extensions / analyses but can never insert into execution unverified. Thesis-aligned (a single agent on a leash ≠ the rejected El Agente Q swarm; does **not** reopen [[multi-agent-scope]]). Captured as future-work, deliberately not started. → `Future_Work_Proposer_Agent.md` (`status: candidate-not-started`).
+
+**Next (as planned then):** the user writes the report → drafted 2026-06-17 as `Implementation_Summary_Report.md`.
+
+---
+
 ## 2026-06-11 — Advisor mdin-edit task: live demo + record ✅
 
 **Context:** Before the planned teaching walkthrough, the user surfaced the **advisor's actual instruction** (it had not transmitted into `Next_Session_Prompt_ReportWalkthrough.md`'s body) and flagged it "do this FIRST." The advisor's 4-part task — understand the mdin set (§23.6); an NL Agent Skill that edits one stage+param then submits; extend to temp0-from-3rd-onward / cut / restraint_wt; record how mistakes are avoided — is exactly the existing **`mdin-edit`** skill (`7b89568`). So this was a **demonstration + record**, not a build (plan-mode, approved; refined with the user: all-four-in-NL, cut `group:all`, all-four-then-submit, demo-level hardening). The Ultraplan handoff was declined; refined inline.
