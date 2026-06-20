@@ -25,7 +25,7 @@ type: log
 
 **Committed + pushed:** vault `88934a7` (content) + `3252680` (declutter) → `origin/main`. Rollback: tag `pre-reassess-20260619` @ `dceba59`, or `git revert` either commit (declutter is independently revertable; archived files are preserved on disk in `_archive/` AND in history). project-prime `5647b0a` (gate fix) is now **published to a private repo `github.com/zhoism/Single-Particle-pipeline`** (renamed master→main; HEAD `5647b0a`; verified private via anon-API 404; security-scanned — no secrets in working tree or history; only the 74 committed files + full history pushed, run-scratch stayed untracked/local). Rollback: tag `pre-neutrality-fix-20260619` @ `7b89568` (also pushed).
 
-**Next:** the AMBER-gate **encoding session** for the remaining P1 candidates (GB-radii/igb, SOLVENT_NOT_ADDED, CROSS_GAP bond, PLIP `--nohydro`) per [[Research_AMBER_Failure_Modes]]; Proposer-agent remains opt-in. (project-prime is now published — private `zhoism/Single-Particle-pipeline`.)
+**Next:** the AMBER-gate **encoding session** for the remaining P1 candidates (GB-radii/igb, SOLVENT_NOT_ADDED, CROSS_GAP bond, PLIP `--nohydro`) — onboarding handoff ready at [[Next_Session_Prompt_AMBER_Gate_Encoding]] (encode → commit → **push**, since the code repo now has a remote). A `README.md` was added to the code repo. Proposer-agent remains opt-in. (project-prime is published — private `zhoism/Single-Particle-pipeline`.) Note banked: the gate-encoding work is **separate** from expanding `mdin-edit`'s param whitelist — only shared link is the `check_amber` bounds layer.
 
 ---
 
