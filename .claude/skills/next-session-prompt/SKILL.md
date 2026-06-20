@@ -1,11 +1,11 @@
 ---
 name: next-session-prompt
-description: Use to generate a Next_Session_Prompt_*.md handoff file at vault root when the current session has substantial state that the next fresh-chat session must pick up cleanly. Triggers on "write a handoff prompt", "next session prompt", "wrap into a starter", "Day N+1 prompt", or naturally at session end when the next session will be in a fresh chat. Output is a paste-ready vault note containing recap + pasteable prompt + decision-banked guards.
+description: Use to generate a Next_Session_Prompt_*.md handoff file in the vault's `handoffs/` folder when the current session has substantial state that the next fresh-chat session must pick up cleanly. Triggers on "write a handoff prompt", "next session prompt", "wrap into a starter", "Day N+1 prompt", or naturally at session end when the next session will be in a fresh chat. Output is a paste-ready vault note containing recap + pasteable prompt + decision-banked guards.
 ---
 
 # next-session-prompt — fresh-chat handoff scaffold
 
-Convention: each phase has a starter prompt at vault root (`Next_Session_Prompt_<Topic>_<DayN>.md`) to be pasted into a fresh Claude Code session. The prompt minimizes rediscovery, preserves banked decisions, and points at the right vault notes / memories to load first.
+Convention: each phase has a starter prompt in the vault's **`handoffs/`** folder (`handoffs/Next_Session_Prompt_<Topic>_<DayN>.md`) to be pasted into a fresh Claude Code session. The prompt minimizes rediscovery, preserves banked decisions, and points at the right vault notes / memories to load first.
 
 Existing exemplars:
 - `Next_Session_Prompt_OpenClaw.md` (Day 1 entry — substrate setup)
@@ -67,7 +67,7 @@ Existing exemplars:
 - Decisions-banked reference (point at the section above).
 - A "stop conditions" line so the session knows when to write the next handoff.
 
-**Step 4 — Place file.** Vault root, name `Next_Session_Prompt_<Topic>_<DayN>.md` (kebab-case `_DayN` suffix).
+**Step 4 — Place file.** In the `handoffs/` folder, name `handoffs/Next_Session_Prompt_<Topic>_<DayN>.md` (kebab-case `_DayN` suffix). Then add a one-line entry for it under the right status heading in `handoffs/README.md` (the forward-queue index).
 
 **Step 5 — Cross-link.** Update the Dev_Log entry's `Next:` line to point at the new prompt file.
 

@@ -27,6 +27,8 @@ The vault uses a prefix convention to indicate the role of each note. Match it w
 - `Research_*` — Raw research materials and primary-source notes (e.g., the user's Phase 1 market survey). The `Arch_*`/`Skill_*`/`Design_*` notes are *distilled* from these; cross-link back to the source.
 - `Gap_*` — Open problems the vault has identified but not resolved (e.g., `Gap_Remote_HPC_Backend`). Frontmatter `status: open | partially-filled | filled`. Surface these when a question touches the unresolved area; they are where the interesting decisions still live.
 
+**Session handoffs & future-work** (`Next_Session_Prompt_*`, `Future_Work_*`) live in the **`handoffs/`** folder (not at vault root) — see `handoffs/README.md` for the forward queue and per-file `status:`. New handoffs go there. Obsidian `[[wikilinks]]` resolve by filename, so the folder doesn't affect link traversal.
+
 ## Controlled Vocabulary
 
 `vocabulary.md` is the canonical term list. **Before introducing a new term for an existing concept, check it first** — vocabulary drift silently breaks cross-note reasoning and `[[wikilink]]` traversal. If a concept already has a name, reuse it; if it is genuinely new, add it to `vocabulary.md` before using it elsewhere. Note confidence is carried by the existing **tier badges** (`✅`/`🟡`/`⚪`) and rule trust by **Memory Provenance** (4 labels) — do not add parallel `confidence:` frontmatter.
