@@ -9,6 +9,12 @@ type: log
 
 ---
 
+## 2026-06-19 (cont. 2) — Workflow feature guide (`FEATURES.md`) ✅
+
+Added a succinct, sectioned **per-feature catalog** to the code repo: `FEATURES.md` — every skill (1–9) + the spine + the agent/safety/scope layers, one tight section each (one-liner · accepts · produces · guards), in the same showcase style as the `mdin-edit` summary. Feature set was extracted by a dynamic workflow (11 agents, one per skill + pipeline + agent layer) reading the actual wrapper flags/gates, then distilled (long error-code lists folded into one-line "Guards"). Linked from `README.md`. No code change. project-prime HEAD `5647b0a`→`a166768` (README pointer + FEATURES.md), pushed to origin/main (private `Single-Particle-pipeline`).
+
+---
+
 ## 2026-06-19 (cont.) — Vault re-assessment + AMBER failure-mode sweep + workspace organize ✅
 
 **Context:** Ultracode session (multi-agent workflow orchestration). Three asks: (1) re-assess the whole vault for inconsistencies and report them; (2) act on the two forward-queue next-task files (`Future_Work_Proposer_Agent`, `Next_Session_Prompt_AMBER_FailureMode_Sweep`) — *particularly execute the AMBER sweep*; (3) organize the workspace + bookkeep. project-prime started GREEN at `7b89568`; one gate fix was committed at session end (`5647b0a` — see the Update below); nothing pushed.
