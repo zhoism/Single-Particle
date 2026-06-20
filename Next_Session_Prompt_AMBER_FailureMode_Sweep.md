@@ -1,7 +1,7 @@
 ---
 tags: [project-prime, openclaw, amber, gates, failure-modes, session-handoff, research, gap]
 type: handoff
-status: ready
+status: consumed
 created: 2026-06-12
 ---
 
@@ -93,3 +93,16 @@ Scope-fence: SURVEY + PRIORITIZED BACKLOG of AMBER failure modes ONLY. Encode at
 - [[upstream-chemistry-skills-library]] — 66 read-only skills to mine for encoded pitfalls.
 - memories: [[project-prime-status]], [[feedback-verify-and-eval]].
 - Sibling research handoff: [[Next_Session_Prompt_HermesAgent_Eval]] (same "propose-then-verify, never auto-author" discipline).
+
+---
+
+## Outcome
+
+**Consumed 2026-06-19** (executed as a dynamic multi-agent workflow per the ultracode session).
+
+- **Surveyed:** 38 candidate failure modes across the 5 pipeline stages (antechamber/GAFF · tleap/solvation · pmemd · cpptraj/MMPBSA · PLIP), mined from the Amber26 manual, AMBER mailing-list archives, the upstream 66-skill library, and the live wrapper code.
+- **Kept after adversarial verification:** 15 genuinely-new candidate gates — **P1=4, P2=7, P3=4** (23 dropped with recorded reasons, several instructive: tautological/redundant/false-premise — e.g. the disulfide one was empirically disproven against live pdb4amber).
+- **Encoded:** **1 existing-gate fix** (the `SYSTEM_NOT_NEUTRAL` redesign — see below), **0 new candidate gates**. The 15-item candidate backlog stays a backlog: each remaining P1 needs real-artifact oracle validation against the GREEN core before it touches it (a scoped follow-on).
+- **🚩 Correctness defect found → FIXED this session:** `SYSTEM_NOT_NEUTRAL` in `tleap-build` was **vacuous on 100% of production runs** (its `leap.log` regex never matched the skill's output) and would **false-fire** when it did (captured the pre-neutralization charge). Verified across all 13 production `leap.log`s, then **repaired** to read the prmtop CHARGE block structurally (`prmtop_net_charge()`, sum ÷ 18.2223, fire `|net| > 0.5 e`) + oracle/regression test (48 real builds, 0 false-alarms) → project-prime `5647b0a` (local, not pushed).
+- **Artifacts:** [[Research_AMBER_Failure_Modes]] (survey + prioritized backlog) · [[Gap_Gate_Coverage]] (`status: open → partially-filled`) · [[Dev_Log]] 2026-06-19.
+- **Follow-on:** a focused **encoding session** for the remaining P1 candidates (GB-radii/igb, SOLVENT_NOT_ADDED, CROSS_GAP bond, PLIP `--nohydro`), each with an oracle test against the real GREEN artifacts + local commit (no `run_happy_path.sh` wire-in, no push). The `SYSTEM_NOT_NEUTRAL` redesign is **done** (`5647b0a`).

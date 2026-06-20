@@ -34,7 +34,8 @@ This list is *adopted selectively* from the "Knowledge Network" CLAUDE.md patter
 ## Simulation engine & tooling
 
 - **AMBER** — the MD suite. **AmberTools** (currently `24.8`) is the open toolset within it.
-- **sander** — CPU MD engine (the one in use; CPU-only Mac).
+- **pmemd** — serial CPU MD engine; the **live default** (`pmemd 26` built locally from source, 2026-05-22). See [[pmemd-local-build]].
+- **sander** — AmberTools CPU MD engine; the conda-shipped **fallback** (the only engine before `pmemd` was built; CPU-only Mac).
 - **pmemd.cuda** — GPU MD engine. Not available locally (no NVIDIA); relevant only under a remote GPU backend — see [[Gap_Remote_HPC_Backend]].
 - **tleap** — system/topology builder. (Not "xleap", not "LEaP" in prose.)
 - **antechamber** — ligand atom-typing + charge assignment.
@@ -44,7 +45,7 @@ This list is *adopted selectively* from the "Knowledge Network" CLAUDE.md patter
 - **obabel** (Open Babel) — SMILES→3D conversion in ligand prep.
 - **PLIP** — Protein-Ligand Interaction Profiler (post-processing).
 - **smoke test** — the fast env-sanity check at `project-prime/smoke-test/` (isolated protein-only + ligand-only legs). Not the real workflow.
-- **golden path** — the canonical *end-to-end* reference recipe at `project-prime/golden-path/`: a real protein–ligand complex (the **T4 lysozyme L99A + benzene** positive control, PDB `181L`) driven through the entire pipeline (prep → build → MD → cpptraj → PLIP). This is the known-good recipe the OpenClaw skills automate; it is engine-agnostic (the `ENGINE` seam swaps `sander`↔`pmemd` for the HPC future — see [[Gap_Remote_HPC_Backend]]).
+- **golden path** — the canonical *end-to-end* reference recipe at `project-prime/golden-path/`: a real protein–ligand complex (the **T4 lysozyme L99A + benzene** positive control, PDB `181L`) driven through the entire pipeline (prep → build → MD → cpptraj → PLIP). This is the known-good recipe the OpenClaw skills automate; it is engine-agnostic (the `ENGINE` seam is already built — `pmemd` is the current default and `sander` the fallback; the seam carries `pmemd.cuda`/scheduler for the HPC future — see [[Gap_Remote_HPC_Backend]]).
 
 ## Force fields & parameters
 

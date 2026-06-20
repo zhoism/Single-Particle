@@ -14,7 +14,7 @@ created: 2026-06-12
 Wrap the existing nine-skill deterministic pipeline with **one** standing supervisory agent that can **propose** new things, **make decisions**, **supply inputs**, and **test its own ideas** — but can never *insert* anything into execution directly. Every proposal it makes is barred by the deterministic wrappers (`check_amber` bounds, the validation gates, the bounded-recovery ladder) before it can touch the science. A **propose-then-verify** loop, generalized.
 
 This is not a new pattern for the project — it is the generalization of two things already built:
-- the **planner** ([[md-planner]] / [[Arch_Taskboard_Manifest]]) — proposes a workflow plan; gates G0–G6 validate before any skill runs;
+- the **planner** (`md-planner` / [[Arch_Taskboard_Manifest]]) — proposes a workflow plan; gates G0–G6 validate before any skill runs;
 - the **recovery proposer** ([[Workflow_Error_Recovery_Loop]] / [[Skill_Bounded_Recovery_AMBER]]) — proposes crash fixes; `check_amber` + the bounded ladder bar anything out of bounds.
 
 The extension: turn that one-shot pattern into a **standing exploratory loop** — propose variants → run them through the frozen pipeline → look at results → propose again.
@@ -50,16 +50,34 @@ Second-order limit: to let it "test its ideas," you need to **score** them. For 
 
 "How much can we expand?" has a precise answer: **as much as we can expand the verifier.** Growing safe capability is therefore *not* "add a smarter agent" — it is "**build a verifier (or defensible proxy) for the thing you want it to reason about.**" Where you can build that check, the agent can roam; where you can't (is the science *correct*), it cannot, because nothing can bar a wrong-but-legal proposal. This is a feature: capability grows through auditable, reproducible checks rather than trust in a black box.
 
-## If/when this is picked up
+## If/when this is picked up — guiding principles
 
 - Decide it deliberately — it is opt-in and intersects [[multi-agent-scope]] (confirm: single supervisory agent, not a swarm).
 - Scope the **first verifier to extend** before scoping the agent (oracle-first, per the reframe above).
 - Every proposal + decision must be logged as an auditable artifact (the planner manifest is the precedent) to preserve the frozen-core reproducibility guarantee.
 - Keep all agent output `inferred` ([[Design_Memory_Provenance]]) until a deterministic check clears it.
 
+## Comprehensive build plan (oracle-first) — drafted 2026-06-19
+
+> Status stays `candidate-not-started`. This is the *how*, not a go-decision. **Gate 0 (human):** a deliberate "build it" call is required before any code — this plan does not authorize a build. Each increment below ships only when it clears the standard discipline ([[Eval_Criteria]]): cheap deterministic check → oracle/regression test → adversarial review → local commit. The increments are ordered by **risk to the frozen-core guarantee**, lowest first — and deliberately so: the first two cannot weaken the guarantee *at all*, so they are where a build should start.
+
+**Phase 0 — pick the verifier, not the agent (the oracle-first rule).** Before scoping any agent, name the *one* deterministic check the agent's proposals will be barred by, and confirm it already exists or can be built cheaply. If there is no defensible verifier/proxy for the thing you want the agent to reason about, STOP — that capability is out of scope by construction (a wrong-but-legal proposal cannot be barred). Output of this phase is a one-line "verifier contract" per intended capability.
+
+**Phase 1 — the two zero-trust-risk increments first (build these or nothing).** Both are already specified below and share one property: they improve the *proposal* or *human-readability*, never the *trust*. They are the correct entry points because they exercise the propose-to-a-human firewall with no path to the science.
+- **1a. Curated planner-context file** (see *Related smaller idea — curated planner-context file* below). Build = author a `md-planner` context `.md` (worked goal→manifest examples, domain notes, pitfall hints); wire it into the planner's prompt only. **Verifier contract:** the G0–G6 validator stays byte-for-byte as strict; acceptance = the existing planner oracle still passes unchanged AND a held-out set of goals yields fewer *rejected* manifests (quality metric), with zero change to what validates. Adversarial check: confirm a deliberately bad context cannot make an invalid manifest pass.
+- **1b. NL gloss on the recovery diagnostic** (see *Related smaller idea — NL gloss* below). Build = one LLM call over the existing crash dict, emitted into a *separate* envelope field. **Verifier contract:** routing keys off the deterministic `classification`/`signatures` only; acceptance = the `amber-recover` detector oracle still covers the dict unchanged, the gloss is labelled `inferred`/non-reproducible, and a test asserts the gloss field is never read by the Tier-1/2/HALT decision.
+
+**Phase 2 — the standing proposer loop, but only on a defensible-proxy domain.** This is the actual "proposer agent." Restrict its first domain to **parameter exploration / DOE** where the *pipeline itself is the verifier*: it proposes `cut` / equilibration-length / ion-concentration variants, each runs through the frozen wrappers (every namelist still gated by `check_amber`), and it reads back results. **Verifier contract:** mechanical validity = the existing gates; "did it help" = an explicit, pre-registered proxy (variance/drift/convergence) chosen in Phase 0 — and the proxy must be reward-hack-audited (a skeptic asks "what settings make this proxy look great and mean nothing?"). Every proposal + the agent's decision is written as an auditable manifest (planner precedent), so the run is reproducible without the agent. Convergence-monitoring ("ΔG still drifting → propose extending production") is the natural second capability, same proxy discipline.
+
+**Phase 3 — generalized recovery triage (needs a richer verifier first).** Smarter [[Skill_Bounded_Recovery_AMBER]]: diagnose *why* a gate failed and propose a targeted fix. Only after Phase 0 yields a verifier that can *bound* the proposed fix (the bounded-recovery ladder is the template). Until that verifier exists, this stays out of scope.
+
+**Permanent out-of-scope (no verifier can exist cheaply — do not attempt).** Verifying scientific *appropriateness/correctness* of an in-bounds proposal; judging convergence/sampling adequacy as *truth* (only as a proxy); deciding whether the question is well-posed. These remain human judgment; the agent may *propose to a human* but never act.
+
+**Cross-cutting acceptance discipline (every increment).** (1) The deterministic core stays frozen — the agent calls wrappers, never edits them. (2) All agent output is `inferred` ([[Design_Memory_Provenance]]) until a deterministic check clears it. (3) Each increment gets its own oracle/regression test + an adversarial review that specifically tries to make a wrong-but-legal proposal survive. (4) Single supervisory agent only — re-confirm against [[multi-agent-scope]] at build time; if the design drifts toward multiple execution-authority agents, that is a separate, re-litigated decision.
+
 ## Related smaller idea — a curated planner-context file (captured 2026-06-17)
 
-A lighter, orthogonal addition surfaced during the report walkthrough: give [[md-planner]] a **curated context `.md`** beyond the per-skill `SKILL.md` + registry — worked goal→manifest examples, domain notes (e.g. equilibration length vs system size), common-pitfall hints. It would raise the *quality* of the LLM's drafted manifests (fewer rejected plans, smarter defaults). **Key caveat (thesis-aligned):** context improves the *proposal* only, never the *trust* — the G0–G6 validator gates stay exactly as strict regardless of how good the context is. Context and validation are orthogonal: context makes the agent propose better, gates make the system safe regardless. Low-risk to build precisely because it cannot weaken the guarantee. Not started; noted as a clean, opt-in addition.
+A lighter, orthogonal addition surfaced during the report walkthrough: give `md-planner` a **curated context `.md`** beyond the per-skill `SKILL.md` + registry — worked goal→manifest examples, domain notes (e.g. equilibration length vs system size), common-pitfall hints. It would raise the *quality* of the LLM's drafted manifests (fewer rejected plans, smarter defaults). **Key caveat (thesis-aligned):** context improves the *proposal* only, never the *trust* — the G0–G6 validator gates stay exactly as strict regardless of how good the context is. Context and validation are orthogonal: context makes the agent propose better, gates make the system safe regardless. Low-risk to build precisely because it cannot weaken the guarantee. Not started; noted as a clean, opt-in addition.
 
 ## Related smaller idea — a natural-language gloss on the recovery diagnostic (captured 2026-06-17)
 
@@ -77,5 +95,5 @@ Small to build (one LLM call over the existing dict, output into a separate enve
 
 - [[Design_Determinism_Spectrum]] — the spine; this stays on the boundary pole.
 - [[multi-agent-scope]] (memory) — the banked swarm rejection this does *not* reopen.
-- [[md-planner]] / [[Arch_Taskboard_Manifest]], [[Workflow_Error_Recovery_Loop]] / [[Skill_Bounded_Recovery_AMBER]] — the one-shot propose-then-verify patterns this generalizes.
+- `md-planner` / [[Arch_Taskboard_Manifest]], [[Workflow_Error_Recovery_Loop]] / [[Skill_Bounded_Recovery_AMBER]] — the one-shot propose-then-verify patterns this generalizes.
 - [[Gap_Remote_HPC_Backend]] — sibling open direction.

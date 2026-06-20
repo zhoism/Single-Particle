@@ -9,17 +9,6 @@ tags:
 type: context-index
 status: in-progress
 ---
----
-tags:
-  - #active
-  - #internship
-  - #openclaw
-  - #computational-chemistry
-  - #amber
-  - #project-prime
-type: context-index
-status: in-progress
----
 
 # 🎯 Project Prime: Single Particle Agentic Workflow
 
@@ -38,7 +27,7 @@ This project implements a decoupled, hybrid OpenClaw architecture. Instead of ha
 ## 3. Developer Context (For Claude via MCP)
 * **Background:** The developer is a Computer Science major with a minor in Physics. They have prior experience with data pipelines (e.g., recursive sparse regression via PySPIDER) and prefer tangible, design-oriented problem-solving over purely abstract theory. 
 * **Role:** Integration & Automation Engineer. The focus is on building robust logic, guardrails, and UX for the simulation pipeline.
-* **Infrastructure Uncertainty:** *CRITICAL CONTEXT.* It is currently unconfirmed whether the AMBER backend is pre-configured on a remote cluster or if local compilation is required. **Claude must be prepared to assist with both:**
+* **Infrastructure (RESOLVED 2026-05-21):** Scenario A (local) is the confirmed active path — AMBER is compiled/installed locally (Phase 2 ✅). The remaining open question is whether a production *remote* backend ever becomes available — tracked in [[Gap_Remote_HPC_Backend]]. Both scenarios are kept as future-swap context:
     1.  *Scenario A (Local/Raw):* Troubleshooting dependency hell (gcc, cmake, CUDA) and compiling AMBER from source.
     2.  *Scenario B (Pre-configured):* Writing API-driven OpenClaw skills that dispatch jobs to a remote Single Particle staging server.
 

@@ -1,11 +1,13 @@
 ---
 tags: [project-prime, openclaw, architecture, phase-b, system-overview, proof]
 type: arch
-status: proven-live
+status: snapshot-2026-06-08
 created: 2026-06-08
 ---
 
 ✅ **Verified / proven live 2026-06-08.** This note explains the working system end-to-end: how it is built, how a simulation runs through it, and the proof for every claim. Companion to [[OpenClaw_CLI_Map]] (CLI facts) and [[Phase3_Taskboard_Manifest]] (stage plan). Evidence is cited inline (commit hashes, run ids, file paths).
+
+> ⏳ **SNAPSHOT — describes the 2026-06-08 Phase-B state (5 skills).** The pipeline has since grown to **NINE** skills (added `plip-profile`, `mdin-edit`, `amber-recover`, `md-planner`), and the Stage-6/7/8 items listed in §7 as "Deferred by design" (PLIP, planner, bounded-recovery) are now **BUILT** (by 2026-06-10). The architecture and worked example below remain accurate for their date — for current status see [[Phase3_Taskboard_Manifest]] + [[project-prime-status]].
 
 # The agentic MD pipeline — how it's built, how it runs, and proof
 
@@ -109,4 +111,3 @@ Step by step, with evidence:
 - [[Dev_Log]] 2026-06-08 + 2026-06-08 (cont.) — the build sessions.
 - [[Phase3_Taskboard_Manifest]] — the stage plan + status.
 - [[antechamber-aromatic-kekulize-bug]], [[project-prime-status]], [[openclaw-canonical-paths]] — memories.
-- [[Next_Session_Prompt_OpenClaw_Day9]] — what's next (live e2e was proven this session; Stage 6 PLIP is the frontier).

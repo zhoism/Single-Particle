@@ -160,7 +160,9 @@ four chained green by `project-prime/run_happy_path.sh` on the 1L2Y fixture.
   10-analysis suite + free-energy landscape + MM-GBSA, each → .dat + .png. Fixes
   the upstream cpptraj footguns (two-call PCA, single-command clustering,
   hbond-empty-is-a-finding), auto-detects residue masks, strips with the SOLVATED
-  topology. 1L2Y/indole MM-GBSA ΔG ≈ −14 kcal/mol (short run; article ≈ −16).
+  topology. 1L2Y/indole MM-GBSA ΔG ≈ −14 kcal/mol (PRE-kekulize-fix, mis-typed
+  ligand — SUPERSEDED 2026-06-08, corrected ≈ −17 to −18; see the 2026-06-08 banner
+  above + [[antechamber-aromatic-kekulize-bug]]).
 
 **See/do/verify:** `--dry-run` on any wrapper prints the generated inputs (SEE);
 `run_happy_path.sh [sim_ps]` runs the chain (DO); per-skill `test_acceptance.sh` +
@@ -239,4 +241,4 @@ deferred note). Each later stage gets its own manifest entry when its turn comes
 
 ---
 
-**Source:** Drafted 2026-06-01 evening at the close of the OpenClaw install session. Consolidates findings from today's Dev_Log entry + [[Actionable_Recommendations]] §1 BUILD/INTEGRATE/ADOPT triage. Resume sequence in [[Next_Session_Prompt_OpenClaw_Day2]].
+**Source:** Drafted 2026-06-01 evening at the close of the OpenClaw install session. Consolidates findings from today's Dev_Log entry + [[Actionable_Recommendations]] §1 BUILD/INTEGRATE/ADOPT triage. (Resume sequence was in Next_Session_Prompt_OpenClaw_Day2 — consumed/pruned.)

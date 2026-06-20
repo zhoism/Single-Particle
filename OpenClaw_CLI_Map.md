@@ -264,7 +264,7 @@ Three options to make OpenClaw discover them:
 ### Per-agent allowlist
 
 ```json5
-{ agents: { defaults: { skills: ["antechamber-ligandprep", "tleap-build", "sander-run"] } } }
+{ agents: { defaults: { skills: ["antechamber-ligandprep", "tleap-build", "amber-md-run"] } } }
 ```
 
 If `agents.defaults.skills` is omitted, all eligible skills are available. If set, it's an allowlist. Per-agent `agents.list[].skills: [...]` is the final set for that agent (does NOT merge with defaults). Empty list = no skills.

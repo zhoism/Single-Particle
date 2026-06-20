@@ -13,6 +13,8 @@ status: installed
 
 Source-build AMBER on osx-arm64 is the "Scenario A dependency hell" path called out in [[project-prime-status]] — Apple clang/OpenMP/Fortran toolchain interactions are fragile, and the only reason to ever build from source (`pmemd.cuda`) is N/A on this CPU-only Mac. conda-forge ships a tested arm64 binary that includes everything the project actually needs.
 
+> **Superseded 2026-05-22:** a local from-source **`pmemd 26`** build was later added (PMEMD_ONLY, gcc@11; `make test.serial` 212/0, `make test.parallel` 197/0) and is now the **default MD engine** — see [[Dev_Log]] 2026-05-22 and memory [[pmemd-local-build]]. This conda env now provides the prep/analysis toolchain (`tleap`/`cpptraj`/`antechamber`) + the `sander` fallback, not all MD. The 2026-05-19 decision above stands for its date.
+
 `make test` from the source tree is **not** shipped with the conda-forge binary, so the SOP step "run the built-in test cases" is satisfied by the literal `cpptraj --help` + `which sander` checks below. An end-to-end MD validation (tiny water box / ligand) is the queued next task — see [[Dev_Log]] entry of 2026-05-19.
 
 ## Env summary

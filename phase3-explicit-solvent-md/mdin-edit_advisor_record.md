@@ -3,14 +3,14 @@ name: mdin-edit-advisor-record
 description: "Record & summary for the advisor's parameter-editing task: a natural-language Agent Skill (mdin-edit) that changes one parameter in one stage (or a stage group) of the pre-prepared explicit-solvent AMBER mdin set, then submits the job — demonstrated end-to-end on the provided files, with each change logged and each mistake-avoidance mechanism proven live."
 license: MIT
 homepage: https://github.com/zhoism/Single-Particle
-metadata: {"skill":"mdin-edit","skill_source":"project-prime/skills/mdin-edit","skill_commit":"7b89568","demonstrated":"2026-06-11","model":"google/gemini-3-flash-preview","inputs":"phase3-explicit-solvent-md (10-stage pmemd chain)","tasks":["understand-inputs","nl-edit","extend-temp0-cut-restraint","record-summary"],"verdict":"PASS"}
+metadata: {"skill":"mdin-edit","skill_source":"project-prime/skills/mdin-edit","skill_commit":"7b89568","demonstrated":"2026-06-19 (live via Discord; first demonstrated 2026-06-11)","model":"google/gemini-3-flash-preview","channel":"discord @-mention","inputs":"phase3-explicit-solvent-md (10-stage pmemd chain)","tasks":["understand-inputs","nl-edit","extend-temp0-cut-restraint","record-summary"],"verdict":"PASS"}
 ---
 
 # mdin-edit — Advisor Task Record
 
-**What this is.** The advisor asked for an Agent Skill that edits AMBER `mdin` parameters from natural language, then submits the job — and a summary of whether each change succeeds and how the skill avoids mistakes. This document records that, demonstrated end-to-end on the provided `phase3-explicit-solvent-md/` set on **2026-06-11**.
+**What this is.** The advisor asked for an Agent Skill that edits AMBER `mdin` parameters from natural language, then submits the job — and a summary of whether each change succeeds and how the skill avoids mistakes. This document records that, demonstrated end-to-end on the provided `phase3-explicit-solvent-md/` set and driven **live through the Discord-connected agent on 2026-06-19** (first demonstrated 2026-06-11).
 
-**How it was run.** The skill is `mdin-edit` (`project-prime/skills/mdin-edit`, commit `7b89568`). An OpenClaw agent (`google/gemini-3-flash-preview`) reads the English request and maps it to structured arguments; a deterministic Python wrapper does the actual edit — the LLM never writes the file. Every edit ran on a **copy** under `_demo-work/`; the 10 original `.in` files are byte-identical to their session-start checksums.
+**How it was run.** The skill is `mdin-edit` (`project-prime/skills/mdin-edit`, commit `7b89568`). An OpenClaw agent (`google/gemini-3-flash-preview`) reads the English request and maps it to structured arguments; a deterministic Python wrapper does the actual edit — the LLM never writes the file. This round, the four requests were sent as **live Discord `@`-mentions** to the bot (`@Single Particle`); each resolved English → `--stage/--param/--value` and the wrapper applied the edit. Every edit ran on a **copy** under `_demo-work/live-20260619/`; the 10 original `.in` files at the `phase3-explicit-solvent-md/` root were verified byte-unchanged. The packaged artifacts live in `deliverables-mdin-edit-20260619/` (skill code zip + complete-run output zip).
 
 ---
 
@@ -50,7 +50,7 @@ A fuller §23.6 write-up lives at `project-prime/skills/mdin-edit/references/mdi
 
 ## Tasks 2 + 3 — The four edits (natural-language driven, verified)
 
-Each edit was issued to the agent in the advisor's English (no `--stage/--param/--value` supplied — that mapping is what's under test), and the agent's result was **byte-compared to a deterministic CLI baseline**. All four matched byte-for-byte.
+Each edit was issued to the agent in the advisor's English as a **live Discord `@`-mention** (no `--stage/--param/--value` supplied — that mapping is what's under test), and the agent's result was **byte-compared to a deterministic CLI baseline**. All four matched byte-for-byte (10/10 files byte-identical).
 
 | # | Natural-language instruction | Agent-resolved command | Result | NL == CLI |
 |---|---|---|---|---|
@@ -86,7 +86,7 @@ The skill's guarantees (`SKILL.md` §"Guarantees", `references/heuristics.md`) w
 | **Advisory validation + deliberate WARN** | Silently accepting *or* silently blocking a borderline value | `cut=7.0` accepted with a transparent "below 8 Å floor" WARN (PME covers long-range), `ok:true` |
 | **Post-edit self-check + atomic write** | A half-written or wrong-span edit reaching disk | re-parse-and-assert before `os.replace`; all-or-nothing batch |
 
-**Regression suites (re-run this session, both green):** `test_acceptance.sh` — 12/12 cases (malformed, golden, idempotency, out-of-bounds, wrong-param, group temp0 + coupling, cut WARN, restraint_wt + ntr=0 skip). `tests/submit_acceptance.sh` — `--submit` dry-run + real run (10/10 normal termination, `--md-dir` untouched).
+**Regression suites (re-run this session, green):** `test_acceptance.sh` — 11/11 cases (malformed, golden, idempotency, out-of-bounds, wrong-param, group temp0 + coupling, cut WARN, restraint_wt + ntr=0 skip). A fresh `--submit --reduce-nstlim 120` run of the four-edit set reached **10/10 stages normal termination** (`--md-dir` untouched); that output is packaged in `deliverables-mdin-edit-20260619/` → `02-run-output/`.
 
 ---
 
@@ -125,9 +125,10 @@ bash project-prime/skills/mdin-edit/tests/submit_acceptance.sh
 ## Evidence ledger
 
 - Skill: `project-prime/skills/mdin-edit` @ `7b89568`. Engine: `scripts/wrapper.py` (pure-Python, stdlib only). Validation bounds vendored from `check_amber`.
-- NL drive: `google/gemini-3-flash-preview` via the local OpenClaw gateway; 5–16 s / turn. All four agent edits byte-identical to the CLI baselines.
-- Submit: 10/10 stages normal termination, final `prod.rst7`, `--md-dir` unmutated.
-- Suites: `test_acceptance.sh` 12/12; `tests/submit_acceptance.sh` dry-run + real run green.
-- Integrity: all 10 original `.in` files byte-identical to session start; edits confined to `_demo-work/`.
+- NL drive: `google/gemini-3-flash-preview` via the local OpenClaw gateway, issued as **live Discord `@`-mentions**. All four agent edits byte-identical to the CLI baselines (10/10 files).
+- Submit: fresh 10/10 stages normal termination, final `prod.rst7`, `--md-dir` unmutated.
+- Suites: `test_acceptance.sh` 11/11; `tests/submit_acceptance.sh` dry-run + real run green.
+- Integrity: all 10 original `.in` files byte-unchanged; edits confined to `_demo-work/live-20260619/`.
+- Deliverables: `deliverables-mdin-edit-20260619/` — skill-code zip, run-output zip (`00-original-unedited` / `01-edited` / `02-run-output`), this record.
 
 **Verdict: PASS** — the skill modifies `dt`, `temp0` (with ramp coupling), `cut`, and `restraint_wt` from natural language, stage-aware and bounds-checked, idempotently, and the edited set runs; mistake-avoidance mechanisms demonstrated, limitations stated.

@@ -16,7 +16,7 @@ tags: [amber, cpptraj, mmpbsa, analysis, rmsd, pca, mm-gbsa, built]
 - **Parsing gotchas** handled: `evecs.dat` hand-parsed (not `read_csv`); `summary.DENSITY` may be 1-col; cluster `summary.dat` header skipped.
 - **Path-with-space safe** (copy in + relative refs, as in [[Skill_Tleap_Build]]).
 
-**MM-GBSA:** `MMPBSA.py -sp comp_oct -cp comp_dry -rp protein -lp ligand -y product.nc`, `igb=5 saltcon=0.1`. 1L2Y/indole ΔG ≈ −14 kcal/mol on a short run (article ≈ −16 on 1 ns) — negative = favorable, consistent. This is the headline quantitative result; PLIP interaction profiling ([[Phase3_Taskboard_Manifest]] Stage 6) is the deferred differentiator beyond it.
+**MM-GBSA:** `MMPBSA.py -sp comp_oct -cp comp_dry -rp protein -lp ligand -y product.nc`, `igb=5 saltcon=0.1`. 1L2Y/indole MM-GBSA ΔG ≈ −17 to −18 kcal/mol on short runs (article ≈ −16 on 1 ns) — negative = favorable, consistent. (The pre-2026-06-08 ≈ −14 figure was computed on the mis-typed, non-aromatic ligand and is **SUPERSEDED** — see [[antechamber-aromatic-kekulize-bug]].) This is the headline quantitative result; PLIP interaction profiling ([[Phase3_Taskboard_Manifest]] Stage 6) is the differentiator beyond it (since built as `plip-profile`).
 
 **Acceptance:** `skills/cpptraj-analysis/test_acceptance.sh` — golden (full suite, ≥12 analyses + ΔG<0), subset (`rmsd,rg` only), malformed (missing trajectory). PASS.
 

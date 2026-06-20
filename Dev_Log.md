@@ -9,6 +9,43 @@ type: log
 
 ---
 
+## 2026-06-19 (cont.) — Vault re-assessment + AMBER failure-mode sweep + workspace organize ✅
+
+**Context:** Ultracode session (multi-agent workflow orchestration). Three asks: (1) re-assess the whole vault for inconsistencies and report them; (2) act on the two forward-queue next-task files (`Future_Work_Proposer_Agent`, `Next_Session_Prompt_AMBER_FailureMode_Sweep`) — *particularly execute the AMBER sweep*; (3) organize the workspace + bookkeep. project-prime started GREEN at `7b89568`; one gate fix was committed at session end (`5647b0a` — see the Update below); nothing pushed.
+
+**Done:**
+- **Re-assessment (dynamic workflow, 26 agents):** 7 cluster-finders over every canonical note → adversarial verifiers. **19 candidates → 14 confirmed, 5 dismissed** (the verifier killed a proposed ff19SB→ff14SB "fix" that would have *introduced* an error — the skill correctly runs ff19SB). **All 14 fixed** across 9 files: deduped `Project Prime.md` frontmatter; `Arch_Pipeline_System` `proven-live`→snapshot banner (5→9 skills) + dead `Day9` link removed; `Infra_AMBER_Install` "never build from source" superseded note; retracted ΔG≈−14 → corrected −17 to −18 (+supersede flag) in `Skill_CPPTraj_Analysis` & `Phase3_Taskboard_Manifest`; `Skill_Antechamber_LigandPrep` missing `✅ BUILT` + GAFF→GAFF2; `vocabulary.md` sander→**pmemd** live default; `sander-run`→`amber-md-run`; Dev_Log 12/12→11/11; `[[md-planner]]`→`` `md-planner` ``. (Two Dev_Log history refs deliberately left — append-only, accurate-for-date.)
+- **AMBER failure-mode sweep (dynamic workflow, 43 agents) — the next-task, executed:** 5 per-stage finders mining the Amber26 manual + AMBER mailing-list + upstream 66-skill lib + live wrappers → adversarial gate-verifiers. **38 surveyed → 15 kept (P1=4 / P2=7 / P3=4), 23 dropped** (reasons recorded). **0 encoded — by discipline** (the frozen GREEN core stays frozen; candidates need real-artifact oracle validation as a scoped follow-on). 🚩 **Correctness defect found + independently verified:** `SYSTEM_NOT_NEUTRAL` (`tleap-build`) is **vacuous on 100% of production runs** (its `leap.log` regex never matches the skill's output) and would **false-fire** when it does (captures the pre-neutralization charge) — confirmed across all 13 production `leap.log`s. Fix is a prmtop-charge-sum **redesign**, not a regex tweak (STOP-and-surface). Artifacts: [[Research_AMBER_Failure_Modes]] · [[Gap_Gate_Coverage]] (`open`→`partially-filled`) · handoff [[Next_Session_Prompt_AMBER_FailureMode_Sweep]] flipped `ready`→`consumed` + Outcome footer.
+- **Proposer-agent (next-task, planned not built):** expanded [[Future_Work_Proposer_Agent]] "If/when picked up" into a phased **oracle-first build plan** (Gate-0 human decision → 2 zero-trust-risk increments → proxy-gated DOE loop → richer recovery triage → permanent out-of-scope), per-increment acceptance discipline. Status stays `candidate-not-started`. **Forward-queue clarified:** AMBER sweep = **consumed**; Proposer = **deferred opt-in** (decision-gate pending, build plan now on file); remaining = [[Gap_Remote_HPC_Backend]] (the big one, externally blocked) + [[Next_Session_Prompt_HermesAgent_Eval]].
+- **Workspace organize (Moderate):** archived ~70 MB of `_demo-work/` runs into `phase3-explicit-solvent-md/_archive/` (move, nothing deleted); deleted the redundant `deliverables-…zip` mirror + `phase3-…zip` + the consumed `live-20260619_BEFORE.md`; gitignored scratch dirs (`_archive/`, `mdin-edit/`, `deliverables-mdin-edit-*/`). ⚠️ Much of `_demo-work/` was git-**tracked**, so the archive move shows as ~130 pending **deletions** (files safe in `_archive/`) — repo needs a commit to finalize; **not committed** (awaiting user OK on the vault commit).
+
+**Verified:** `Project Prime.md` parses with one frontmatter block; all touched `[[links]]` resolve; `_archive/` holds all 11 runs (70 MB, nothing lost); `SYSTEM_NOT_NEUTRAL` vacuity reproduced over 13 real `leap.log`s.
+
+**Update — `SYSTEM_NOT_NEUTRAL` FIXED this session (user asked to proceed).** Reworked the gate from the broken `leap.log` scrape to a **structural** check: sum the `comp_oct` prmtop `%FLAG CHARGE` block ÷ 18.2223 → net charge in e, fire when `|net| > 0.5`. New `prmtop_net_charge()` helper; misleading `residual_charge` log-parse dropped; envelope now exposes `net_charge_e`; SKILL.md updated. New `skills/tleap-build/tests/test_neutrality_gate.py` — oracle (neutral/+2/−1/+0.3/+0.6/malformed) + regression over **all 48 real `comp_oct.top` builds (worst |net| 1e-6 e, 0 false-alarms)**; green under py3.11 (conda) + py3.14 (system); live `validate()` on the 1L2Y GREEN build now emits `net_charge_e` and does not false-fire. **Committed project-prime `5647b0a`** (master, local-only, NOT pushed). `run_happy_path.sh` untouched. So 1 of the 15 backlog items (the one shipping defect) is now closed; the remaining P1–P3 candidates stay backlog.
+
+**Next:** (optional) commit the vault declutter; the AMBER-gate **encoding session** for the remaining P1 candidates (GB-radii/igb, SOLVENT_NOT_ADDED, CROSS_GAP bond, PLIP `--nohydro`) per [[Research_AMBER_Failure_Modes]]; Proposer-agent remains opt-in.
+
+---
+
+## 2026-06-19 — mdin-edit advisor deliverables + live Discord demo of all 4 edits ✅
+
+**Context:** Presenting/packaging the `mdin-edit` skill (`7b89568`) for the advisor, who asked for three things: the **skill package code**, the **entire output folder zipped from a complete run**, and a **live run-through**. Continuation of the 2026-06-11 advisor-demo thread; this session = live Discord drive + the deliverable package. No code change (project-prime still HEAD `7b89568`, GREEN).
+
+**Done (all on copies under `phase3-explicit-solvent-md/_demo-work/`; 10 originals byte-unchanged):**
+- **Discord gateway fixed.** Overnight transient DNS drop (`getaddrinfo ENOTFOUND discord.com`) left the provider stuck in a websocket-1006 retry loop. Verified network healthy, `launchctl kickstart`-ed the gateway → bot reconnected (guild "Single Particle" resolved, **0 drops** since). Same flap-then-restart pattern noted in [[openclaw-canonical-paths]].
+- **Live Discord drive of all four edits.** Each advisor instruction sent as a live `@`-mention (`google/gemini-3-flash-preview`); the agent resolved English → `--stage/--param/--value` and the wrapper applied it. **Byte-compared to a deterministic CLI baseline → 10/10 files byte-identical.** Edits: `dt 0.002→0.001` heat-1; `temp0 300→310` group:third-onward (heat-3 `&wt value2` coupling, footgun resolved); `cut 9.0→7.0` group:all (deliberate <8 Å WARN); `restraint_wt 5.0→1.0` press-1.
+- **Fresh complete run.** `--submit --reduce-nstlim 120` on the 4-edit set → **10/10 pmemd stages normal termination**, final `prod.rst7` (Run-GREEN, not a science claim).
+- **Deliverable package** `deliverables-mdin-edit-20260619/`: `mdin-edit-skill-code-…zip` (62 KB, clean — no `__pycache__`/`test-runs`) + `mdin-edit-run-output-…zip` (12 MB, structured **00-original / 01-edited(+log) / 02-run-output**) + a NEW one-page advisor-facing `mdin-edit_summary.md` + manifest README.
+- **Doc split (user call).** The detailed `mdin-edit_advisor_record.md` (refreshed: date→06-19, Discord drive, corrected suite count 12/12→**11/11**) stays at the phase3 root as **internal** documentation; the concise summary is what goes to the advisor.
+
+**Verified:** `test_acceptance.sh` 11/11; NL == deterministic baseline (10/10 byte-identical); fresh submit 10/10 normal termination.
+
+**Artifacts:** `deliverables-mdin-edit-20260619/` (untracked, vault repo) · `phase3-explicit-solvent-md/mdin-edit_advisor_record.md` (internal) · `_demo-work/live-20260619/` + `…_BEFORE.md` + `mdin-edit-run-package/`. Memory [[project_prime_status]] updated.
+
+**Next:** user delivers the package + does the live Discord run-through with the advisor. Forward queue unchanged ([[Gap_Remote_HPC_Backend]] et al.).
+
+---
+
 ## 2026-06-17 — Maintenance pass: Dev_Log catch-up, report condensed, MLFF gap captured 🧹
 
 **Context:** User asked for a full bookkeeping sweep — review both repos, bring the Dev_Log current, prune consumed files, surface the planned next tasks. No build; housekeeping + two small vault additions.
@@ -47,7 +84,7 @@ type: log
 - **Tasks 2+3** — the four edits, each NL-driven via `openclaw agent` (`gemini-3-flash-preview`) with a `--dry-run` read-back, then **byte-compared to a deterministic CLI baseline → all four byte-identical**: (a) `dt 0.002→0.001` heat-1; (b) `temp0 300→310` group:third-onward + heat-3 `value2` coupling (mismatch resolved); (c) `cut 9.0→7.0` group:all (deliberate <8 Å WARN, `ok:true`); (d) `restraint_wt 5.0→1.0` press-1.
 - **Submit** — all four edits on one copy → `--submit --reduce-nstlim 120` → **10/10 pmemd stages normal termination**, final `prod.rst7`, `--md-dir` unmutated (a Run-GREEN, not a science claim).
 - **Robustness (the user's 3 adversarial counter-perspectives, proven live):** `temp0→600` ⇒ `OUT_OF_BOUNDS` + byte-identical; a valid `dt` placed in the *wrong* stage (heat-2) ⇒ **caught by the baseline byte-compare**; idempotent re-run ⇒ `unchanged`; `dt` on min1 ⇒ `PARAM_NOT_FOUND`, no append. (Pushed back on a "temp0 ∈ 200–500 K" guard — would reject heat-1's legitimate 5 K start.)
-- **Suites re-run GREEN:** `test_acceptance.sh` 12/12; `tests/submit_acceptance.sh` dry-run + real (10/10).
+- **Suites re-run GREEN:** `test_acceptance.sh` 11/11 (11 cases; an earlier "12/12" tally was a miscount); `tests/submit_acceptance.sh` dry-run + real (10/10).
 
 **Artifact:** [[mdin-edit_advisor_record]] (`phase3-explicit-solvent-md/mdin-edit_advisor_record.md`) — OpenClaw skill-format record: per-change NL→read-back→command→result→guardrail, plus a Limitations section (mis-map residual; scaling → planner/HPC; Run-GREEN ≠ science). **Verdict PASS.** No code changed, nothing pushed.
 
