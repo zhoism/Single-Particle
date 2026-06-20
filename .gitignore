@@ -19,3 +19,9 @@
 
 # Redundant archive — extracted dir phase3-explicit-solvent-md/ is tracked instead
 phase3-explicit-solvent-md.zip
+
+# Scratch / working / demo artifacts (kept on disk, not canonical vault content)
+phase3-explicit-solvent-md/_archive/
+phase3-explicit-solvent-md/_demo-work/
+mdin-edit/
+deliverables-mdin-edit-*/
