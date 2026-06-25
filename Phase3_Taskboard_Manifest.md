@@ -42,7 +42,7 @@ OpenClaw is the substrate we run inside. The "framework" the report describes is
 
 ## Stage 0 — LLM Auth Resolution (PREREQ for all downstream stages)
 
-**Status:** PENDING (today's blocker).
+**Status:** ✅ RESOLVED 2026-06-03 — LLM auth working; default `google/gemini-3-flash-preview` via `--gateway`. (Steps below retained as the historical resolution record.)
 
 **Inputs:**
 - A regenerated AI Studio API key, generated against a NEW GCP project (keeps `single-XXXXXX` untouched since the $300 credit is excluded from AI Studio anyway — see [[gcp-credit-ai-studio-exclusion]]).
@@ -61,7 +61,7 @@ OpenClaw is the substrate we run inside. The "framework" the report describes is
    - **`API key not valid`** → key generated against wrong surface. Regenerate at [aistudio.google.com/apikey](https://aistudio.google.com/apikey), ensure prefix is `AIzaSy...`. Re-curl.
    - **`API has not been enabled`** → enable Generative Language API on the project at [console.cloud.google.com/apis/library/generativelanguage.googleapis.com](https://console.cloud.google.com/apis/library/generativelanguage.googleapis.com). Re-curl.
 3. Wire into OpenClaw: `openclaw models auth paste-api-key --provider google` → paste key → `openclaw gateway restart`.
-4. Verify default model alignment: `openclaw config get agents.defaults.model.primary` should be `google/gemini-2.5-flash` (set yesterday).
+4. Verify default model alignment: `openclaw config get agents.defaults.model.primary` should be `google/gemini-3-flash-preview`.
 
 **Outputs:**
 - AI Studio key validated against Google's API (curl test passes with model list returned).

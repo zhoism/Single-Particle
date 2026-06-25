@@ -22,7 +22,7 @@ A **decoupled hybrid agent**: an LLM decides *what* to run, but never touches *h
       │  @-mention: "run the full MD pipeline at 20 ps"
       ▼
 [ Discord bot  ↔  OpenClaw gateway ]      127.0.0.1:18789  (macOS LaunchAgent)
-      │  routes to the `main` agent — model: cerebras/gpt-oss-120b (free)
+      │  routes to the `main` agent — model: google/gemini-3-flash-preview
       ▼
 [ AGENT: the LLM picks ONE skill ]   ◄── the ONLY LLM-in-the-loop step
       │  one `exec` call → pipeline-async wrapper
@@ -49,11 +49,11 @@ A **decoupled hybrid agent**: an LLM decides *what* to run, but never touches *h
 | Component | What | Where / proof |
 |---|---|---|
 | **Substrate** | OpenClaw 2026.5.28, gateway as a LaunchAgent | `127.0.0.1:18789`; [[openclaw-canonical-paths]] |
-| **Model** | `cerebras/gpt-oss-120b` (free, default) → fallback `google/gemini-3.1-pro-preview` | `openclaw models status` |
+| **Model** | `google/gemini-3-flash-preview` (default, paid key); `cerebras/gpt-oss-120b` available as a free option | `openclaw models status` |
 | **Channel** | Discord bot `@Single Particle`, guild `1511130058306228311`, channel `1511130059061067858`, `requireMention` | `openclaw channels status --probe` |
 | **MD toolchain** | `prime-amber` conda env (AmberTools 24.8) + locally-built **pmemd 26** | sourced for detached runs via `project-prime/scripts/env.sh` |
 | **Skills (5)** | deterministic wrappers, registered via `skills.load.extraDirs` | `openclaw skills list` → all `✓ ready` |
-| **Code repo** | `project-prime/` (git, branch `master`) | runnable skills + spine + scripts |
+| **Code repo** | `project-prime/` (git, branch `main`) | runnable skills + spine + scripts |
 | **Docs repo** | this vault (git, branch `main`) | design notes, Dev_Log, this file |
 
 **The 5 skills** (each = a SKILL.md goal description + a `scripts/wrapper.py` that does the work and validates its own output; the LLM stays *outside* the wrapper):

@@ -12,7 +12,9 @@ When editing notes, preserve the frontmatter block and keep `[[wikilinks]]` inta
 
 The vault is the design/context index for **Project Prime — Single Particle Agentic Workflow**: an internship project that uses the **OpenClaw** agent framework to automate explicit-solvent **Molecular Dynamics (MD)** simulations in **AMBER**, dispatched to HPC via **DPDispatcher**, with post-processing through **CPPTRAJ** and **PLIP**. `Project Prime.md` is the canonical entry point and lists the phased roadmap and SOPs.
 
-A critical, unresolved context flag from `Project Prime.md`: it is **not yet confirmed** whether AMBER is pre-configured on a remote cluster or must be compiled locally. Be prepared for either Scenario A (local compilation, dependency hell) or Scenario B (API-driven dispatch to a Single Particle staging server). Development currently proceeds local (Scenario A), but the production-backend question stays open — tracked in `Gap_Remote_HPC_Backend`.
+The active deployment is **local (Scenario A)**: AMBER is compiled and installed locally (`pmemd` built from source) and the full MD pipeline runs CPU-only on the dev machine. The one open infrastructure question is whether a **remote production HPC backend** (Scenario B — API-driven dispatch to a Single Particle staging server) ever becomes available — tracked in `Gap_Remote_HPC_Backend`. Keep both scenarios as future-swap context, but treat local as the confirmed current path.
+
+**Companion code repo:** the *runnable* pipeline lives in the sibling repo `../project-prime/` (GitHub `zhoism/Single-Particle-pipeline`); read its `CLAUDE.md` for the 9 skills, the run spine, and the pinned toolchain. This vault is the design side (`zhoism/Single-Particle`).
 
 ## Note Taxonomy (filename prefixes)
 
@@ -23,7 +25,7 @@ The vault uses a prefix convention to indicate the role of each note. Match it w
 - `Infra_*` — Execution-layer infrastructure (DPDispatcher, HPC schedulers).
 - `Skill_*` — Concrete OpenClaw skills to be built (e.g., Antechamber ligand prep, AMBER bounded recovery).
 - `Workflow_*` — Cross-cutting procedural loops (error recovery).
-- `Design_*` — Cross-cutting design principles (memory providence, contextual reasoning, skill decomposition).
+- `Design_*` — Cross-cutting design principles (memory provenance, contextual reasoning, skill decomposition).
 - `Research_*` — Raw research materials and primary-source notes (e.g., the user's Phase 1 market survey). The `Arch_*`/`Skill_*`/`Design_*` notes are *distilled* from these; cross-link back to the source.
 - `Gap_*` — Open problems the vault has identified but not resolved (e.g., `Gap_Remote_HPC_Backend`). Frontmatter `status: open | partially-filled | filled`. Surface these when a question touches the unresolved area; they are where the interesting decisions still live.
 

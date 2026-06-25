@@ -33,7 +33,7 @@ This project implements a decoupled, hybrid OpenClaw architecture. Instead of ha
 
 ## 4. The Tech Stack
 * **Agent Framework:** OpenClaw (Local deployment, skills defined via Markdown/YAML and Python/Shell scripts).
-* **Simulation Engine:** AMBER (specifically `sander` or `pmemd.cuda` for explicit solvent MD).
+* **Simulation Engine:** AMBER — `pmemd` (CPU serial, built locally from source) for explicit-solvent MD. `pmemd.cuda` is not used on the CPU-only dev machine; `sander`/AmberTools cover prep.
 * **HPC Interface:** DPDispatcher (for remote cluster job submission and state tracking).
 * **Data Analysis:** CPPTRAJ (native AMBER trajectory analysis) and PLIP (Protein-Ligand Interaction Profiler).
 * **Environment:** Bash, Python, Slurm (potential cluster execution).
@@ -55,7 +55,7 @@ This project implements a decoupled, hybrid OpenClaw architecture. Instead of ha
 * **Tasks:**
     * ✅ Resolve system dependencies (gcc@11, cmake, open-mpi) and configure environment variables (`amber.sh` in `~/.zshrc`).
     * ✅ Install and verify AMBER core modules — AmberTools 24.8 via conda + `pmemd`/`pmemd.MPI` from source; `make test.serial`/`test.parallel` pass.
-    * ⏭️ **NEXT:** Initialize OpenClaw and verify it can execute basic local commands + a Gemini-backed `llm-task`.
+    * ✅ Initialize OpenClaw and verify it executes basic local commands + a Gemini-backed agent turn (done — OpenClaw 2026.5.28, default `google/gemini-3-flash-preview` via `--gateway`).
 
 ### Phase 3: Skill-Based Explicit Solvent MD (The Logic)
 * **Objective:** Build OpenClaw Skills to control simulation behavior dynamically.
