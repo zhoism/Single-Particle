@@ -35,6 +35,22 @@ The vault uses a prefix convention to indicate the role of each note. Match it w
 
 `vocabulary.md` is the canonical term list. **Before introducing a new term for an existing concept, check it first** — vocabulary drift silently breaks cross-note reasoning and `[[wikilink]]` traversal. If a concept already has a name, reuse it; if it is genuinely new, add it to `vocabulary.md` before using it elsewhere. Note confidence is carried by the existing **tier badges** (`✅`/`🟡`/`⚪`) and rule trust by **Memory Provenance** (4 labels) — do not add parallel `confidence:` frontmatter.
 
+## Definition of Done (anti-drift)
+
+The vault + auto-memory **are** the deliverable, so the main failure mode is **drift** — work happens but the record doesn't catch up. **Full discipline + the status-document inventory live in `Definition_of_Done.md`** (read it; this is the always-loaded summary).
+
+A **substantive result** (a build, decision, assessment, failure-mode finding, report, gate fix, scope change — *not* a Q&A, typo, or read-only exploration) is **not done until, in one pass:**
+
+1. **memory file** updated (+ `project_prime_status.md` for live state) **and** its **`MEMORY.md`** index pointer;
+2. the **canonical vault note** per taxonomy, with **frontmatter `status:`/dates** refreshed on every note touched;
+3. a **`Dev_Log.md`** entry (reverse-chron marker + pointers);
+4. any **status field the result moved** — `Gap_*`/`handoffs/` `status:`, `Phase3_Taskboard_Manifest` stage state, `Project Prime.md` roadmap, and **`MAP.md`** if the high-level picture shifted;
+5. **commit → independent review → push** (§4 below).
+
+Don't ask whether to record it — just do it (extends [[feedback-autonomous-vault]]; pairs with [[feedback-sync-memory-status-docs]], [[dev-log-convention]], [[feedback-verify-and-eval]]). *Memory lives outside git — kept current by this discipline, never committed.*
+
+**Commit → review → push** (scope: **both** this vault and the sibling `../project-prime/`, both private + solo so push is low-stakes and reversible): commit a completed result, then **review each commit independently before pushing it** — `/code-review` for the code repo; a frontmatter/`[[wikilink]]`/date/contradiction consistency pass for the vault — then push (`git push` is wired to prompt; that prompt is the review-gate moment). A deterministic user-scope **`Stop`-hook backstop** (`~/.claude/helpers/hook-handler.cjs`) nudges once if a session ends with uncommitted/un-logged/unpushed work in either repo — it can't write the updates, only catch the omission.
+
 ## Architectural Big Picture
 
 The system is a **decoupled hybrid agent**: LLM reasoning is deliberately separated from domain execution to avoid hallucination in mission-critical chemistry steps. Three layers stack on top of each other:

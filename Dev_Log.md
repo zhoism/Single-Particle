@@ -9,6 +9,80 @@ type: log
 
 ---
 
+## 2026-06-26 — Definition-of-Done discipline + Stop-nudge drift backstop ✅
+
+**Context:** User flagged the recurring **memory ↔ status-doc drift** — work lands but the record lags (cf. the 2026-06-24 drift-audit, the 2026-06-19 re-assessment that fixed 14 inconsistencies). Wanted it structural: every substantive result ends with all memory + status docs synced, committed, and **each commit reviewed independently before push**. The intent was already banked ([[feedback-sync-memory-status-docs]]) but unenforced. Planned in plan-mode; 4 forks settled via one AskUserQuestion gate ([[feedback-verify-and-eval]]) → **Discipline + Stop-nudge** (not full automation / hard push block), **review-each-commit-before-push**, trigger = **substantive result** (not trivial), scope = **both repos**.
+
+**Done:**
+- **Canonical checklist** — new vault-root [[Definition_of_Done]] (trigger def · the one-pass sync set · the full status-document inventory table · per-result/weekly/monthly cadence · commit→review→push protocol). Always-loaded summary added as a **"Definition of Done" section in BOTH `CLAUDE.md` files** (vault + `../project-prime/`).
+- **Created the missing [[MAP]]** — the weekly high-level done/in-flight/blocked artifact that `CLAUDE.md` referenced but that never existed (the audit's single biggest structural hole).
+- **Deterministic Stop-nudge backstop** — extended `~/.claude/helpers/hook-handler.cjs` with `session-start` (snapshot HEAD+worktree per `session_id`) + `stop` (block-once if this session left uncommitted/un-logged/unpushed work in the vault or project-prime repo); wired `SessionStart`+`Stop` in `~/.claude/settings.json`. Scoped to the two repo roots, compares to the session-start baseline (chronic pre-existing dirt doesn't fire it), honors `stop_hook_active`, fails open. Unit-tested with mock JSON (6/6: snapshot · silent-unchanged · nudge-on-dirt · nudge-once · no-op-elsewhere · pre-bash regression). Recorded in [[claude-harness-statusline-hooks]].
+- **Memory synced** — strengthened [[feedback-sync-memory-status-docs]] + [[claude-harness-statusline-hooks]] + their two `MEMORY.md` index lines.
+
+**State:** Hooks activate on next Claude Code **restart** — so THIS session's `Stop` won't nudge (no session-start baseline existed when it began; fail-silent by design). This change dogfoods its own protocol: committed per-repo → independent adversarial review → push.
+
+**Next:** Discipline now governs future sessions; nothing queued. (Pre-existing open item untouched: the `heat-3.in` `value2 310→300` oracle decision — see below + [[MAP]].)
+
+---
+
+## 2026-06-26 — Full code audit → 6 verified-bug fixes + comprehensive tests (project-prime) ✅
+
+**Context:** Began by evaluating the `ponytail` "lazy senior dev" agent plugin (verdict: **not useful here** — redundant with built-in `/code-review`+`/simplify`, doesn't reach the OpenClaw runtime, and its delete-list ethos works against this pipeline's deliberate defense-in-depth). A `/code-review` of `golden-path/run.sh` then surfaced 2 real defects → user asked to audit ALL code, fix everything, add comprehensive-but-not-crazy-hard tests. Ultracode multi-agent; choices gated up front ([[feedback-verify-and-eval]]): real-pmemd smokes + test-first red→green + new branch, no push.
+
+**Method:** read-only audit (3 Explore agents over ~5k LOC python + ~1k LOC shell) → **hand-verified every finding** (recall-mode over-flagged; ~half self-retracted or fell to verification) → 1 authoring workflow (4 oracle suites) + 1 adversarial-verify workflow (PASS×3) → real-toolchain smokes.
+
+**6 verified bugs FIXED** — branch `fix/audit-gates-and-tests-20260626` (3 commits, **local-not-pushed**, off `9c73875`): #1 **HIGH** `assert_no_nan` missed `Infinity` (golden-path + smoke-test; now `Infinity\b`, matching [[Skill_Bounded_Recovery_AMBER]]'s detector) · #2 pipefail dead-guard made the BNZ-absent message unreachable → `extract_ligand()` · #3 ligand grep missed PDB altLoc col 17 → awk cols 18-20 · #4 no engine-on-PATH preflight → `require_engine()` · #5 env.sh silently skipped a missing amber.sh → warns · #6 antechamber `validate()` silent-passed an empty frcmod → explicit gate.
+
+**Tests (all green):** new `golden-path/tests/test_gates.sh` (20) + 4 oracles closing the coverage gaps the audit found — antechamber `test_engine.py` (48), cpptraj-analysis `test_engine.py` (43), tleap-build `test_build_oracle.py` (54), pipeline-async `test_validation.py` (46). All 6 fixes proven RED→GREEN; 10 pre-existing suites still green. **Real-toolchain smokes:** reduced golden-path on real 181L → sander→cpptraj→PLIP GREEN (24,553 atoms, prod TEMP 300.42 K); benzene→antechamber→real frcmod (no #6 false-fire); extract_ligand on real 181L (6 BNZ atoms); env.sh warning both branches.
+
+**Rejected as false-alarms (don't re-litigate):** watch_ratelimits cooldown (one subshell for the whole pipe — `last` persists), run_happy_path `jget` (set -e aborts loudly, not silent), sim-ps validation (correct), antechamber partial-zero-charge (legit AM1-BCC), env.sh hardcoded paths (overridable defaults), `check_amber` drift (3 copies identical), amber-recover Infinity (already fixed), kekulize/tleap-neutrality gates (sound).
+
+**Separate PRE-EXISTING finding (NOT fixed — user's call):** the vault's `phase3-explicit-solvent-md/heat-3.in` was edited `value2 310→300`, erasing the deliberate temp0≠value2 mismatch that mdin-edit's oracle (`MDIN_DEMO_DIR`) asserts must persist → `oracle_selftest`/`mutation_test` go red at ground-truth load. Decide: revert demo to 310, or update the oracle's expectation. See [[Gap_Gate_Coverage]].
+
+---
+
+## 2026-06-26 — Assessed `graphify` knowledge-graph tool 🟡
+
+**Context:** User asked to evaluate `github.com/safishamsi/graphify` against the current state of the vault + project-prime, across two use-cases: the **OpenClaw runtime** and the **current Claude-Code dev setup** (vault + code repo). Standing instruction set this session: keep memory + all status docs in sync as part of the task (now banked as [[feedback-sync-memory-status-docs]]).
+
+**Done — source-level assessment (not run against private content; reading the extraction code is more precise than one run).** graphify (PyPI `graphifyy` v0.8.49, MIT, YC S26, 72.6k★) maps any folder into a queryable knowledge graph (outputs graph.html / GRAPH_REPORT.md / graph.json / an Obsidian vault / an MCP server). Two on-target hooks: a **native OpenClaw skill** (`graphify claw install`; OpenClaw = sequential extraction) and it **understands Obsidian** (`extract_markdown` parses `[[wikilinks]]` + heading tree).
+
+**Load-bearing finding:** graphify has **two separable layers** and conflating them is the trap — (1) **deterministic structural** (`extract.py` literally "Deterministic structural extraction": tree-sitter AST + markdown link parse, local/no-API, every edge `EXTRACTED`, **zero edge-invention** — faithfully renders the existing graph) vs (2) **LLM semantic** (`llm.py`, the `/graphify` skill; `INFERRED`/`AMBIGUOUS` conceptual edges + hyperedges — **the edge-inventing part** that conflicts with vault discipline). This cleanly resolves the vault tension.
+
+**Verdict:** does **NOT** do our job (no deterministic gating / `check_amber` / MD realism / HPC dispatch — [[Gap_Remote_HPC_Backend]] untouched); same shape as [[Research_amber_md_skill]] / [[Future_Work_Headroom_ContextCompression]]. Don't adopt as a dependency. **Two scoped spikes banked:** (1) **vault structural-only/no-LLM** read-only spike = god-nodes (most-`[[wikilinked]]`) + orphan detection + betweenness bridges → hand-ratify worthy un-encoded edges into `connections/` (NEVER let it write notes); (2) OpenClaw runtime is weak for code-nav (known 5-skill catalog, small repo) but indexing **`Amber26.pdf`** + the [[Research_AMBER_Failure_Modes]] corpus into a queryable graph is the one novel run-time use. **Steal-list:** its `EXTRACTED/INFERRED/AMBIGUOUS` taxonomy = convergent prior-art for [[Design_Memory_Provenance]].
+
+**Artifacts:** full note `Research_graphify.md`; memory [[graphify-assessment]] + [[feedback-sync-memory-status-docs]] + MEMORY.md (2 pointers). No code change; project-prime untouched. **Next:** optionally run the structural-only vault spike (needs a go to install `graphifyy` + run it read-only/no-LLM against the private vault).
+
+---
+
+## 2026-06-22 — mdin-edit: addressed the advisor's 4-point feedback ✅
+
+**Context:** The advisor reviewed `mdin-edit` and sent four physical-realism / data-safety refinements (not bugs). Pre-build gate settled three forks: full bidirectional restraints · vault note + memory + Dev_Log record · full verification incl. real pmemd smoke. Explainer-on-the-side requested.
+
+**Done — project-prime `246b06f`** (main, local-only, NOT pushed; was `bda79f9`): all four in `skills/mdin-edit/scripts/wrapper.py`. (1) **temp0→tempi coupling** on constant-T stages (relax/prod get `tempi==temp0`) alongside the existing heat-stage `&wt value2` coupling; heat `tempi` (ramp start) + press stages untouched. (2) **SHAKE-aware `dt` cap** — read from the stage (0.002 ps with `ntc=2,ntf=2`, else 0.001; global ceiling stays 0.002) + a non-blocking **hot-`dt` advisory** above 300 K. (3) **Restraint transitions both ways** — new `--enable-restraints` (ntr=1 + restraint_wt + restraintmask, **inserting** the mask line where absent — the only line the skill ever adds, quarantined + line-count self-checked) and `--disable-restraints` (ntr=0); `MODE_CONFLICT` guard; mask is a string param validated to forbid `"`/`'`/`/`/newline and read back via a quoted-value regex (the vendored parser's `!`-comment strip eats a leading-`!` mask). (4) **`nstlim` output-schedule** — emits `output_schedule` + advisory warnings on zero/sparse/non-multiple sampling (`ntwx=0`=trajectory-off, no warn); `--dry-run` is the review-before-commit path.
+
+**Verified (full, per [[feedback-verify-and-eval]]):** acceptance **15/15** (cases 0–14), oracle self-test **38/38**, fuzz **245,531/0** (added no-SHAKE dt-cap + restraint-op tiers), mutation **14/14** (6 new mutants: dt-cap-ignores-shake, tempi-coupling-wrong-key, enable-skips-insert, disable-wrong-ntr, schedule-no-sparse-warn, schedule-warns-ntwx0). Adversarial 2nd-AI review found + I **FIXED 3 latent arbitrary-input bugs**: HIGH `/`-in-mask namelist corruption, MED tempi-coupling firing on a half-disassembled `nmropt=1` heat stage, MED `'`-in-mask (all on masks/stages outside the demo form). Real **pmemd edit→run smoke 10/10** with the mask-insert (min2) + tempi-coupling (relax/prod) applied → all stages normal termination.
+
+**Artifacts:** explainer (the "on the side" doc) = `Research_Advisor_Feedback_mdin_edit.md` (chemistry behind each point + how the skill handles it + the deferral); skill docs updated (SKILL.md, references/heuristics.md, references/mdin-params.md); memory [[mdin-edit-advisor-feedback]] + MEMORY.md. **Deferred (noted in explainer):** a cross-stage "set temp0 on some-but-not-all downstream stages" advisory (misfires; per-edit coupling already keeps each edited stage internally consistent).
+
+**Next:** user reviews; concise advisor-facing summary if he wants one (internal record is this entry + the explainer). project-prime `246b06f` local-not-pushed.
+
+---
+
+## 2026-06-20 — Whole-skillbase proof package for the advisor ✅
+
+**Context:** The advisor has the single-skill `mdin-edit` proof; now wants the same kind of proof for the **entire 9-skill pipeline**. Built the pipeline-level counterpart, same packaging format, in the vault. Pre-run gate settled three forks: fresh capstone run (not just reuse) · deterministic spine (cite existing live Discord drives, don't re-run) · mdin-edit-style package. Three follow-up forks: 100 ps · include 3HTB exhibit · write a reproducible packager.
+
+**Done — `deliverables-skillbase-20260620/`** (gitignored, matching the `deliverables-mdin-edit-*` precedent): `README.md` manifest + one-page `skillbase_summary.md` (results-first, four-flavors-of-green honest scope) + `skillbase-code-20260620.zip` (clean `git archive` of project-prime HEAD `a166768`; 266 KB; 9/9 `SKILL.md`; no scratch) + `pipeline-run-1L2Y-20260620.zip` (68 MB, structured `00-inputs / 01-stage-envelopes / 02-analysis` + `RUN_LOG.txt`) + `TEST_LOG.txt`. **Three pillars of proof:** (1) *it runs* — a fresh 100 ps 1L2Y spine run GREEN: **12 analyses, 15 figures, MM-GBSA ΔG −18.54 kcal/mol**, PLIP 5 interactions (4 hydrophobic, 1 H-bond), all 5 stage envelopes `ok:true`; (2) *each skill correct* — **9/9** acceptance suites + 5 independent oracles (planner / detector / neutrality / mdin-edit selftest / fuzz-quick 6318 assertions) captured green; (3) *hard cases* — `amber-recover` (induced real-pmemd-crash Tier-1/2 salvage) + `md-planner` (7-gate untrusted-manifest) ride in the suites, `mdin-edit` cross-referenced to its own package. **Generality:** the prior 3HTB run (T4-lysozyme+JZ4, ΔG −27.41) folded in under `generality-3HTB/` at zero compute to rebut "hardcoded to 1L2Y."
+
+**New reproducible packager:** `scripts/make_skillbase_deliverable.sh` (run → capture suites/oracles → git-archive code → assemble `00/01/02` run zip → fold 3HTB) — committed **project-prime `bda79f9`** (main, local-only, NOT pushed). Fixed in it the `env.sh`-under-`set -u` gotcha (amber.sh's unguarded `DYLD_FALLBACK_LIBRARY_PATH` aborts nounset → guard with `set +u`).
+
+**Verified:** no leftover placeholder tokens; both zips' structure via `unzip -l`; `TEST_LOG` 9/9 + 5 oracles ok (the only "FAIL"-substring hits are `PASS:` lines for crash-*detection* cases); honest-scope sections present (not converged / ΔG is a fingerprint / local-only, HPC open).
+
+**Vault:** deliverable folder gitignored (`.gitignore` updated); this entry. The vault changes + project-prime `bda79f9` are **local, not pushed** — push pending user OK.
+
+---
+
 ## 2026-06-19 (cont. 2) — Workflow feature guide (`FEATURES.md`) ✅
 
 Added a succinct, sectioned **per-feature catalog** to the code repo: `FEATURES.md` — every skill (1–9) + the spine + the agent/safety/scope layers, one tight section each (one-liner · accepts · produces · guards), in the same showcase style as the `mdin-edit` summary. Feature set was extracted by a dynamic workflow (11 agents, one per skill + pipeline + agent layer) reading the actual wrapper flags/gates, then distilled (long error-code lists folded into one-line "Guards"). Linked from `README.md`. No code change. project-prime HEAD `5647b0a`→`a166768` (README pointer + FEATURES.md), pushed to origin/main (private `Single-Particle-pipeline`).
