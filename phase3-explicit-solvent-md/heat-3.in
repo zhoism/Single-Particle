@@ -38,7 +38,7 @@ Heat MD
   &wt
   type = 'TEMP0',
   istep1 = 0, istep2 = 40000,
-  value1 = 200.0, value2 = 310.0,
+  value1 = 200.0, value2 = 300.0,
   /
   &wt
   type = 'END',

@@ -25,3 +25,7 @@ phase3-explicit-solvent-md/_archive/
 phase3-explicit-solvent-md/_demo-work/
 mdin-edit/
 deliverables-mdin-edit-*/
+deliverables-skillbase-*
+
+# Claude Code harness config kit (distilled into ~/.claude; not vault-domain content)
+claude-config-kit/
