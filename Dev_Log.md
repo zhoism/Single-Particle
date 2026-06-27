@@ -9,6 +9,19 @@ type: log
 
 ---
 
+## 2026-06-26 — Audit branch verified + merged; heat-3 mismatch resolved ✅
+
+**Context:** With the Definition-of-Done discipline in place (entry below), surfaced two pending project-prime items: the `fix/audit-gates-and-tests-20260626` branch (3 commits, unpushed) and the `heat-3.in` oracle question. User confirmed the **`heat-3` `300/300` coherence is correct** — the advisor's original `value2=310` was a **mistake**, not a deliberate fixture — and asked to push the high-confidence commits first, then discuss `mdin-edit`.
+
+**Done:**
+- **Verified the 3 audit commits the strongest way — ran the suites, didn't trust the "green" claim:** 210 assertions green (cpptraj 43 [prime-amber py3.11, needs numpy] · tleap 54 · pipeline 46 · antechamber 47 · shell-gates 20) + independent read-review of the 6 logic fixes (Infinity-catch, altLoc ligand match, `require_engine` preflight, `env.sh` warn, empty-frcmod gate). Already adversarially reviewed in the audit session itself.
+- **Merged → `origin/main` (`fb6c1a9`)** via an isolated worktree, so the user's checked-out branch + 384 untracked run-outputs were untouched. Branch is now an ancestor of `origin/main` — safe to `git branch -d`.
+- **`heat-3` RESOLVED** — kept coherent `300/300`; corrected memory [[phase3-advisor-demo]] (it had framed the mismatch as a live "anomaly to flag") + the `MEMORY.md` index line.
+
+**Next:** **`mdin-edit` test/oracle update** — its acceptance suite used the old `300/310` mismatch as its fixture (Ext-A: edit `temp0→310` → mismatch gone); update to the coherent ground-truth, do NOT re-introduce the mismatch. Design discussion pending with the user (detect-and-handle vs committed fixture). Also: the 384 untracked project-prime files (run outputs + some golden-path recipes) want a `.gitignore` pass.
+
+---
+
 ## 2026-06-26 — Definition-of-Done discipline + Stop-nudge drift backstop ✅
 
 **Context:** User flagged the recurring **memory ↔ status-doc drift** — work lands but the record lags (cf. the 2026-06-24 drift-audit, the 2026-06-19 re-assessment that fixed 14 inconsistencies). Wanted it structural: every substantive result ends with all memory + status docs synced, committed, and **each commit reviewed independently before push**. The intent was already banked ([[feedback-sync-memory-status-docs]]) but unenforced. Planned in plan-mode; 4 forks settled via one AskUserQuestion gate ([[feedback-verify-and-eval]]) → **Discipline + Stop-nudge** (not full automation / hard push block), **review-each-commit-before-push**, trigger = **substantive result** (not trivial), scope = **both repos**.

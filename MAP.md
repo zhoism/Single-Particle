@@ -19,6 +19,7 @@ status: active
 - **mdin-edit advisor feedback** addressed + packaged ([[Research_Advisor_Feedback_mdin_edit]]).
 - **Phase 1 market landscape** delivered (`Market_Landscape_Report.md` + Summary + `Actionable_Recommendations.md`).
 - **Dev discipline** — Definition-of-Done + Stop-nudge drift backstop ([[Definition_of_Done]], 2026-06-26).
+- **Code audit hardening (project-prime)** — 6 verified bug-fixes + ~1800 lines of oracle/gate tests, verified 210 assertions green + merged to `origin/main` (`fb6c1a9`, 2026-06-26).
 
 ## 🔄 In-flight / forward queue
 
@@ -29,6 +30,7 @@ status: active
 - **Proposer agent** — outer propose-then-verify supervisory agent, oracle-first build plan ([[Future_Work_Proposer_Agent]], candidate-not-started).
 - **Headroom context-compression** — route OpenClaw tool-output through Headroom; low urgency on free tier ([[Future_Work_Headroom_ContextCompression]], candidate).
 - **graphify spikes** (2026-06-26) — vault structural-only god-node/orphan analysis + index `Amber26.pdf` into a queryable graph (banked, [[Research_graphify]]).
+- **mdin-edit test/oracle update** — the heat-3 demo is now coherent `300/300`, but `mdin-edit`'s acceptance suite used the old `300/310` mismatch as its fixture → update the tests/oracle to the coherent ground-truth (do **not** re-introduce the mismatch). Design discussion pending with the user (detect-and-handle vs fixture). 2026-06-26.
 
 ## ⛔ Blocked
 
@@ -38,7 +40,7 @@ status: active
 
 - [[Gap_Remote_HPC_Backend]] — open · [[Gap_MachineLearned_ForceFields]] — open · [[Gap_Gate_Coverage]] — partially-filled.
 
-## ⚠️ Open decisions
+## ✅ Recently resolved (2026-06-26)
 
-- **`phase3-explicit-solvent-md/heat-3.in`** was edited `value2 310→300`, erasing the deliberate `temp0≠value2` mismatch that `mdin-edit`'s oracle asserts must persist → its self-test/mutation go red at ground-truth load. Decide: revert the demo to 310, or update the oracle's expectation. See [[Dev_Log]] (2026-06-26) + [[Gap_Gate_Coverage]].
-- **project-prime** `fix/audit-gates-and-tests-20260626` (6 verified bug-fixes, 3 commits) is **local-not-pushed** — review + push pending per [[Definition_of_Done]] §4.
+- **`heat-3.in` temp0/&wt mismatch** — RESOLVED. The coherent `300/300` is correct; the advisor's original `value2=310` was a **mistake**, not a deliberate fixture (user's call). Knock-on `mdin-edit` test update is queued above (in-flight), not a blocker.
+- **project-prime audit branch** — DONE. `fix/audit-gates-and-tests-20260626` verified (210 assertions) + merged to `origin/main` (`fb6c1a9`) + pushed. The local branch is now an ancestor of `origin/main` — safe to delete (`git branch -d`).
