@@ -91,8 +91,18 @@ Concrete, narrow extension to [[Skill_Bounded_Recovery_AMBER]] / `amber-recover`
 
 Small to build (one LLM call over the existing dict, output into a separate envelope field). Not started.
 
+## graphify intersection (assessed 2026-06-26 — conceptual prior-art + one possible role)
+
+The graphify knowledge-graph tool ([[Research_graphify]]) was assessed against this proposer-agent design. Two connections, honestly weighted:
+
+- **Conceptual prior-art (the real one):** graphify's whole architecture *is* this propose-then-verify pattern applied to graph-building — its `EXTRACTED` (deterministic, trusted) vs `INFERRED`/`AMBIGUOUS` (proposed, must be ratified) edge taxonomy is exactly the [[Design_Memory_Provenance]] firewall + the "all agent output is `inferred` until a deterministic check clears it" rule from the cross-cutting acceptance discipline above. It is a **worked external instance of the pattern we're designing** — useful to cite as convergent validation, **not** something to wire in.
+- **One possible role — backend for Phase-1a's curated planner-context file:** graphify's queryable graph could in principle *be* the knowledge backend the planner-context increment draws on (worked examples + domain notes + the Amber manual). **But** the planner targets a **KNOWN 5-skill catalog** small enough that a hand-written, auditable context file is almost certainly better. graphify only wins here if that context corpus grows large — at which point this collapses into the same question the reference-corpus thread asks.
+
+**Verdict for this note:** graphify does **not** lower the bottleneck this design names — *"the oracle, not the brain."* It's a retrieval/navigation aid, and the proposer agent is gated by *verifiers*, which graphify neither builds nor checks. Keep it as cited prior-art; revisit the planner-context-backend angle only if the reference corpus is indexed for other reasons. Full open questions + the precise-lookup-vs-conceptual-navigation crux: [[Next_Session_Prompt_Graphify_ReferenceCorpus]].
+
 ## Cross-links
 
+- [[Research_graphify]] / [[Next_Session_Prompt_Graphify_ReferenceCorpus]] — the graphify assessment + the banked evaluation questions (this note's intersection section above).
 - [[Design_Determinism_Spectrum]] — the spine; this stays on the boundary pole.
 - [[multi-agent-scope]] (memory) — the banked swarm rejection this does *not* reopen.
 - `md-planner` / [[Arch_Taskboard_Manifest]], [[Workflow_Error_Recovery_Loop]] / [[Skill_Bounded_Recovery_AMBER]] — the one-shot propose-then-verify patterns this generalizes.

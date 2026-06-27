@@ -19,6 +19,7 @@ Obsidian `[[wikilinks]]` resolve by filename, so links work regardless of folder
 - [[Future_Work_Proposer_Agent]] — outer propose-then-verify supervisory agent (contains an oracle-first build plan; not started by design).
 - [[Future_Work_Headroom_ContextCompression]] — route OpenClaw tool-output through Headroom (ContextEngine plugin) for token savings; assessed 2026-06-24, cache-busting risk verified fixed; scoped to observational content only; low urgency while on free Cerebras.
 - [[Future_Work_Run_Confirmation_Gate]] — confirm-before-launch ("Proceed?") gate for agent/Discord-driven runs; decision banked 2026-06-26 — lives at the agent/conversation layer **or** a staged-spec `stage-run`/`confirm-run` handshake, **not** a blocking prompt inside the skill (would deadlock `exec`/detached pipeline/`md-planner`/the test harness). Approach pick pending.
+- [[Next_Session_Prompt_Graphify_ReferenceCorpus]] — graphify knowledge-graph tool: assessed + shelved ([[Research_graphify]]), banks the Q1–Q4 evaluation questions to settle **before** any spike. Strongest real use = index the reference corpus (`Amber26.pdf` + mailing-list + 66-skill lib); gated on conceptual-navigation-vs-precise-lookup (lean: steer away from graphify for the gate backlog). Never writes into vault notes. Decision-gated, to be called when ready. 2026-06-26.
 
 ## ✔ Consumed — kept for the Outcome record + cross-links
 - [[Next_Session_Prompt_AMBER_FailureMode_Sweep]] — the failure-mode sweep (done 2026-06-19 → produced [[Research_AMBER_Failure_Modes]] + the gate-encoding handoff).

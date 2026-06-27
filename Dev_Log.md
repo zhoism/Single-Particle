@@ -9,6 +9,22 @@ type: log
 
 ---
 
+## 2026-06-26 (cont. 3) — graphify: verdict refined + open questions banked into a handoff ✅
+
+**Context:** Follow-up discussion on the graphify assessment (committed earlier in `51e15c1`, see the cont. entry below). The user pushed back — *"the research phase is over, so what's the point?"* — which sharpened the verdict, then asked to bank the open questions as a handoff and wire the intersection into the proposer-agent note.
+
+**Done (vault-only; project-prime UNCHANGED):**
+- **Verdict refined → shelved, "to be called when ready"** ([[Research_graphify]]). The connection-discovery use over the design notes is **moot** (a research-phase activity; the build phase is over); the structural vault spike is **low-value-now hygiene** (already covered by [[Definition_of_Done]] + Stop-hook); the strongest real use = **indexing the reference corpus**, but **decision-gated** on conceptual-navigation-vs-precise-lookup (lean: steer away from graphify for the gate backlog — it needs precise lookups, a concept-graph's weak spot).
+- **New handoff [[Next_Session_Prompt_Graphify_ReferenceCorpus]]** — banks the three next-step threads (reference-corpus index · [[Research_AMBER_Failure_Modes]] 15-gate backlog · [[Future_Work_Proposer_Agent]]) + the Q1–Q4 evaluation questions to settle **before** any spike + a paste-ready prompt. `status: candidate-decision-gated`.
+- **[[Future_Work_Proposer_Agent]]** — added a "graphify intersection" section (graphify's `EXTRACTED`/`INFERRED`/`AMBIGUOUS` firewall = conceptual prior-art for this propose-then-verify design; possible planner-context backend only if the corpus grows; doesn't lower the "oracle not the brain" bottleneck).
+- **Sync (this pass):** `handoffs/README` (Candidate queue) + [[MAP]] (graphify line) + memory [[graphify-assessment]] + MEMORY.md pointer + this entry.
+
+**Concurrency note:** a parallel session committed + pushed `6864c9c` (run-confirmation gate) mid-pass; verified the tree was **clean** (HEAD==origin) before staging, then staged **only** the 6 graphify files by explicit path — no other-session work swept in.
+
+See [[graphify-assessment]] (memory) · [[Research_graphify]].
+
+---
+
 ## 2026-06-26 (cont. 2) — mdin-edit point #4 walkthrough (read-only); run-confirmation gate design decision banked ✅
 
 **Context:** Conceptual session — walked the advisor's `nstlim`-vs-output-frequency feedback (point #4) + the per-file status contract, verifying behavior against `mdin-edit`'s `wrapper.py` (no code touched). Then a design discussion: should a run-confirmation "Proceed?" be a literal blocking prompt in the skill?

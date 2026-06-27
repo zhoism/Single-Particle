@@ -62,10 +62,14 @@ Local AST map of the 9 wrappers + run spine + shell + SKILL.md/JSON is **free** 
 - LLM semantic pass costs tokens on docs (negligible per-turn on `google/gemini-3-flash-preview`, vault is small) → scope any run to **code/markdown structural** only unless deliberately generating candidates.
 - Third-party YC startup tool sending content to an LLM API → for the vault, structural/no-LLM keeps content local; the semantic pass would ship note prose to the model.
 
-## Verdict
+## Verdict — assessed, shelved, **to be called when ready** (refined 2026-06-26)
 
-**Don't adopt as a dependency now.** Neither surface clears the bar: the agent doesn't navigate a big codebase at run time, the code repo is small, and the vault's curation discipline is hostile to auto-edges. **Two scoped, aligned uses worth banking:**
-1. **Structural-only candidate-connection spike over the vault** (read-only, no-LLM, free): god-nodes + orphan list + betweenness bridges → hand-ratify any worthy un-encoded edges into `connections/`. Fits the documented maintenance rhythm; lowest risk, highest fit.
-2. **Watch for Scenario B** — if remote HPC lands and project-prime grows past ~50 files, revisit the OpenClaw `query_graph` MCP layer (sibling to [[Future_Work_Headroom_ContextCompression]]). Separately, indexing `Amber26.pdf` into a queryable graph is the one novel runtime use that needs no growth trigger.
+**Don't adopt as a dependency.** Neither surface clears the bar, and a follow-up discussion sharpened *why* the most-obvious use is moot:
 
-Sibling to [[Research_amber_md_skill]], [[Future_Work_Headroom_ContextCompression]], and the `memory-system-options` / `llm-wiki-pattern` assessments — **assessed, deferred, don't re-open** the "should we just adopt it" question; the two scoped spikes above are the only live threads.
+- **Connection-discovery over the design `.md` notes is moot now.** That pays off only during *active synthesis* — when a surfaced link changes what you build next. The build phase that justified it is **over** (9-skill pipeline complete). Mining the design notes for new edges now solves a problem we no longer have. graphify's ceiling for us is *retrieval/navigation for the human+agent doing the real work* — it never writes/tests a gate, builds a verifier, or makes a scientific judgment.
+- **The structural-only vault spike** (god-nodes / orphans / betweenness, read-only, no-LLM) is **discipline-safe but low-value-now** — it's graph *hygiene*, and the anti-drift need it would serve is already covered by [[Definition_of_Done]] + the Stop-hook. **NEVER let graphify write into vault notes.**
+- **The strongest real use is indexing the *reference* corpus** (`Amber26.pdf` + mailing-list archives + the upstream 66-skill library) for the agent — but it's **decision-gated**, not a go: it hinges on whether we need *conceptual navigation of a large corpus* (graph wins) or *precise fact-lookups* (a lighter PDF-RAG likely wins — and the gate-backlog work is mostly the latter, so steer away from graphify there).
+
+**Status: shelved with conditional triggers, to be called when ready.** The open evaluation questions (Q1 retrieval-mode · Q2 graph-vs-RAG head-to-head · Q3 cost/scope · Q4 the vault hygiene spike) and the three next-step threads (reference-corpus index · 15-gate backlog · proposer agent) are banked in **[[Next_Session_Prompt_Graphify_ReferenceCorpus]]**. Triggers that reopen it: a deliberate "give the agent a navigable Amber manual" decision, or Scenario B HPC + project-prime growth past ~50 files.
+
+Sibling to [[Research_amber_md_skill]], [[Future_Work_Headroom_ContextCompression]], and the `memory-system-options` / `llm-wiki-pattern` assessments — **assessed, deferred, don't re-open** the "should we just adopt it" question.
