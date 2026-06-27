@@ -20,8 +20,9 @@ updated: 2026-06-27
 | 3 | **ntx_irest_CoherenceGate** | One gate in #2's family; could fold into #2. |
 | 4 | **RunOutput_Convention** | Cheap hygiene — stops recurring git-noise; needs one verifying re-run. |
 | 5 | **mdin_edit_Whitelist** | Incremental capability (more editable params). |
-| 6 | **HermesAgent_Eval** | Pure research; do when you want a survey, not urgent. |
-| — | *candidates (7–11)* | Decision-gated — promote when you decide to start one (see below). |
+| — | *candidates (6–10)* | Decision-gated — promote when you decide to start one (see below). |
+
+*(HermesAgent_Eval consumed 2026-06-27 → declined; see Consumed below.)*
 
 ## 🟢 Ready — paste-and-go
 
@@ -31,7 +32,6 @@ updated: 2026-06-27
 | **AMBER_Gate_Encoding** | Encode the 4 P1 failure-mode gates into the skills | `ready` |
 | **ntx_irest_CoherenceGate** | Encode the `ntx`↔`irest` restart-coherence gate (real verifier hole) | `ready` |
 | **mdin_edit_Whitelist** | Expand mdin-edit's editable-parameter set | `ready` |
-| **HermesAgent_Eval** | Research + verdict on the Hermes agent framework (not a migration) | `ready` |
 
 ## 🟡 Candidate — needs a "go" / approach decision first
 
@@ -70,7 +70,6 @@ Verdict **vs. a running CoherenceFix** (which owns `skills/mdin-edit/`):
 | Handoff | A · files | B · runtime | Parallel now? |
 |---|---|---|---|
 | **AMBER_Gate_Encoding** | none (tleap/cpptraj/plip) | light (oracle tests) | ✅ yes (worktree) |
-| **HermesAgent_Eval** | none (research) | none | ✅ safest |
 | **Graphify_ReferenceCorpus** | none (eval/corpus; never edits vault notes) | none | ✅ safe — but decision-gated (Q1–Q4 first; lean steer-away) |
 | **RunOutput_Convention** | none vs CF (run_happy_path/pipeline-async) | **yes — needs a verifying pmemd run** | ⚠️ edit-parallel ok; serialize the run |
 | **Headroom_ContextCompression** | none (OpenClaw ContextEngine plugin) | **yes — reconfigures the gateway CF live-drives** | ⚠️ hold while CF is live; low-urgency |
@@ -81,3 +80,4 @@ Verdict **vs. a running CoherenceFix** (which owns `skills/mdin-edit/`):
 ## ✔ Consumed (done, for the record)
 
 - **AMBER_FailureMode_Sweep** — produced `Research_AMBER_Failure_Modes` + `Gap_Gate_Coverage` (the gate backlog above).
+- **HermesAgent_Eval** (2026-06-27) — evaluated → **declined** (research only, no migration). Produced [[Research_Hermes_Agent]]; engine room stays frozen; the one thesis-compatible coupling (a gated recovery *proposer*) folds into **Proposer_Agent** + `Gap_Gate_Coverage`.

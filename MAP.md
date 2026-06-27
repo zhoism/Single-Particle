@@ -20,13 +20,13 @@ status: active
 - **Phase 1 market landscape** delivered (`Market_Landscape_Report.md` + Summary + `Actionable_Recommendations.md`).
 - **Dev discipline** — Definition-of-Done + Stop-nudge drift backstop ([[Definition_of_Done]], 2026-06-26).
 - **Code audit hardening (project-prime)** — 6 verified bug-fixes + ~1800 lines of oracle/gate tests, verified 210 assertions green + merged to `origin/main` (`fb6c1a9`, 2026-06-26).
+- **Hermes Agent evaluated → DECLINED** (2026-06-27) — Nous Research's self-evolution-headline "OpenClaw alternative"; research only, no migration. Primary-source crux: the self-improvement loop edits `SKILL.md` definitions, not code; default execution is LLM-mediated. Engine room stays frozen; the one thesis-compatible coupling (a gated recovery *proposer*) folds into the Proposer agent. Sharpened [[Design_Determinism_Spectrum]] into a self-mutation / execution-mediation pair. [[Research_Hermes_Agent]].
 
 ## 🔄 In-flight / forward queue
 
 *Source of truth = `status:` in each `handoffs/` file; see `handoffs/README.md`.*
 
 - **Gate encoding** — `ntx`↔`irest` restart-coherence gate ([[Next_Session_Prompt_ntx_irest_CoherenceGate]], ready) · 4 P1 AMBER failure-mode gates ([[Next_Session_Prompt_AMBER_Gate_Encoding]], ready) · `mdin-edit` whitelist expansion (ready). Backlog tracked in [[Gap_Gate_Coverage]] (partially-filled).
-- **Hermes-Agent eval** — research + verdict, not migration ([[Next_Session_Prompt_HermesAgent_Eval]], ready).
 - **Proposer agent** — outer propose-then-verify supervisory agent, oracle-first build plan ([[Future_Work_Proposer_Agent]], candidate-not-started).
 - **Headroom context-compression** — route OpenClaw tool-output through Headroom; low urgency on free tier ([[Future_Work_Headroom_ContextCompression]], candidate).
 - **Run-confirmation gate** — confirm-before-launch for agent/Discord runs; decision banked (agent-layer or staged-spec `stage-run`/`confirm-run` handshake, not an in-skill blocking prompt), approach pick pending ([[Future_Work_Run_Confirmation_Gate]], candidate). 2026-06-26.
