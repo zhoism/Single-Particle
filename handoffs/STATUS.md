@@ -20,7 +20,7 @@ updated: 2026-06-27
 | 3 | **mdin_edit_Whitelist** | Incremental capability (more editable params). |
 | — | *candidates (4–8)* | Decision-gated — promote when you decide to start one (see below). |
 
-*Newly Ready — **slot into the order where you want**: **GB_Radii_Fix** (apply the `mbondi2` fix + re-baseline ΔG + flip the GB-radii detector fatal; gates' deferred 4th-P1 follow-up). Order above is the prior seed minus the two items consumed today — re-rank as you like.*
+*Newly Ready — **slot into the order where you want**: **GB_Radii_Fix** (apply the `mbondi2` fix + re-baseline ΔG + flip the GB-radii detector fatal; gates' deferred 4th-P1 follow-up) · **CodeReview_Parallel_Sessions** (independent 2nd-pass review of the 2026-06-27 code before clearing). Order above is the prior seed minus the items consumed today — re-rank as you like.*
 
 *(Consumed 2026-06-27 → see Consumed below: HermesAgent_Eval, AMBER_Gate_Encoding, mdin_edit_CoherenceFix.)*
 
@@ -31,6 +31,7 @@ updated: 2026-06-27
 | **ntx_irest_CoherenceGate** | Encode the `ntx`↔`irest` restart-coherence gate (real verifier hole) | `ready` |
 | **GB_Radii_Fix** | Apply the `mbondi2` fix + re-baseline ΔG, then flip the GB-radii detector fatal | `ready` |
 | **mdin_edit_Whitelist** | Expand mdin-edit's editable-parameter set | `ready` |
+| **CodeReview_Parallel_Sessions** | Independent 2nd-pass review of the 2026-06-27 code-heavy work (project-prime `b375f39..fee1fbe`, 4 skills) | `ready` |
 
 ## 🟡 Candidate — needs a "go" / approach decision first
 

@@ -15,6 +15,7 @@ Obsidian `[[wikilinks]]` resolve by filename, so links work regardless of folder
 - [[Next_Session_Prompt_ntx_irest_CoherenceGate]] — encode the `ntx`↔`irest` restart-coherence gate (a real verifier hole: `irest=1, ntx=1` passes today). Opens by asking 4 scope questions; gate-only recommended. Replaced the `Gap_ntx_irest_restart_topology` note 2026-06-24.
 - [[Next_Session_Prompt_GB_Radii_Fix]] — apply the GB-radii (`mbondi2`) fix + re-baseline ΔG, then flip the `GB_RADII_IGB_MISMATCH` detector fatal. Small, well-scoped follow-up spun out of the AMBER P1 gate-encoding session. 2026-06-27.
 - [[Next_Session_Prompt_mdin_edit_Whitelist]] — expand `mdin-edit`'s editable-parameter whitelist (Tier-1 scalars: `gamma_ln`/`taup`/`pres0`/`tempi`/`maxcyc`/`ncyc`).
+- [[Next_Session_Prompt_CodeReview_Parallel_Sessions]] — independent 2nd-pass code review of the 2026-06-27 parallel-session code (project-prime `b375f39..fee1fbe`, 4 skills: tleap-build / cpptraj-analysis / plip-profile / mdin-edit); Hermes + graphify out of scope. 2026-06-27.
 
 ## ◆ Candidate — opt-in, decision-gated
 - [[Future_Work_Proposer_Agent]] — outer propose-then-verify supervisory agent (contains an oracle-first build plan; not started by design).
