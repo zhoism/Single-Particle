@@ -58,6 +58,26 @@ updated: 2026-06-27
 - **AMBER_Gate_Encoding & ntx_irest both draw from Gap_Gate_Coverage**; ntx_irest is one gate in that family — foldable into the gate-encoding session.
 - **Gap_Remote_HPC** is externally blocked — priority can't make it happen.
 
+## 🔀 Concurrency — parallel-safe map (while mdin-edit work is in flight; 2026-06-27)
+
+Two sessions clash if they share any of **three axes**:
+- **A · Files** — same files/dir → staging/merge clash. The **mdin-edit cluster** (CoherenceFix, ntx_irest's vendored `check_amber`, Whitelist, Arbitrary_Shapes) all collide with each other.
+- **B · Shared runtime** — ONE OpenClaw gateway + one local toolchain/CPU. Keep a single runner for any `openclaw agent` / pmemd / pipeline run; do NOT reconfigure/restart the gateway mid-run.
+- **C · Shared vault/memory** — Dev_Log/MAP/Gap notes are git-mergeable; memory (`MEMORY.md`, `project_prime_status.md`) is outside git → serialize, re-read before edit. Applies to EVERY parallel session.
+
+Verdict **vs. a running CoherenceFix** (which owns `skills/mdin-edit/`):
+
+| Handoff | A · files | B · runtime | Parallel now? |
+|---|---|---|---|
+| **AMBER_Gate_Encoding** | none (tleap/cpptraj/plip) | light (oracle tests) | ✅ yes (worktree) |
+| **HermesAgent_Eval** | none (research) | none | ✅ safest |
+| **Graphify_ReferenceCorpus** | none (eval/corpus; never edits vault notes) | none | ✅ safe — but decision-gated (Q1–Q4 first; lean steer-away) |
+| **RunOutput_Convention** | none vs CF (run_happy_path/pipeline-async) | **yes — needs a verifying pmemd run** | ⚠️ edit-parallel ok; serialize the run |
+| **Headroom_ContextCompression** | none (OpenClaw ContextEngine plugin) | **yes — reconfigures the gateway CF live-drives** | ⚠️ hold while CF is live; low-urgency |
+| **Run_Confirmation_Gate** | indirect (reuses mdin-edit schedule, in flux) | yes (pipeline-async) | ⚠️ don't — moving dep + lowest priority |
+| **ntx_irest_CoherenceGate** | **YES (mdin-edit `check_amber`)** | — | 🚫 sequence after CF |
+| **mdin_edit_Whitelist / Arbitrary_Shapes** | **YES (mdin-edit core)** | — | 🚫 sequence after CF |
+
 ## ✔ Consumed (done, for the record)
 
 - **AMBER_FailureMode_Sweep** — produced `Research_AMBER_Failure_Modes` + `Gap_Gate_Coverage` (the gate backlog above).

@@ -17,9 +17,10 @@ type: log
 - **Answered the advisor-scope question** (with a *real* `--dry-run` preview): the advisor's point #4 is **already shipped at the EDIT level** — mdin-edit emits `output_schedule` + sparse/uneven-sampling warnings on `nstlim` edits, previewable via `--dry-run` (demo: `prod nstlim→15000` → `"only 1 trajectory frame; very sparse sampling"`). The Run_Confirmation_Gate is the **LAUNCH-level generalization**, reusing that same `output_schedule` machinery — hence low-urgency.
 - **Sharpened the gate's approach pick** ([[Future_Work_Run_Confirmation_Gate]]): reframed the two homes as **Levels 0–3**, recommended **Level 2 (`stage-run`/`confirm-run`) + a TTY-guarded `--confirm`**, and documented why ironclad-over-the-agent is **structurally impossible** (raw-shell `exec` bypasses any tool gate; worst case = wasted local $0 compute). Added "where the preview surfaces" (terminal stdout JSON / agent chat / Discord). Updated the README line + prompt-to-paste.
 - **New [[STATUS]] dashboard** (`handoffs/STATUS.md`) — compact priority queue + Ready/Candidate/Gap tables + dependencies; `README` points to it; per-file frontmatter `status:` stays source of truth. Re-checked all 12 handoffs live (one new since last: [[Next_Session_Prompt_RunOutput_Convention]] `[candidate]`).
+- **Concurrency / parallel-safe map** added to [[STATUS]] (`CoherenceFix` is running in another session): assessed every handoff against three collision axes — **A files** (the mdin-edit cluster all clash), **B shared runtime** (one gateway + one toolchain runner), **C vault/memory** (serialize). Safe-to-parallelize-with-CF: **AMBER_Gate** + **Hermes** + **Graphify** (decision-gated); ⚠️ serialize the run for **RunOutput**/**Headroom**; 🚫 **ntx_irest**/**Whitelist**/**Arbitrary_Shapes** touch mdin-edit → sequence after CF.
 - **Sync:** README, this entry.
 
-**Next:** user to set the priority order in [[STATUS]] (suggested seed in place); warm #1 = [[Next_Session_Prompt_mdin_edit_CoherenceFix]].
+**Next:** user to set the priority order in [[STATUS]] (suggested seed in place); warm #1 = [[Next_Session_Prompt_mdin_edit_CoherenceFix]] (running). Safe parallels: AMBER_Gate + Hermes.
 
 ---
 
