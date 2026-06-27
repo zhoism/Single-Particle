@@ -15,7 +15,7 @@ Obsidian `[[wikilinks]]` resolve by filename, so links work regardless of folder
 - [[Next_Session_Prompt_ntx_irest_CoherenceGate]] — encode the `ntx`↔`irest` restart-coherence gate (a real verifier hole: `irest=1, ntx=1` passes today). Opens by asking 4 scope questions; gate-only recommended. Replaced the `Gap_ntx_irest_restart_topology` note 2026-06-24.
 - [[Next_Session_Prompt_GB_Radii_Fix]] — apply the GB-radii (`mbondi2`) fix + re-baseline ΔG, then flip the `GB_RADII_IGB_MISMATCH` detector fatal. Small, well-scoped follow-up spun out of the AMBER P1 gate-encoding session. 2026-06-27.
 - [[Next_Session_Prompt_mdin_edit_Whitelist]] — expand `mdin-edit`'s editable-parameter whitelist (Tier-1 scalars: `gamma_ln`/`taup`/`pres0`/`tempi`/`maxcyc`/`ncyc`).
-- [[Next_Session_Prompt_CodeReview_Parallel_Sessions]] — independent 2nd-pass code review of the 2026-06-27 parallel-session code (project-prime `b375f39..fee1fbe`, 4 skills: tleap-build / cpptraj-analysis / plip-profile / mdin-edit); Hermes + graphify out of scope. 2026-06-27.
+- [[Next_Session_Prompt_GateHardening_Followups]] — **non-blocking** durability / test-quality / doc-accuracy nits from the 2026-06-27 code review (PASS, no blockers). 6 small test-first tasks across the 4 gate skills: add a `needs_human` mutation mutant, harden CROSS_GAP (structural-or-canary + `\b`), commit a real-format prmtop fixture + fix an mbondi3 comment, re-scope the plip "zero-regression" claim, correct mdin-params.md parser-scope wording, pin the test interpreter. Tasks 1–3 carry the real value. 2026-06-27.
 
 ## ◆ Candidate — opt-in, decision-gated
 - [[Future_Work_Proposer_Agent]] — outer propose-then-verify supervisory agent (contains an oracle-first build plan; not started by design).
@@ -30,6 +30,7 @@ Obsidian `[[wikilinks]]` resolve by filename, so links work regardless of folder
 - [[Next_Session_Prompt_AMBER_Gate_Encoding]] — 4 P1 gates encoded 2026-06-27 (merged project-prime `origin/main`): `SOLVENT_NOT_ADDED` + `CROSS_GAP_SPURIOUS_BOND` + PLIP `--nohydro` + non-fatal `GB_RADII_IGB_MISMATCH`. Detector's actual fix spun out → [[Next_Session_Prompt_GB_Radii_Fix]] (Ready).
 - [[Next_Session_Prompt_mdin_edit_CoherenceFix]] — done 2026-06-27 (merged project-prime `origin/main`): flipped the stale heat-3 canary + py3.11 harness fix + `needs_human` coherence gate (`--couple`/`--keep-value2`). Parser-scope follow-up in [[Gap_Gate_Coverage]].
 - [[Next_Session_Prompt_Graphify_ReferenceCorpus]] — graphify **TRIALED** 2026-06-27 as a proposer-manual backend → **REJECTED** (concept-graph has no parameter-level concepts; pairwise edges ~60% hallucinated). Precise-lookup > concept-graph, with evidence. [[Research_graphify]].
+- [[Next_Session_Prompt_CodeReview_Parallel_Sessions]] — independent 2nd-pass review of the 2026-06-27 gate code (project-prime `b375f39..fee1fbe`, 4 skills) → **PASS** 2026-06-27 (empirical pass + 24-agent adversarial workflow converged; 0 HIGH/MED, 14 LOW/INFO, project-prime UNCHANGED). LOW/INFO hardening banked → [[Next_Session_Prompt_GateHardening_Followups]] (Ready).
 
 ## Bigger open direction (not a paste-ready prompt)
 - [[Gap_Remote_HPC_Backend]] — production remote HPC backend (lives at vault root as a `Gap_` note; the largest forward item, externally blocked).

@@ -9,6 +9,20 @@ type: log
 
 ---
 
+## 2026-06-27 ~04:00 PDT — independent 2nd-pass code review of the 2026-06-27 gate code → **PASS** (project-prime UNCHANGED) ✅
+
+**Context:** Consumed [[Next_Session_Prompt_CodeReview_Parallel_Sessions]] (the last Ready item from the parallel-session day). Fresh-eyes independent review of the merged gate work `b375f39..fee1fbe` (6 commits / +935−52 / 4 skills: tleap-build, cpptraj-analysis, plip-profile, mdin-edit). Hermes + graphify explicitly out of scope (vault-only / isolated-corner — no code). Two independent passes run in parallel: (1) a hands-on **empirical** pass by the runner, (2) a **24-agent adversarial workflow** (5 fresh reviewers → refute-pass per finding → synthesis).
+
+**Done (verdict = PASS; both passes converged):**
+- **0 HIGH, 0 MED, 4 findings refuted, 14 surviving — all LOW/INFO.** The three PASS-WITH-CONCERNS areas each had their MED concern *downgraded to LOW* under refutation. No correctness bug, no FATAL gate that can false-fire, no gate+test wrong-together.
+- **Highest-risk items empirically re-verified (not trusted):** CROSS_GAP — **0 `bond of` lines across 17 real leap.logs** (cannot false-fire), regex captures the genuine `4.084 Å` fixture, ignores `Close contact`, S-S `2.05 Å` < 3.0 Å bound; the fixture is byte-verbatim real teLeap output (parse-test decoupled from gate-test → defeats the `SYSTEM_NOT_NEUTRAL`-vacuous mode). SOLVENT_NOT_ADDED — water **1890–8290 across 47 real `comp_oct.top`** ≫ floor 100. mdin `needs_human` — `out.old` = original temp0, value2 read pre-edit, **halt (step 7b) precedes all writes (step 9)** = true all-or-nothing; flag guards block smuggling; no-op edge still halts; oracle canary flip matches the now-coherent vault demo (300/300). cpptraj GB-radii — confirmed **non-fatal** (never in `errors`), no ΔG perturbation, pure-`re`, py3.14-clean in isolation (mbondi2 last-paren trap handled). plip `--nohydro` — single-source constant splatted into argv.
+- **Suites green on a consistent interpreter:** tleap 72/72 (py3.11+3.14), cpptraj 60/60 (py3.11; engine test needs numpy → py3.14 module-load-blocked, env-only, new GB funcs pass py3.14 standalone), plip 61/61 (py3.11+3.14), mdin oracle 38/38 · mutation 14/14 · **fuzz 245522/0** (py3.11+3.14) · acceptance rc=0 (incl. new gate cases 5c–5k).
+- **No code edits** — clean review ⇒ no busywork (per the handoff's "Done ="). **project-prime UNCHANGED at `fee1fbe`** (test runs touched only gitignored scratch).
+
+**Pointers:** [[Next_Session_Prompt_CodeReview_Parallel_Sessions]] (`status: consumed`, full Outcome block) · LOW/INFO hardening banked → [[Next_Session_Prompt_GateHardening_Followups]] (Ready, non-blocking: `needs_human` mutation mutant · CROSS_GAP structural-or-canary + `\b` · committed real-format prmtop fixture + mbondi3 comment · plip "zero-regression" scope · mdin-params.md parser-scope wording · pin test interpreter) · [[Gap_Gate_Coverage]] (review-confirmed-no-false-fire + the gate-durability theme) · memory `project_prime_status`.
+
+---
+
 ## 2026-06-27 ~03:00 PDT — graphify trial → REJECT (concept-graph wrong for the proposer manual) · branch `graphify-reject-20260627` ✅
 
 **Context:** User asked to actually *test* graphify (not just the banked assessment) as a navigable-AMBER-manual backend for the future proposer-agent. Ran in an isolated non-git corner (`graphify-trial/`, py3.12 venv, `graphifyy[pdf]==0.8.49`, `gemini-3-flash-preview`, deep mode, ~$0.75 total). Recorded via worktree off `main` (concurrent Hermes session held its own branch).

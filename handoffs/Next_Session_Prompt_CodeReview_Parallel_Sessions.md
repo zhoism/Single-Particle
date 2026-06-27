@@ -1,9 +1,44 @@
 ---
 tags: [project-prime, code-review, quality-gate, session-handoff, parallel-sessions]
 type: handoff
-status: ready
+status: consumed
 created: 2026-06-27
 scope: review-only
+---
+
+## Outcome (2026-06-27) — **PASS**
+
+Done. Two independent passes — a hands-on empirical pass by the runner + a 24-agent adversarial
+review workflow (5 fresh-eyes reviewers → refute-pass per finding → synthesis) — **converged on
+PASS**. Zero HIGH, zero MED (the three PASS-WITH-CONCERNS areas each had their MED concern
+**downgraded to LOW** under refutation; 4 findings refuted outright); 14 surviving findings, all
+LOW/INFO. No correctness bug, no FATAL gate that can false-fire on legitimate production output, no
+gate+test wrong-together. **project-prime UNCHANGED** (`fee1fbe`) — clean review ⇒ no busywork edits.
+
+Highest-risk items, empirically re-verified (not trusted):
+- **CROSS_GAP (FATAL log-scrape):** 0 `bond of` lines across **17 real leap.logs** ⇒ cannot
+  false-fire; regex captures the genuine `4.084 Å` fixture, ignores the benign `Close contact` line;
+  S-S `2.05 Å` stays under the `3.0 Å` bound. Fixture is byte-verbatim real teLeap output (parse-test
+  decoupled from gate-test ⇒ defeats the `SYSTEM_NOT_NEUTRAL`-vacuous failure mode).
+- **SOLVENT_NOT_ADDED (FATAL):** water **1890–8290** across **47 real `comp_oct.top`** ≫ floor 100;
+  absent file ⇒ gate skips. No false-fire.
+- **mdin `needs_human`:** `out.old` = original `temp0`, `parsed_wt_temp0_value2` reads pre-edit
+  `value2`, halt (step 7b) precedes **all** writes (step 9) — true all-or-nothing; flag guards block
+  smuggling; no-op edge still halts; oracle canary flip matches the now-coherent vault demo (300/300).
+- **cpptraj GB-radii:** confirmed **non-fatal** (never enters `errors`), no ΔG/output perturbation;
+  pure-`re`, verified clean under py3.14 in isolation (mbondi2 last-paren trap handled).
+- **plip `--nohydro`:** single-source constant splatted into argv.
+
+Suites green on a consistent interpreter: tleap 72/72 (py3.11+3.14), cpptraj 60/60 (py3.11; engine
+test needs numpy so py3.14 is module-load-blocked — env-only, new GB funcs pass py3.14 standalone),
+plip 61/61 (py3.11+3.14), mdin oracle 38/38 · mutation 14/14 · **fuzz 245522/0** (py3.11+3.14) ·
+acceptance rc=0 (incl. the new gate cases 5c–5k).
+
+The LOW/INFO hardening items (synthetic-only fixtures; no `needs_human` mutation mutant; CROSS_GAP
+fails-open durability; a wrong mbondi3 comment; mdin-params.md parser-scope wording; plip
+"zero-regression" claim scope; test-infra hygiene) are banked, none blocking, in
+[[Next_Session_Prompt_GateHardening_Followups]] (Ready).
+
 ---
 
 # Next Session — Independent code review of the 2026-06-27 parallel-session code
