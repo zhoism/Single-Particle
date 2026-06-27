@@ -7,7 +7,7 @@ updated: 2026-06-27
 
 # Forward queue — status & priority dashboard
 
-> At-a-glance view of every open handoff / future-work / gap, so we always know **what's next**. The per-file `status:` frontmatter is the **source of truth**; `README.md` has the richer per-item annotations; this is the compact dashboard. Snapshot **2026-06-27** (vault `ee198b9`, project-prime `fee1fbe`, both clean + pushed). The 3 concurrent 2026-06-27 sessions (Hermes-eval · AMBER-gate-encoding · mdin-coherence-fix) all **merged + consumed**; worktrees/branches cleaned both repos.
+> At-a-glance view of every open handoff / future-work / gap, so we always know **what's next**. The per-file `status:` frontmatter is the **source of truth**; `README.md` has the richer per-item annotations; this is the compact dashboard. Snapshot **2026-06-27** (project-prime `fee1fbe`, both clean + pushed). The 3 concurrent 2026-06-27 sessions (Hermes-eval · AMBER-gate-encoding · mdin-coherence-fix) plus the graphify trial and the parallel-session code review all **merged + consumed**; the **6 consumed handoff files were removed from this folder 2026-06-27** (Outcome record retained in the Consumed section below + memory + `Dev_Log.md`).
 
 ## ⭐ Priority queue (set the order here)
 
@@ -20,9 +20,9 @@ updated: 2026-06-27
 | 3 | **mdin_edit_Whitelist** | Incremental capability (more editable params). |
 | — | *candidates (4–8)* | Decision-gated — promote when you decide to start one (see below). |
 
-*Newly Ready — **slot into the order where you want**: **GB_Radii_Fix** (apply the `mbondi2` fix + re-baseline ΔG + flip the GB-radii detector fatal; gates' deferred 4th-P1 follow-up) · **CodeReview_Parallel_Sessions** (independent 2nd-pass review of the 2026-06-27 code before clearing). Order above is the prior seed minus the items consumed today — re-rank as you like.*
+*Newly Ready — **slot into the order where you want**: **GB_Radii_Fix** (apply the `mbondi2` fix + re-baseline ΔG + flip the GB-radii detector fatal; gates' deferred 4th-P1 follow-up) · **GateHardening_Followups** (non-blocking durability/test-quality nits from the 2026-06-27 code review — PASS, no blockers). Order above is the prior seed minus the items consumed today — re-rank as you like.*
 
-*(Consumed 2026-06-27 → see Consumed below: HermesAgent_Eval, AMBER_Gate_Encoding, mdin_edit_CoherenceFix.)*
+*(Consumed 2026-06-27 → see Consumed below: HermesAgent_Eval, AMBER_Gate_Encoding, mdin_edit_CoherenceFix, Graphify_ReferenceCorpus, CodeReview_Parallel_Sessions.)*
 
 ## 🟢 Ready — paste-and-go
 
@@ -31,7 +31,7 @@ updated: 2026-06-27
 | **ntx_irest_CoherenceGate** | Encode the `ntx`↔`irest` restart-coherence gate (real verifier hole) | `ready` |
 | **GB_Radii_Fix** | Apply the `mbondi2` fix + re-baseline ΔG, then flip the GB-radii detector fatal | `ready` |
 | **mdin_edit_Whitelist** | Expand mdin-edit's editable-parameter set | `ready` |
-| **CodeReview_Parallel_Sessions** | Independent 2nd-pass review of the 2026-06-27 code-heavy work (project-prime `b375f39..fee1fbe`, 4 skills) | `ready` |
+| **GateHardening_Followups** | Non-blocking durability/test-quality/doc nits from the 2026-06-27 code review (6 small test-first tasks; tasks 1–3 carry the value) | `ready` |
 
 ## 🟡 Candidate — needs a "go" / approach decision first
 
@@ -61,10 +61,11 @@ updated: 2026-06-27
 
 ✅ The three concurrent 2026-06-27 sessions (Hermes-eval · AMBER-gate-encoding · mdin-coherence-fix) all **merged to `main` + cleaned up** (worktrees removed, branches deleted in both repos). The live collision map is retired. The reusable principle for the next parallel burst: sessions clash if they share **files** (stage explicit paths; isolate worktrees), **runtime** (one OpenClaw gateway / one toolchain runner), or **vault/memory** (Dev_Log/MAP/Gap are git-mergeable — stack newest-first; `MEMORY.md`/`project_prime_status.md` are outside git → serialize, re-read before edit).
 
-## ✔ Consumed (done, for the record)
+## ✔ Consumed (done, for the record — the 6 handoff files were removed from this folder 2026-06-27; the record below + memory + `Dev_Log.md` are now canonical)
 
 - **AMBER_FailureMode_Sweep** — produced `Research_AMBER_Failure_Modes` + `Gap_Gate_Coverage` (the gate backlog above).
 - **HermesAgent_Eval** (2026-06-27) — evaluated → **declined** (research only, no migration). Produced [[Research_Hermes_Agent]]; engine room stays frozen; the one thesis-compatible coupling (a gated recovery *proposer*) folds into **Proposer_Agent** + `Gap_Gate_Coverage`.
 - **AMBER_Gate_Encoding** (2026-06-27) — all **4 P1 gates encoded** (project-prime `f188b79`/`7582194`, merged `origin/main`): `SOLVENT_NOT_ADDED` + `CROSS_GAP_SPURIOUS_BOND` (tleap-build, FATAL) + PLIP `--nohydro` guard + non-fatal `GB_RADII_IGB_MISMATCH` detector. The detector's actual fix → newly-Ready **GB_Radii_Fix**.
 - **mdin_edit_CoherenceFix** (2026-06-27) — flipped the stale heat-3 ground-truth canary (+ fixed an exposed py3.11 harness break) + added the `needs_human` coherence gate (`--couple`/`--keep-value2`, value2-only). Green py3.11+3.14; merged `origin/main` (project-prime `be656a4`). Parser-scope follow-up banked in [[Gap_Gate_Coverage]].
 - **Graphify_ReferenceCorpus** (2026-06-27) — graphify **TRIALED** as a navigable-Amber-manual backend for the future proposer → **REJECTED**: software-centric ontology has zero parameter-level concepts (dt/ntt/igb/mbondi absent) → baseline lookup wins; pairwise edges ~60% hallucinated / ~20% fabricated. Confirms precise-lookup > concept-graph, with evidence. [[Research_graphify]] (trial-rejected); memory `graphify-assessment`.
+- **CodeReview_Parallel_Sessions** (2026-06-27) — independent 2nd-pass review of the 2026-06-27 gate code (project-prime `b375f39..fee1fbe`, 4 skills) → **PASS** (0 HIGH/MED, 14 LOW/INFO; project-prime UNCHANGED). LOW/INFO hardening banked → newly-Ready **GateHardening_Followups**.

@@ -9,6 +9,22 @@ type: log
 
 ---
 
+## 2026-06-27 ~05:00 PDT — handoffs/ housekeeping: removed the 6 consumed handoff files + reconciled both dashboards 🧹
+
+**Context:** Rundown-of-what's-next pass over `handoffs/`. Per-file `status:` frontmatter audited as source of truth → 4 `ready`, 5 `candidate`, 6 `consumed`/done. User directive: completed tasks should be **removed** from the folder (superseding the old "keep consumed for the record" convention — the Outcome record is preserved in the dashboards + memory + Research/Gap notes).
+
+**Done:**
+- **Removed 6 consumed handoff files** (`git rm`): `AMBER_FailureMode_Sweep`, `AMBER_Gate_Encoding`, `CodeReview_Parallel_Sessions`, `Graphify_ReferenceCorpus`, `HermesAgent_Eval`, `mdin_edit_CoherenceFix`.
+- **`README.md`** — rewrote the Consumed section as an outcome record with the removed-file self-links de-linked (cross-links to still-existing Research/Gap notes kept).
+- **`STATUS.md`** (was stale) — reconciled: dropped consumed `CodeReview_Parallel_Sessions` from the Ready table and added `GateHardening_Followups`; updated the Newly-Ready note + the Consumed section (added Graphify + CodeReview rows); refreshed the snapshot line.
+- **Left historical/provenance `[[wikilinks]]`** to the removed files intact across 13 notes (Dev_Log append-only, Research/Gap/MAP, live handoffs) — they record descent/consumption; unresolved-in-Obsidian is acceptable and de-linking would lose provenance. Flagged to the user as the one judgment call.
+
+**Forward queue after this pass:** Ready (4) = `ntx_irest_CoherenceGate` · `GB_Radii_Fix` · `mdin_edit_Whitelist` · `GateHardening_Followups`. Candidate (5) = `RunOutput_Convention` · `mdin_edit_Arbitrary_Shapes` · `Run_Confirmation_Gate` · `Proposer_Agent` · `Headroom_ContextCompression`. Big open: `Gap_Remote_HPC_Backend` (externally blocked).
+
+**Pointers:** [[STATUS]] (dashboard) · [[README]] (handoffs index) · project-prime UNCHANGED (`fee1fbe`).
+
+---
+
 ## 2026-06-27 ~04:00 PDT — independent 2nd-pass code review of the 2026-06-27 gate code → **PASS** (project-prime UNCHANGED) ✅
 
 **Context:** Consumed [[Next_Session_Prompt_CodeReview_Parallel_Sessions]] (the last Ready item from the parallel-session day). Fresh-eyes independent review of the merged gate work `b375f39..fee1fbe` (6 commits / +935−52 / 4 skills: tleap-build, cpptraj-analysis, plip-profile, mdin-edit). Hermes + graphify explicitly out of scope (vault-only / isolated-corner — no code). Two independent passes run in parallel: (1) a hands-on **empirical** pass by the runner, (2) a **24-agent adversarial workflow** (5 fresh reviewers → refute-pass per finding → synthesis).
