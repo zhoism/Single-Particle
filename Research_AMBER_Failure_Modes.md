@@ -1,8 +1,9 @@
 ---
 tags: [project-prime, amber, gates, failure-modes, research, gap]
 type: research
-status: survey-complete
+status: p1-encoded
 created: 2026-06-19
+updated: 2026-06-27
 ---
 
 ✅ **Source-cited survey** (Amber26 manual + AMBER mailing-list archives + the upstream 66-skill library + the live wrapper code). Produced 2026-06-19 by the systematic failure-mode sweep called for in [[Next_Session_Prompt_AMBER_FailureMode_Sweep]]. This is the **first systematic** dive into AMBER's documented footguns — the prior gate set was reactive (textbook `check_amber` limits + the handful we crashed into). **Honest scope:** this surveys *known* failure modes per pipeline stage and turns them into a reviewed, prioritized **candidate-gate backlog**. It does **not** claim completeness, and (per the discipline) **no gates were encoded** — every candidate is `inferred` until it clears proxy-invariant + oracle-test + adversarial-review + commit ([[Eval_Criteria]]). Method: 5 per-stage finders (38 candidates) → adversarial verifiers → 15 kept (P1=4 / P2=7 / P3=4), 23 dropped.
@@ -37,7 +38,15 @@ The sweep first inventoried the ~80 existing deterministic gates (in `check_ambe
 
 Priority = (silent > loud) × likelihood × cheap-to-check. **P1 = silent AND likely AND cheap.** Every candidate was adversarially checked for *would-it-actually-fire / false-alarm / vacuous* before being kept.
 
-### P1 — encode first (each still pending the full discipline)
+### P1 — ✅ ALL 4 ENCODED 2026-06-27
+
+> **Status: all four P1 candidates encoded, tested, adversarially-reviewed (all SOUND), committed + pushed** to project-prime `main` (`f188b79` tleap-build SOLVENT_NOT_ADDED + CROSS_GAP_SPURIOUS_BOND & plip-profile `--nohydro`; `7582194` cpptraj-analysis GB_RADII_IGB_MISMATCH). Each cleared the full [[Eval_Criteria]] discipline (proxy invariant → oracle/regression test → adversarial review → commit + push). Per-candidate outcome:
+> 1. **GB radii ↔ igb** → encoded as a **NON-FATAL detector** (`GB_RADII_IGB_MISMATCH` in `validation.gb_radii` + the mmgbsa note; `MMGBSA_IGB` is the single source of truth for the igb written to `mmgbsa.in` AND the check; helpers `prmtop_radius_set` / `gb_radii_check`). **Decision 2026-06-27 (user):** a *fatal* gate would redden every GREEN MM-GBSA run and the proper mbondi2 fix shifts the reported ΔG → the fix is **DEFERRED** to [[Next_Session_Prompt_GB_Radii_Fix]] (flip-to-fatal is a one-line wire-in once the fix lands). Verified: oracle 60/60 (conda py3.11; helpers stdlib-portable under py3.14) + 78/78 real-prmtop regression + a real MMPBSA run stays `ok:true` with ΔG −18.16 **unchanged** (the detector is purely additive).
+> 2. **SOLVENT_NOT_ADDED** → encoded **FATAL** (structural WAT-count ≥ 100 from the comp_oct RESIDUE_LABEL; the brittle log-regex half dropped per the SYSTEM_NOT_NEUTRAL lesson). 0 false-fire / 47 real prmtops (min water 1890).
+> 3. **CROSS_GAP_SPURIOUS_BOND** → encoded **FATAL** (`bond of N angstroms` > 3.0 Å). Ground-truthed by **inducing a REAL un-TER'd gap** (teLeap emitted "There is a bond of 4.084 angstroms between C and N atoms:") and committed as a real `.txt` fixture so the gate+test can't be wrong together (the SYSTEM_NOT_NEUTRAL failure class).
+> 4. **PLIP `--nohydro`** → encoded (added to the argv via `PLIP_REQUIRED_FLAGS` + a guard; dry-run plan exposes the flags). Determinism hardening: WITH vs WITHOUT gives *identical* interaction counts on the real 1L2Y + 3HTB frames → zero result regression, while removing OpenBabel re-protonation non-determinism.
+>
+> One adversarial NIT (the `(N)`-aside in the `mbondi2` RADIUS_SET string) was caught by the GB-radii oracle and fixed (parse the LAST parenthetical). The original backlog table below is preserved as the source proposal.
 
 | # | Failure mode | Stage / skill | Silent? | Proposed proxy invariant | Note from adversarial review |
 |---|---|---|---|---|---|

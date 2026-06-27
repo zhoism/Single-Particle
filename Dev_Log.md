@@ -9,6 +9,24 @@ type: log
 
 ---
 
+## 2026-06-27 — AMBER P1 failure-mode gates ENCODED (4/4) ✅
+
+**Context:** Consumed [[Next_Session_Prompt_AMBER_Gate_Encoding]] — turned the 4 P1 candidates from the failure-mode sweep ([[Research_AMBER_Failure_Modes]]) into real, tested, committed deterministic gates. Parallel session → isolated in git worktrees (code + vault).
+
+**Done (project-prime `main` `f188b79` + `7582194`, pushed):**
+- **SOLVENT_NOT_ADDED** (tleap-build, FATAL) — structural WAT-count ≥100 from comp_oct RESIDUE_LABEL; 0 false-fire / 47 real prmtops (min 1890).
+- **CROSS_GAP_SPURIOUS_BOND** (tleap-build, FATAL) — `bond of N angstroms` > 3.0 Å; ground-truthed by inducing a REAL un-TER'd gap (teLeap "bond of 4.084 angstroms") → committed `.txt` fixture so the gate+test can't be wrong together.
+- **PLIP `--nohydro`** (plip-profile) — added to the argv via `PLIP_REQUIRED_FLAGS` + a guard; determinism hardening, identical WITH/WITHOUT counts on the real 1L2Y + 3HTB frames (zero result regression).
+- **GB-radii ↔ igb** (cpptraj-analysis) — **NON-FATAL detector** `GB_RADII_IGB_MISMATCH` (user decision: a fatal gate would redden every run + the mbondi2 fix shifts ΔG → fix **DEFERRED** to [[Next_Session_Prompt_GB_Radii_Fix]]). Real MMPBSA run stays `ok:true`, ΔG −18.16 unchanged.
+
+**Verification:** oracle 72/72 (tleap) + 56/56 (plip) under py3.11 & py3.14; 60/60 (cpptraj) py3.11 (helpers stdlib-portable under py3.14); real-artifact regressions clean (47 prmtops / 17 logs / 78 cp·rp·lp); two independent adversarial reviews → both **SOUND** (one NIT fixed: parse the LAST RADIUS_SET parenthetical, dodging the mbondi2 `(N)` aside).
+
+**Records:** [[Research_AMBER_Failure_Modes]] `status: p1-encoded`, [[Gap_Gate_Coverage]] updated, [[Next_Session_Prompt_AMBER_Gate_Encoding]] → consumed, new [[Next_Session_Prompt_GB_Radii_Fix]] banked. Memory: [[project-prime-status]].
+
+**Next:** GB-radii fix + ΔG re-baseline + flip-to-fatal ([[Next_Session_Prompt_GB_Radii_Fix]]); the P2/P3 gate backlog (11) remains.
+
+---
+
 ## 2026-06-27 — Run-confirmation gate sharpened (Level 2 + TTY) + forward-queue priority dashboard ✅
 
 **Context:** Continued the [[Future_Work_Run_Confirmation_Gate]] discussion, asked "what did we ship that already addresses the advisor, and how does that differ in scope?", asked to *see* what a preview looks like, and asked for a status/priority dashboard in `handoffs/`. Vault-only; no code touched.

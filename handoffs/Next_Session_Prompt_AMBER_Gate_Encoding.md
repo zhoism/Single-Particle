@@ -1,8 +1,9 @@
 ---
 tags: [project-prime, openclaw, amber, gates, failure-modes, session-handoff, encoding]
 type: handoff
-status: ready
+status: consumed
 created: 2026-06-19
+consumed: 2026-06-27
 ---
 
 # Next Session Starter — Encode the AMBER failure-mode gates (P1 backlog)
@@ -68,6 +69,17 @@ Scope-fence: encode at most the 4 P1s, fully disciplined, committed + pushed. Do
 
 1. Flip `status: ready` → `status: consumed`.
 2. Add an `## Outcome` footer: how many P1s encoded, commits/pushes, any that hit STOP-and-surface (GB-radii recipe), any new shipping defect found, links to the updated [[Research_AMBER_Failure_Modes]] + [[Dev_Log]].
+
+## Outcome (2026-06-27)
+
+**All 4 P1s handled** — each cleared the full discipline (proxy invariant → oracle/regression → adversarial review SOUND → commit + push). Pushed to project-prime `main` (`f188b79` + `7582194`); isolated in a git worktree (parallel session).
+
+- **SOLVENT_NOT_ADDED** (tleap-build, FATAL) — structural WAT-count ≥100 from comp_oct RESIDUE_LABEL; 0 false-fire / 47 real prmtops.
+- **CROSS_GAP_SPURIOUS_BOND** (tleap-build, FATAL) — `bond of N angstroms` > 3.0 Å; **ground-truthed by inducing a REAL un-TER'd gap** (teLeap "bond of 4.084 angstroms"), committed as a real fixture.
+- **PLIP `--nohydro`** (plip-profile) — argv flag + guard; determinism hardening, identical WITH/WITHOUT counts on real frames (zero result regression).
+- **GB-radii ↔ igb** — **STOP-and-surfaced as planned.** User chose a **NON-FATAL detector now, defer the fix**: `GB_RADII_IGB_MISMATCH` finding (non-fatal), with the mbondi2 fix + ΔG re-baseline banked to [[Next_Session_Prompt_GB_Radii_Fix]] (flip-to-fatal = one line). Real MMPBSA run stays `ok:true`, ΔG −18.16 unchanged.
+
+No new shipping defect found (the `SYSTEM_NOT_NEUTRAL` repair from the sweep was the only one; it held). Verification: oracle 72/72 (tleap) + 56/56 (plip) under py3.11 + py3.14; 60/60 (cpptraj) under py3.11; real-artifact regressions clean. Records updated: [[Research_AMBER_Failure_Modes]] (`status: p1-encoded`), [[Gap_Gate_Coverage]], [[Dev_Log]].
 
 ## Cross-links
 
