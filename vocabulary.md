@@ -28,6 +28,7 @@ This list is *adopted selectively* from the "Knowledge Network" CLAUDE.md patter
 - **approval gates** — human-in-the-loop checkpoints in the Lobster engine.
 - **llm-task** — OpenClaw's LLM-reasoning task primitive.
 - **MetaClaw / OpenClaw-RL** — the self-evolution / RL direction. Tier ⚪ aspirational, out of report scope. Canonical: [[OpenClaw_Self_Evolution]].
+- **Hermes Agent** — Nous Research's open-source "OpenClaw alternative" (MIT, 2026-02-25) whose *headline* feature is self-evolution (agent rewrites its own `SKILL.md` skills at runtime). A *substrate peer* of OpenClaw, not an MD technique. Evaluated + declined 2026-06-27. Canonical: [[Research_Hermes_Agent]]. Two positioning axes it sharpened — **self-mutation** and **execution-mediation** — live in [[Design_Determinism_Spectrum]].
 - **Taskboard Manifest** — the lazy-loaded, stage-validated planning spec. A planner-agent design idea (plan-and-execute pattern), not OpenClaw-novel. Canonical: [[Arch_Taskboard_Manifest]].
 - **decoupled hybrid agent** — the architecture: LLM reasoning separated from domain execution. Three layers: **planning**, **deterministic execution**, **HPC grounding**.
 

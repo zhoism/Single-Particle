@@ -1,8 +1,9 @@
 ---
 tags: [project-prime, openclaw, hermes-agent, session-handoff, research, evaluation, competitive-landscape]
 type: handoff
-status: ready
+status: consumed
 created: 2026-06-11
+consumed: 2026-06-27
 ---
 
 # Next Session Starter — Hermes Agent: Research & Genuine Evaluation
@@ -96,3 +97,15 @@ Scope-fence: RESEARCH + EVALUATION of Hermes Agent ONLY. Do NOT migrate, port, i
 - [[Eval_Criteria]] — the verdict discipline (deterministic-where-possible → adversarial pass → honest verdict).
 - memories: [[project-prime-status]], [[multi-agent-scope]], [[feedback-verify-and-eval]], [[openclaw-canonical-paths]].
 - (No Dev_Log entry was written for the 2026-06-11 exploratory tangent that seeded this — the framing lives entirely in this handoff.)
+
+## Outcome
+
+**Consumed 2026-06-27.** Evaluation ran exactly as scoped (research only; project-prime untouched). Pre-run gate (user): start-focused-escalate + produce both Hermes-specific and durable category-level verdict.
+
+- **Verdict, per coupling mode:** Gateway/multi-channel front-end **REJECT-FOR-NOW** · Front door (local launch-turn model + memory) **REJECT-FOR-NOW** · Engine room (self-evolving loop on wrappers) **REJECT (by design)** · Proposer-for-recovery **ALIGNED-WITH-CONCERNS (low priority)**.
+- **Load-bearing finding (primary-source):** the autonomous self-improvement loop edits **`SKILL.md` Markdown definitions, not executable code**; literal code-evolution is a separate, offline, user-invoked, *not-yet-implemented* Phase-4 add-on. Second axis surfaced by the adversarial pass: Hermes' **default execution is LLM-mediated**, not frozen-wrapper.
+- **The preliminary "front door = plausibly yes" did NOT hold:** the vault's own record deflated it — local-LLM was already dropped 2026-05-20 (Mac headroom), and the 429/503 pain it targeted was already fixed by the paid Google key. Revives only under a remote/GPU backend ([[Gap_Remote_HPC_Backend]]).
+- **Vault note created:** [[Research_Hermes_Agent]] (source-cited). Datapoint + the self-mutation/execution-mediation 2-axis refinement added to [[Design_Determinism_Spectrum]]; `vocabulary.md` "Hermes Agent" entry added.
+- **Competitive-landscape row: DECLINED with reason** — Hermes is a substrate peer of OpenClaw (attacks no MD bottleneck; OpenClaw itself isn't in the matrix). Value is positioning-contrast on the determinism spectrum, not a competitor row.
+- **No follow-on spike triggered:** the stop-condition (loop is boundary-only AND local-LLM real → surface a front-door spike) did *not* fire, because local-LLM is hardware-blocked on the current box and the 429 motivation is already resolved. The Mode-4 proposer idea folds into the existing [[Future_Work_Proposer_Agent]] + [[Gap_Gate_Coverage]], not a new handoff.
+- **Records:** [[Dev_Log]] 2026-06-27 entry; memory `project_prime_status` marker + `MEMORY.md` pointer.

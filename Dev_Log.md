@@ -9,6 +9,24 @@ type: log
 
 ---
 
+<!-- ▼ MERGE NOTE — independent Dev_Log entry from branch `hermes-eval-20260627` (stamped 2026-06-27 01:50 PDT). Three concurrent 2026-06-27 sessions (this · `gates-encoding-20260627` · `mdin-coherence-fix`) each prepend here, so a conflict in THIS top region is EXPECTED and benign. Resolution = keep ALL session blocks, newest-first; this block has NO textual overlap with the other two. Delete this comment post-merge. -->
+## 2026-06-27 01:50 PDT — Hermes Agent evaluated → declined (frozen core holds) · branch `hermes-eval-20260627` ✅
+
+**Context:** Consumed `handoffs/Next_Session_Prompt_HermesAgent_Eval.md` (forward-queue item 2). RESEARCH + EVALUATION only — no migration, no `project-prime/` touch. Pre-run gate (user): *start-focused-escalate* + *produce both Hermes-specific AND durable category-level verdict*. Followed [[Eval_Criteria]] (primary sources → adversarial pass → honest verdict); matched [[Research_El_Agente_Q]] format.
+
+**Done (vault-only; project-prime UNCHANGED):**
+- **Verified the claims from primary sources** (GitHub repos + agentskills.io + docs; no deep-research escalation needed — sources convergent). Load-bearing finding: **the self-improving loop edits `SKILL.md` Markdown definitions, NOT executable code** (`skill_manage` patch/edit; "on-demand knowledge documents"). Literal code-evolution is a *separate, offline, user-invoked, not-yet-implemented Phase 4* in the add-on `hermes-agent-self-evolution` repo (8 commits). Second axis surfaced: Hermes' **default execution is LLM-mediated** (LLM reads prose, calls tools itself), not frozen-wrapper. Local-LLM real (LM Studio first-class); subagents/MCP/16-channel/Honcho/FTS5 verified; "Hermes Function-Calling standard" + star-counts = vendor-only.
+- **Adversarial skeptic pass** (Eval_Criteria step 4) materially improved it: added a **4th coupling mode** (pure gateway), reframed engine-room risk as *redundant-OR-anti-thesis (opt-in)* not intrinsic hazard, flagged **gates-guard-physics-not-intent**, and *upgraded* the proposer coupling (the [[Gap_Gate_Coverage]] 15-gate backlog = real un-enumerated surface). Vault-record check deflated the front door: **local-LLM already dropped 2026-05-20** (Mac headroom; `vocabulary.md`) + **429 pain already fixed** by the paid key — so the handoff's "front door = plausibly yes" no longer holds.
+- **Verdict banked:** Gateway/Front-door **REJECT-FOR-NOW** · Engine-room **REJECT (by design)** · Proposer-for-recovery **ALIGNED-WITH-CONCERNS (low priority)**. Durable category rule: boundary tolerates LLM flexibility; engine room stays frozen+gated regardless of self-evolution quality; learning may *inform* a gated proposer, never *authorize*.
+- **Artifacts:** new [[Research_Hermes_Agent]] (source-cited); datapoint + 2-axis refinement pointer added to [[Design_Determinism_Spectrum]]; `vocabulary.md` "Hermes Agent" entry. **Landscape row DECLINED with reason** — Hermes is a substrate peer of OpenClaw (attacks no MD bottleneck; OpenClaw itself isn't in the matrix), so its value is positioning-contrast, not a competitor row.
+
+**Sync:** handoff flipped `ready`→`consumed` + Outcome footer; [[STATUS]] + `handoffs/README` updated; memory (`project_prime_status` marker + `MEMORY.md` pointer). MAP updated (Hermes moved forward-queue → ✅ Done). project-prime untouched.
+
+**Next:** forward queue now → (1) [[Gap_Remote_HPC_Backend]] · (3) AMBER failure-mode gate backlog · (4) proposer-agent (Hermes Mode-4 folds in here). Safe-to-parallelize unchanged.
+<!-- ▲ END Dev_Log entry · branch `hermes-eval-20260627` -->
+
+---
+
 ## 2026-06-27 — Run-confirmation gate sharpened (Level 2 + TTY) + forward-queue priority dashboard ✅
 
 **Context:** Continued the [[Future_Work_Run_Confirmation_Gate]] discussion, asked "what did we ship that already addresses the advisor, and how does that differ in scope?", asked to *see* what a preview looks like, and asked for a status/priority dashboard in `handoffs/`. Vault-only; no code touched.
