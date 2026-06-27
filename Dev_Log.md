@@ -9,7 +9,9 @@ type: log
 
 ---
 
-## 2026-06-27 (cont.) — mdin-edit coherence fix + needs_human gate ✅
+## 2026-06-27 (cont.) — mdin-edit coherence fix + needs_human gate ✅  ·  branch `mdin-coherence-fix`
+
+> 🔀 **Merge note (for the merge_runner — safe to delete after merge):** this entry was authored in a **parallel `git worktree`** (vault branch `mdin-coherence-fix`), concurrent with the same-day **Hermes-Agent** entry (branch `hermes-eval-20260627`). Both branches prepend a `2026-06-27` block at the top of this file, so a 3-way merge will conflict **here only**. **Resolution = keep BOTH blocks** (this `mdin-edit` one + the `Hermes Agent → declined` one); relative order is immaterial — both belong directly above the earlier `2026-06-27 — Run-confirmation gate` entry. No other lines in my branch overlap the Hermes branch.
 
 **Context:** Executed [[Next_Session_Prompt_mdin_edit_CoherenceFix]] (warm #1 on [[STATUS]]). Two phases / two commits, isolated in a project-prime + vault `git worktree` (parallel session active). The advisor's heat-3 `value2=310` typo was resolved 2026-06-26 (demo coherent 300/300), but mdin-edit's suite was still RED — `tests/oracle.py:_verify_ground_truth` asserted heat-3 must stay MISMATCHED, crashing fuzz+mutation at import.
 
