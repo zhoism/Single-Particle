@@ -51,6 +51,18 @@ Don't ask whether to record it — just do it (extends [[feedback-autonomous-vau
 
 **Commit → review → push** (scope: **both** this vault and the sibling `../project-prime/`, both private + solo so push is low-stakes and reversible): commit a completed result, then **review each commit independently before pushing it** — `/code-review` for the code repo; a frontmatter/`[[wikilink]]`/date/contradiction consistency pass for the vault — then push (`git push` is wired to prompt; that prompt is the review-gate moment). A deterministic user-scope **`Stop`-hook backstop** (`~/.claude/helpers/hook-handler.cjs`) nudges (once per stop attempt) if a session ends with uncommitted or unpushed work in either repo — or, in the vault, a commit lacking a `Dev_Log` entry — it can't write the updates, only catch the omission.
 
+## Concurrent sessions & the working tree
+
+Default (solo): work directly on `main` in this checkout — edit, commit, push. No worktree.
+
+When a second session may touch the **same repo at the same time**, isolate to avoid clobbering:
+- Each concurrent session works in its own `git worktree` on its own branch (`git worktree add ../<repo>-<tag> -b <tag>`), commits there, and merges to `main` when done. Applies **per-repo** (this vault and `../project-prime/` independently).
+- In a **shared** checkout (no worktree) never run repo-wide or destructive git: stage explicit files (`git add <path>`, **never** `git add -A`); never `git restore` / `checkout --` / `reset --hard` while another session may hold uncommitted work — it permanently deletes their edits.
+
+**Self-check:** if the working tree changes in ways *this* session didn't cause (new files, a commit you didn't make), assume a concurrent session — stop sweeping, reconcile or isolate before committing.
+
+Caveat: worktrees are clean for vault notes and for *editing* `project-prime` code; a parallel pipeline **run** from a `project-prime` worktree may still load skills from the canonical checkout (the OpenClaw gateway / `extraDirs` point there). For concurrent *execution*, keep one session as the runner.
+
 ## Architectural Big Picture
 
 The system is a **decoupled hybrid agent**: LLM reasoning is deliberately separated from domain execution to avoid hallucination in mission-critical chemistry steps. Three layers stack on top of each other:
