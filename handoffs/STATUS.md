@@ -7,7 +7,7 @@ updated: 2026-06-27
 
 # Forward queue — status & priority dashboard
 
-> At-a-glance view of every open handoff / future-work / gap, so we always know **what's next**. The per-file `status:` frontmatter is the **source of truth**; `README.md` has the richer per-item annotations; this is the compact dashboard. Snapshot **2026-06-27** (vault `f85ba57`, project-prime `b375f39`, both clean + pushed).
+> At-a-glance view of every open handoff / future-work / gap, so we always know **what's next**. The per-file `status:` frontmatter is the **source of truth**; `README.md` has the richer per-item annotations; this is the compact dashboard. Snapshot **2026-06-27** (vault `ee198b9`, project-prime `fee1fbe`, both clean + pushed). The 3 concurrent 2026-06-27 sessions (Hermes-eval · AMBER-gate-encoding · mdin-coherence-fix) all **merged + consumed**; worktrees/branches cleaned both repos.
 
 ## ⭐ Priority queue (set the order here)
 
@@ -15,22 +15,21 @@ updated: 2026-06-27
 
 | Order | Item | Why here |
 |---|---|---|
-| 1 | **mdin_edit_CoherenceFix** | Small, self-contained, unblocks the 1 broken test + adds `needs_human`; you're warm on it. |
-| 2 | **AMBER_Gate_Encoding** | Highest-value remaining *hardening* — burns down `Gap_Gate_Coverage`. |
-| 3 | **ntx_irest_CoherenceGate** | One gate in #2's family; could fold into #2. |
-| 4 | **RunOutput_Convention** | Cheap hygiene — stops recurring git-noise; needs one verifying re-run. |
-| 5 | **mdin_edit_Whitelist** | Incremental capability (more editable params). |
-| — | *candidates (6–10)* | Decision-gated — promote when you decide to start one (see below). |
+| 1 | **ntx_irest_CoherenceGate** | Real verifier hole; one gate in the `Gap_Gate_Coverage` family (the P1 batch already landed). |
+| 2 | **RunOutput_Convention** | Cheap hygiene — stops recurring git-noise; needs one verifying re-run. |
+| 3 | **mdin_edit_Whitelist** | Incremental capability (more editable params). |
+| — | *candidates (4–8)* | Decision-gated — promote when you decide to start one (see below). |
 
-*(HermesAgent_Eval consumed 2026-06-27 → declined; see Consumed below.)*
+*Newly Ready — **slot into the order where you want**: **GB_Radii_Fix** (apply the `mbondi2` fix + re-baseline ΔG + flip the GB-radii detector fatal; gates' deferred 4th-P1 follow-up). Order above is the prior seed minus the two items consumed today — re-rank as you like.*
+
+*(Consumed 2026-06-27 → see Consumed below: HermesAgent_Eval, AMBER_Gate_Encoding, mdin_edit_CoherenceFix.)*
 
 ## 🟢 Ready — paste-and-go
 
 | Handoff | What | Status |
 |---|---|---|
-| **mdin_edit_CoherenceFix** | Fix the 1 oracle drift-guard + add `needs_human` confirm | `ready` |
-| **AMBER_Gate_Encoding** | Encode the 4 P1 failure-mode gates into the skills | `ready` |
 | **ntx_irest_CoherenceGate** | Encode the `ntx`↔`irest` restart-coherence gate (real verifier hole) | `ready` |
+| **GB_Radii_Fix** | Apply the `mbondi2` fix + re-baseline ΔG, then flip the GB-radii detector fatal | `ready` |
 | **mdin_edit_Whitelist** | Expand mdin-edit's editable-parameter set | `ready` |
 
 ## 🟡 Candidate — needs a "go" / approach decision first
@@ -54,30 +53,17 @@ updated: 2026-06-27
 
 ## Dependencies / sequencing
 
-- **CoherenceFix (#1) → Arbitrary_Shapes** (coherence fix before arbitrary shapes).
-- **AMBER_Gate_Encoding & ntx_irest both draw from Gap_Gate_Coverage**; ntx_irest is one gate in that family — foldable into the gate-encoding session.
+- **Arbitrary_Shapes** follows the now-landed **CoherenceFix** (consumed 2026-06-27).
+- **ntx_irest & GB_Radii_Fix draw from Gap_Gate_Coverage** — the P1 batch landed 2026-06-27 (`AMBER_Gate_Encoding` consumed); these two are the remaining gate work.
 - **Gap_Remote_HPC** is externally blocked — priority can't make it happen.
 
-## 🔀 Concurrency — parallel-safe map (while mdin-edit work is in flight; 2026-06-27)
+## 🔀 Concurrency — parallel-safe map (RETIRED 2026-06-27)
 
-Two sessions clash if they share any of **three axes**:
-- **A · Files** — same files/dir → staging/merge clash. The **mdin-edit cluster** (CoherenceFix, ntx_irest's vendored `check_amber`, Whitelist, Arbitrary_Shapes) all collide with each other.
-- **B · Shared runtime** — ONE OpenClaw gateway + one local toolchain/CPU. Keep a single runner for any `openclaw agent` / pmemd / pipeline run; do NOT reconfigure/restart the gateway mid-run.
-- **C · Shared vault/memory** — Dev_Log/MAP/Gap notes are git-mergeable; memory (`MEMORY.md`, `project_prime_status.md`) is outside git → serialize, re-read before edit. Applies to EVERY parallel session.
-
-Verdict **vs. a running CoherenceFix** (which owns `skills/mdin-edit/`):
-
-| Handoff | A · files | B · runtime | Parallel now? |
-|---|---|---|---|
-| **AMBER_Gate_Encoding** | none (tleap/cpptraj/plip) | light (oracle tests) | ✅ yes (worktree) |
-| **Graphify_ReferenceCorpus** | none (eval/corpus; never edits vault notes) | none | ✅ safe — but decision-gated (Q1–Q4 first; lean steer-away) |
-| **RunOutput_Convention** | none vs CF (run_happy_path/pipeline-async) | **yes — needs a verifying pmemd run** | ⚠️ edit-parallel ok; serialize the run |
-| **Headroom_ContextCompression** | none (OpenClaw ContextEngine plugin) | **yes — reconfigures the gateway CF live-drives** | ⚠️ hold while CF is live; low-urgency |
-| **Run_Confirmation_Gate** | indirect (reuses mdin-edit schedule, in flux) | yes (pipeline-async) | ⚠️ don't — moving dep + lowest priority |
-| **ntx_irest_CoherenceGate** | **YES (mdin-edit `check_amber`)** | — | 🚫 sequence after CF |
-| **mdin_edit_Whitelist / Arbitrary_Shapes** | **YES (mdin-edit core)** | — | 🚫 sequence after CF |
+✅ The three concurrent 2026-06-27 sessions (Hermes-eval · AMBER-gate-encoding · mdin-coherence-fix) all **merged to `main` + cleaned up** (worktrees removed, branches deleted in both repos). The live collision map is retired. The reusable principle for the next parallel burst: sessions clash if they share **files** (stage explicit paths; isolate worktrees), **runtime** (one OpenClaw gateway / one toolchain runner), or **vault/memory** (Dev_Log/MAP/Gap are git-mergeable — stack newest-first; `MEMORY.md`/`project_prime_status.md` are outside git → serialize, re-read before edit).
 
 ## ✔ Consumed (done, for the record)
 
 - **AMBER_FailureMode_Sweep** — produced `Research_AMBER_Failure_Modes` + `Gap_Gate_Coverage` (the gate backlog above).
 - **HermesAgent_Eval** (2026-06-27) — evaluated → **declined** (research only, no migration). Produced [[Research_Hermes_Agent]]; engine room stays frozen; the one thesis-compatible coupling (a gated recovery *proposer*) folds into **Proposer_Agent** + `Gap_Gate_Coverage`.
+- **AMBER_Gate_Encoding** (2026-06-27) — all **4 P1 gates encoded** (project-prime `f188b79`/`7582194`, merged `origin/main`): `SOLVENT_NOT_ADDED` + `CROSS_GAP_SPURIOUS_BOND` (tleap-build, FATAL) + PLIP `--nohydro` guard + non-fatal `GB_RADII_IGB_MISMATCH` detector. The detector's actual fix → newly-Ready **GB_Radii_Fix**.
+- **mdin_edit_CoherenceFix** (2026-06-27) — flipped the stale heat-3 ground-truth canary (+ fixed an exposed py3.11 harness break) + added the `needs_human` coherence gate (`--couple`/`--keep-value2`, value2-only). Green py3.11+3.14; merged `origin/main` (project-prime `be656a4`). Parser-scope follow-up banked in [[Gap_Gate_Coverage]].
