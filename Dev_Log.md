@@ -9,6 +9,20 @@ type: log
 
 ---
 
+## 2026-06-27 — Run-confirmation gate sharpened (Level 2 + TTY) + forward-queue priority dashboard ✅
+
+**Context:** Continued the [[Future_Work_Run_Confirmation_Gate]] discussion, asked "what did we ship that already addresses the advisor, and how does that differ in scope?", asked to *see* what a preview looks like, and asked for a status/priority dashboard in `handoffs/`. Vault-only; no code touched.
+
+**Done:**
+- **Answered the advisor-scope question** (with a *real* `--dry-run` preview): the advisor's point #4 is **already shipped at the EDIT level** — mdin-edit emits `output_schedule` + sparse/uneven-sampling warnings on `nstlim` edits, previewable via `--dry-run` (demo: `prod nstlim→15000` → `"only 1 trajectory frame; very sparse sampling"`). The Run_Confirmation_Gate is the **LAUNCH-level generalization**, reusing that same `output_schedule` machinery — hence low-urgency.
+- **Sharpened the gate's approach pick** ([[Future_Work_Run_Confirmation_Gate]]): reframed the two homes as **Levels 0–3**, recommended **Level 2 (`stage-run`/`confirm-run`) + a TTY-guarded `--confirm`**, and documented why ironclad-over-the-agent is **structurally impossible** (raw-shell `exec` bypasses any tool gate; worst case = wasted local $0 compute). Added "where the preview surfaces" (terminal stdout JSON / agent chat / Discord). Updated the README line + prompt-to-paste.
+- **New [[STATUS]] dashboard** (`handoffs/STATUS.md`) — compact priority queue + Ready/Candidate/Gap tables + dependencies; `README` points to it; per-file frontmatter `status:` stays source of truth. Re-checked all 12 handoffs live (one new since last: [[Next_Session_Prompt_RunOutput_Convention]] `[candidate]`).
+- **Sync:** README, this entry.
+
+**Next:** user to set the priority order in [[STATUS]] (suggested seed in place); warm #1 = [[Next_Session_Prompt_mdin_edit_CoherenceFix]].
+
+---
+
 ## 2026-06-26 (cont. 5) — housekeeping: project-prime run-output git-noise tidied + prevention banked ✅
 
 **Context:** Session aimed at `temporary_house_keeping.md`. Reconciled its layered (multi-session) checklist against live git: #1 (branch switch) + #4 (CLAUDE.md concurrency edits) already DONE; #9 (mdin-edit oracle RED) confirmed still red but deferred to its own fresh chat ([[Next_Session_Prompt_mdin_edit_CoherenceFix]]); #2/#3 + clearing the note handled here.
