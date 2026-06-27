@@ -31,8 +31,6 @@ status: active
 - **Headroom context-compression** — route OpenClaw tool-output through Headroom; low urgency on free tier ([[Future_Work_Headroom_ContextCompression]], candidate).
 - **Run-confirmation gate** — confirm-before-launch for agent/Discord runs; decision banked (agent-layer or staged-spec `stage-run`/`confirm-run` handshake, not an in-skill blocking prompt), approach pick pending ([[Future_Work_Run_Confirmation_Gate]], candidate). 2026-06-26.
 - **graphify** (2026-06-26) — assessed + **shelved, to be called when ready**; not adopted as a dependency. Strongest real use = index the reference corpus (`Amber26.pdf` + mailing-list + 66-skill lib), decision-gated on conceptual-navigation-vs-precise-lookup. Open questions + threads banked in [[Next_Session_Prompt_Graphify_ReferenceCorpus]] ([[Research_graphify]]).
-- **mdin-edit coherence fix + needs_human confirm** — diagnosed (verified by running): ONE failing guard (`oracle.py` ground-truth drift canary); `test_acceptance.sh` already green. Fix (flip the guard + hermetic repair fixture + 3 doc rewrites) **plus** a new `needs_human` confirm gate for a pre-existing `temp0`/`&wt` mismatch — banked as a ready handoff → [[Next_Session_Prompt_mdin_edit_CoherenceFix]]. Arbitrary-mdin-shape support is a separate candidate → [[Future_Work_mdin_edit_Arbitrary_Shapes]]. 2026-06-26.
-
 ## ⛔ Blocked
 
 - **[[Gap_Remote_HPC_Backend]]** (open) — whether a production remote HPC backend (Scenario B) ever becomes available. Externally blocked; needs confirmation from Single Particle. Local (Scenario A) is the confirmed current path.
@@ -41,7 +39,8 @@ status: active
 
 - [[Gap_Remote_HPC_Backend]] — open · [[Gap_MachineLearned_ForceFields]] — open · [[Gap_Gate_Coverage]] — partially-filled.
 
-## ✅ Recently resolved (2026-06-26)
+## ✅ Recently resolved (2026-06-26 – 27)
 
-- **`heat-3.in` temp0/&wt mismatch** — RESOLVED. The coherent `300/300` is correct; the advisor's original `value2=310` was a **mistake**, not a deliberate fixture (user's call). Knock-on `mdin-edit` test update is queued above (in-flight), not a blocker.
+- **mdin-edit coherence fix + `needs_human` gate** — DONE 2026-06-27. Suite was RED (a stale heat-3 ground-truth canary asserting the *old* mismatch); flipped it + fixed an exposed py3.11 harness break + corrected the 310-typo docs (project-prime `174ca3f`), then added the `needs_human` coherence gate + `--couple`/`--keep-value2` (`be656a4`, value2-only). Green py3.11+3.14 (full fuzz 245522/0, acceptance, mutation 14/14); 3-agent adversarial review passed. [[Next_Session_Prompt_mdin_edit_CoherenceFix]] consumed; parser-scope follow-ups in [[Gap_Gate_Coverage]].
+- **`heat-3.in` temp0/&wt mismatch** — RESOLVED. The coherent `300/300` is correct; the advisor's original `value2=310` was a **mistake**, not a deliberate fixture (user's call). Knock-on `mdin-edit` test update **DONE** 2026-06-27 (above).
 - **project-prime audit branch** — DONE. `fix/audit-gates-and-tests-20260626` verified (210 assertions) + merged to `origin/main` (`fb6c1a9`) + pushed. The local branch is now an ancestor of `origin/main` — safe to delete (`git branch -d`).

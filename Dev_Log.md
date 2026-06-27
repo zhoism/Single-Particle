@@ -43,6 +43,20 @@ type: log
 
 ---
 
+## 2026-06-27 (cont.) — mdin-edit coherence fix + needs_human gate ✅  ·  branch `mdin-coherence-fix`
+
+**Context:** Executed [[Next_Session_Prompt_mdin_edit_CoherenceFix]] (warm #1 on [[STATUS]]). Two phases / two commits, isolated in a project-prime + vault `git worktree` (parallel session active). The advisor's heat-3 `value2=310` typo was resolved 2026-06-26 (demo coherent 300/300), but mdin-edit's suite was still RED — `tests/oracle.py:_verify_ground_truth` asserted heat-3 must stay MISMATCHED, crashing fuzz+mutation at import.
+
+**Done (project-prime `b375f39`→`be656a4`, branch `mdin-coherence-fix`):**
+- **Phase 1 (`174ca3f`) — unblock + docs.** Flipped the stale heat-3 canary to assert COHERENCE (kept as an anti-drift guard). Flipping the import-crash exposed a latent **py3.11 break** — `mutation_test.py` used `Path.read_text(newline=)` (3.13+), which crashes under OpenClaw's conda 3.11; replaced all 4 sites with a 3.11-safe `_read_raw` (the project's `open(newline="")` convention). Added a hermetic, demo-independent coherent-couple test (Case 5c). Rewrote the "advisor wanted 310 / heat-3 deliberately mismatched" narrative across SKILL.md, mdin-params.md, heuristics.md, tests/README.md.
+- **Phase 2 (`be656a4`) — needs_human coherence gate.** Editing `temp0` on a heat stage whose `&wt value2` was ALREADY incoherent (>0.5 K — the validator's exact threshold) now HALTS (`status: needs_human` / `EDIT_HALTED`, whole-batch all-or-nothing, writes nothing) instead of silently clobbering value2 — the [[Skill_Bounded_Recovery_AMBER|amber-recover]] needs_human envelope ported in. New `--couple` (cohere) / `--keep-value2` (preserve) flags, mutually exclusive + temp0-only. **value2-only by design** (the session's locked pick; constant-T `tempi` coupling stays silent). 8 synthetic gate cases (5d–5k). Oracle spec unchanged (gate is dead code on the coherent demo).
+- **Verify:** green under py3.11 + py3.14 — oracle 38/0, mutation 14/14, **full fuzz 245 522/0**, acceptance all cases. Manual spot-checks on all 6 flag/halt paths. **Adversarial review (3 agents):** core branch/flag/halt logic verified correct; the one Phase-2-introduced defect (a doc over-claim of "arbitrary-input safety") was corrected. Findings that the parser doesn't handle Fortran `d`-exponent / double-quoted `"TEMP0"` / non-finite tokens are **pre-existing + shared with the vendored validator** (so gate and validator stay consistent) → banked as a candidate gate in [[Gap_Gate_Coverage]].
+- **Sync:** memory ([[mdin-edit-advisor-feedback]] + `project_prime_status` + MEMORY.md), handoff → `consumed`, [[Gap_Gate_Coverage]], this entry.
+
+**Next:** merge `mdin-coherence-fix` → `main` (both repos) + push + remove worktrees. Deferred: [[Future_Work_mdin_edit_Arbitrary_Shapes]] now also covers the double-quote / `d`-exponent parser scope; the `--keep-value2` `deliberate:true` envelope polish.
+
+---
+
 ## 2026-06-27 — Run-confirmation gate sharpened (Level 2 + TTY) + forward-queue priority dashboard ✅
 
 **Context:** Continued the [[Future_Work_Run_Confirmation_Gate]] discussion, asked "what did we ship that already addresses the advisor, and how does that differ in scope?", asked to *see* what a preview looks like, and asked for a status/priority dashboard in `handoffs/`. Vault-only; no code touched.

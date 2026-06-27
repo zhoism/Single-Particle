@@ -1,9 +1,13 @@
 ---
 tags: [project-prime, mdin-edit, session-handoff, coherence-fix, needs-human]
 type: handoff
-status: ready
+status: consumed
 created: 2026-06-26
 ---
+
+## Outcome
+
+Consumed 2026-06-27 (BOTH phases). Phase 1 flipped the stale heat-3 coherence canary + fixed a latent py3.11 harness break it exposed + corrected the 310-typo docs (project-prime `174ca3f`); Phase 2 added the `needs_human` coherence gate + `--couple`/`--keep-value2` (value2-only, `be656a4`). Green under py3.11+3.14 (oracle 38/0, mutation 14/14, full fuzz 245522/0, acceptance); 3-agent adversarial review passed (core logic correct; doc over-claim fixed; parser-scope gaps banked in [[Gap_Gate_Coverage]]). See [[Dev_Log]] entry 2026-06-27 (cont.).
 
 # Next Session Starter — mdin-edit coherence fix + needs_human confirm
 
