@@ -9,6 +9,22 @@ type: log
 
 ---
 
+## 2026-06-26 (cont. 5) — housekeeping: project-prime run-output git-noise tidied + prevention banked ✅
+
+**Context:** Session aimed at `temporary_house_keeping.md`. Reconciled its layered (multi-session) checklist against live git: #1 (branch switch) + #4 (CLAUDE.md concurrency edits) already DONE; #9 (mdin-edit oracle RED) confirmed still red but deferred to its own fresh chat ([[Next_Session_Prompt_mdin_edit_CoherenceFix]]); #2/#3 + clearing the note handled here.
+
+**Done (project-prime `79b0a43`→`b375f39`, pushed; vault sync this entry):**
+- **#2 — git-noise tidied.** project-prime `git status` was **384 untracked**. Classified by reading the harnesses: gitignored 5 ad-hoc run-output trees (`regression-1L2Y`/`new-target-run`/`new-target-3HTB`/`stage6-wire-test`/`antechamber-ligandprep-run`) + 2 stray pdb4amber artifacts under `golden-path/`; committed `runs/.gitkeep` + `docs/.gitkeep` (the rule already whitelisted `runs/.gitkeep` but it was never committed — *why* `runs/` showed dirty) + **17 forgotten recipe fixtures** (`golden-path/`+`smoke-test/` `*.in`/`*.leap`/`*.cpptraj`/README) that the already-tracked `run.sh`/`tests` **reference** → fixes a latent *fresh-clone-can't-run* bug. `git status` 384→**0**. Reviewed clean (no hardcoded paths/secrets).
+- **Prevention banked → [[Next_Session_Prompt_RunOutput_Convention]]** (candidate). Root cause: the `.gitignore` is *type-based* (only `runs/*` is location-based) + the DoD discipline manages *tracked* files, not the untracked tree, so ad-hoc top-level run dirs accumulated and *hid* the forgotten fixtures. Durable fix = route all runs under the already-ignored `runs/` — non-trivial (edits `run_happy_path.sh` [confirmed: no OUTDIR default] + async pipeline + test wire-ins → needs a verifying re-run) → own session.
+- **Updated [[Next_Session_Prompt_mdin_edit_CoherenceFix]]** — refreshed stale HEADs, noted the tree is now clean, + a concurrency heads-up (the `ntx_irest` session also touches `skills/mdin-edit/` → isolate worktree + serialize memory).
+- **#3 — memory lag fixed** by prepending the newest marker to `project_prime_status.md`. **Cleared `temporary_house_keeping.md`** (untracked → plain rm; content migrated here + to the handoffs + memory).
+
+**Sync (this pass):** `handoffs/README` (new candidate) + memory (`project_prime_status` marker + `MEMORY.md` pointer) + this entry. MAP unchanged (high-level picture same). Pushed BOTH repos.
+
+**Next:** #9 [[Next_Session_Prompt_mdin_edit_CoherenceFix]] in a fresh chat; the gate-encoding sessions ([[Next_Session_Prompt_AMBER_Gate_Encoding]] / [[Next_Session_Prompt_ntx_irest_CoherenceGate]]) when spun up — isolate worktrees, serialize memory.
+
+---
+
 ## 2026-06-26 (cont. 4) — mdin-edit coherence fix diagnosed + needs_human decided; 2 handoffs banked ✅
 
 **Context:** Design discussion after the heat-3 typo resolution. User asked four things: (1) is a `temp0 ≠ &wt value2` mismatch ever *wanted* — and shouldn't the tool detect-and-confirm rather than silently couple; (2) clarify "build vs use" input flexibility; (3) is `needs_human` built; (4) is Discord confirmation feasible. High context → execution banked as handoffs, not run inline.

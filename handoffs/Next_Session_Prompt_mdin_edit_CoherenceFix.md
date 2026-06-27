@@ -12,10 +12,14 @@ created: 2026-06-26
 ## Recap (what's done — don't re-discover)
 
 - **heat-3 resolved** — `phase3-explicit-solvent-md/heat-3.in` is coherent `temp0=300 / &wt value2=300` (vault commit `51e15c1`). The advisor's original `value2=310` was a **typo**, confirmed by the user — NOT a deliberate fixture. Memory [[phase3-advisor-demo]] already corrected.
-- **Repos clean** — vault `fed2bf3`, project-prime `79b0a43`, both on `main`, pushed. The audit branch merged (`fb6c1a9`) + was deleted. `mdin-edit` itself is UNCHANGED.
+- **Repos clean** — both on `main`, pushed. **project-prime advanced `79b0a43`→`b375f39`** (2026-06-26 housekeeping: gitignored ad-hoc run-output + committed forgotten golden-path/smoke-test recipe fixtures — `git status` is now **clean**, *not* the 384-untracked noise earlier sessions saw). The audit branch merged (`fb6c1a9`) + was deleted. `mdin-edit` itself is UNCHANGED. *(vault HEAD also advanced this session — `git log` for the latest.)*
 - **Diagnosis was verified by RUNNING (not trusting the Dev_Log)** — `test_acceptance.sh`: all 14 cases PASS (it edits `temp0→310`, the coupling forces `value2→310`, and asserts the END state, so it's robust to the demo). `oracle_selftest.py`: 21 pass / **1 fail**. The single failure is `tests/oracle.py:339-342` `_verify_ground_truth` — it asserts "the famous heat-3 mismatch must still be there" and raises `GROUND-TRUTH DRIFT` when `temp0==value2`. It's a drift-canary that fired correctly.
 - **Blast radius** — that guard is consumed at module scope by `tests/mutation_test.py:32` and `tests/fuzz_mdin_edit.py:156` (`GT = O.load_ground_truth()`), so BOTH crash at startup too. Fixing the one guard unblocks all three.
 - **needs_human** — the pattern is shipping in `amber-recover/scripts/wrapper.py` (10 uses); `mdin-edit` does NOT have it (its envelope is only `ok`/`errors`/`warnings`/`verdict`). Phase 2 ports it, doesn't invent it.
+
+## ⚠️ Concurrency heads-up (added 2026-06-26)
+
+This session edits `skills/mdin-edit/tests/oracle.py` + docs. The **`ntx_irest` encoding handoff also touches `skills/mdin-edit/`** (its diverged `scripts/check_amber_vendored.py`) — *different files, same dir / repo / branch*. If the two run concurrently: **isolate this one in a project-prime `git worktree`** on its own branch, stage only mdin-edit files by path, and **serialize the memory writes** — a `git worktree` does **not** isolate memory (`project_prime_status.md` lives outside git at a fixed path, so concurrent writes clobber). Run solo? Just work on `main`.
 
 ## Decisions banked — do NOT re-litigate
 
