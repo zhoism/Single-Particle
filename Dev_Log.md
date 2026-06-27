@@ -9,6 +9,16 @@ type: log
 
 ---
 
+## 2026-06-27 ~03:00 PDT — graphify trial → REJECT (concept-graph wrong for the proposer manual) · branch `graphify-reject-20260627` ✅
+
+**Context:** User asked to actually *test* graphify (not just the banked assessment) as a navigable-AMBER-manual backend for the future proposer-agent. Ran in an isolated non-git corner (`graphify-trial/`, py3.12 venv, `graphifyy[pdf]==0.8.49`, `gemini-3-flash-preview`, deep mode, ~$0.75 total). Recorded via worktree off `main` (concurrent Hermes session held its own branch).
+
+**Done:** Built two graphs over Amber26.pdf (full 310-node + focused/steelman 60-node; pypdf truncates the big PDF → fed pre-extracted text as doc files). Ran 13 real `graphify query` calls + full 35-edge census. **Verdict REJECT**, two routes: (1) software-centric ontology (nodes=entities, relations=`calls`/`implements`) captures the tool/method landscape but **zero parameter-level concepts** (dt/ntt/igb/mbondi/cut absent) → baseline wins every query; (2) pairwise edges **~60% hallucinated, ~20% fabricated** (load-bearing: `SHAKE→calls→LFMiddle`, `LFMiddle→implements→pmemd`). Hyperedge groupings are the only real output (= categorized glossary). Confirms precise-lookup > concept-graph with evidence.
+
+**Pointers:** [[Research_graphify]] (trial-result block, status→trial-rejected) · [[Next_Session_Prompt_Graphify_ReferenceCorpus]] (resolved-rejected) · memory `graphify-assessment`. Corner torn down; project-prime UNCHANGED.
+
+---
+
 ## 2026-06-27 01:50 PDT — Hermes Agent evaluated → declined (frozen core holds) · branch `hermes-eval-20260627` ✅
 
 **Context:** Consumed `handoffs/Next_Session_Prompt_HermesAgent_Eval.md` (forward-queue item 2). RESEARCH + EVALUATION only — no migration, no `project-prime/` touch. Pre-run gate (user): *start-focused-escalate* + *produce both Hermes-specific AND durable category-level verdict*. Followed [[Eval_Criteria]] (primary sources → adversarial pass → honest verdict); matched [[Research_El_Agente_Q]] format.

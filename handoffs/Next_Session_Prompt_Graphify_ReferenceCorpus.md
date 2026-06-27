@@ -1,11 +1,14 @@
 ---
 tags: [project-prime, graphify, knowledge-graph, reference-corpus, handoff, future-work]
 type: next-session-prompt
-status: candidate-decision-gated
+status: resolved-rejected
 created: 2026-06-26
+resolved: 2026-06-27
 ---
 
 # Handoff — graphify: the open questions to evaluate before any spike
+
+✅ **RESOLVED 2026-06-27 — REJECTED after a real trial.** We built + queried the graph over the AMBER manual in an isolated corner (~$0.75): **no parameter-level nodes** (dt/ntt/igb/mbondi/cut absent) + **~60% hallucinated edges** → REJECT for the proposer navigable-manual use; the precise-lookup-beats-concept-graph lean is now evidence-backed. See the **TRIAL RESULT** block in [[Research_graphify]]. The evaluation questions below are now **moot** — kept only for the record.
 
 🟡 **Decision-gated, to be called when ready.** The graphify assessment is complete ([[Research_graphify]] + memory [[graphify-assessment]]): **do not adopt it as a dependency.** What's left is a small set of *evaluation* questions to settle **before** running any spike — and they only become live when one of the next-step threads below is actually picked up. This file banks those questions so a fresh session can pick them up cleanly without re-deriving the assessment.
 

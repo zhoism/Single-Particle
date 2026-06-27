@@ -1,12 +1,15 @@
 ---
 tags: [research, prior-art, claude-code, openclaw, knowledge-graph, tooling, steal-list, vault-meta]
 type: research
-status: prior-art-assessed
+status: trial-rejected
 source: github.com/safishamsi/graphify (PyPI `graphifyy` v0.8.49, MIT, YC S26 / Penpax)
 date: 2026-06-26
+trial-date: 2026-06-27
 ---
 
 # Research note — `graphify` (safishamsi/graphify)
+
+> **TRIAL RESULT — 2026-06-27: REJECT (tested, not just assessed).** Built the graph over the full AMBER manual (full 310-node + focused/steelman 60-node configs, deep mode, `gemini-3-flash-preview`, ~$0.75, isolated throwaway corner). Decisive REJECT for the proposer navigable-manual use, two independent ways: **(1)** graphify's software-centric ontology (nodes = named entities; relations = `calls`/`implements`/`references`) extracts the tool/method landscape but **no parameter-level knowledge** — `dt`/`ntt`/`ntc`/`igb`/`mbondi`/`cut` absent as nodes in *both* builds, so every parameter query returns nothing and the section-map+read baseline wins every query; **(2)** the pairwise edges are **~60% hallucinated / ~20% outright fabricated** (e.g. `SHAKE --calls--> LFMiddle integrator`, `LFMiddle --implements--> pmemd`) — load-bearing fabrications *in its own best-case cluster*. Only genuinely-real output = hyperedge *groupings* (recommended-FFs, nonbonded-methods, solvation-commands) = a categorized glossary, strictly baseline-dominated. Confirms the banked "precise-lookup beats concept-graph" lean with hard evidence. **Don't revisit.** (Root cause: graphify is a code-knowledge-graph tool; a scientific reference manual's parameter/dependency knowledge is outside its ontology.)
 
 **Status:** 🟡 Prior-art assessed. Repo cloned + read at source level (README, `ARCHITECTURE.md`, `graphify/extract.py`, `graphify/llm.py`, `graphify/analyze.py`, `graphify/serve.py`, `graphify/export.py`, the `claw` skill). **Not** run against our private content — characterization below is from reading the actual extraction code, which is more precise than one run. Mature: 72.6k★, 836 commits, real `security.py` + threat model + CVE-pinned deps, MIT.
 
