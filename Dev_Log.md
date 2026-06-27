@@ -9,6 +9,23 @@ type: log
 
 ---
 
+## 2026-06-26 (cont. 4) — mdin-edit coherence fix diagnosed + needs_human decided; 2 handoffs banked ✅
+
+**Context:** Design discussion after the heat-3 typo resolution. User asked four things: (1) is a `temp0 ≠ &wt value2` mismatch ever *wanted* — and shouldn't the tool detect-and-confirm rather than silently couple; (2) clarify "build vs use" input flexibility; (3) is `needs_human` built; (4) is Discord confirmation feasible. High context → execution banked as handoffs, not run inline.
+
+**Done (vault-only; project-prime UNCHANGED — read-only verification):**
+- **Verified by RUNNING the suite against the live `300/300` demo** (not trusting the prior Dev_Log "goes red"): exactly ONE failure — `tests/oracle.py:339-342` `_verify_ground_truth`, a drift-canary asserting "heat-3 must still be mismatched." Consumed at module scope by `mutation_test.py:32` + `fuzz_mdin_edit.py:156` (both crash at load); `test_acceptance.sh` — all 14 cases PASS (already robust: asserts post-coupling end-state). The fix surface is tiny: **flip** the canary (don't delete — it caught the change), an Option-A **hermetic** repair fixture, and rewrite 3 stale docs.
+- **Answered the design Qs:** the *tool* already detects-and-couples; a mismatch is only legitimate for **intermediate multi-card waypoints** (and the tool assumes single-card, `wrapper.py:183`). `needs_human` is shipping in `amber-recover` (10 uses) but **absent in mdin-edit** → port it. Discord interactive confirm = non-trivial AND wrong (send-only channel; blocking read deadlocks `exec`/detached/planner/harness) → use the `needs_human` HALT envelope instead (same call as [[Future_Work_Run_Confirmation_Gate]]).
+- **Decision banked:** add a `needs_human` confirm gate — when editing `temp0` and `&wt value2` was *already* incoherent, HALT (write nothing) and require `--couple`/`--keep-value2`; couple silently only when already coherent. This would have CAUGHT the advisor's typo.
+- **2 handoffs created** (via the next-session-prompt skill): [[Next_Session_Prompt_mdin_edit_CoherenceFix]] (ready — Phase 1 unblock + Phase 2 needs_human) and [[Future_Work_mdin_edit_Arbitrary_Shapes]] (candidate — stage-name-agnostic + multi-card).
+- **Sync (this pass):** `handoffs/README` (Ready + Candidate) + [[MAP]] + memory + this entry.
+
+**Concurrency note:** re-oriented at session start — vault `de6fcf1→fed2bf3`, project-prime `fb6c1a9→79b0a43` (audit branch merged + deleted; new "Concurrent sessions" CLAUDE.md convention) from parallel sessions that wrapped up. Tree clean before staging; staged only this session's files by path.
+
+**Next:** run [[Next_Session_Prompt_mdin_edit_CoherenceFix]] in a fresh session.
+
+---
+
 ## 2026-06-26 (cont. 3) — graphify: verdict refined + open questions banked into a handoff ✅
 
 **Context:** Follow-up discussion on the graphify assessment (committed earlier in `51e15c1`, see the cont. entry below). The user pushed back — *"the research phase is over, so what's the point?"* — which sharpened the verdict, then asked to bank the open questions as a handoff and wire the intersection into the proposer-agent note.

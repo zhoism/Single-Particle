@@ -31,7 +31,7 @@ status: active
 - **Headroom context-compression** — route OpenClaw tool-output through Headroom; low urgency on free tier ([[Future_Work_Headroom_ContextCompression]], candidate).
 - **Run-confirmation gate** — confirm-before-launch for agent/Discord runs; decision banked (agent-layer or staged-spec `stage-run`/`confirm-run` handshake, not an in-skill blocking prompt), approach pick pending ([[Future_Work_Run_Confirmation_Gate]], candidate). 2026-06-26.
 - **graphify** (2026-06-26) — assessed + **shelved, to be called when ready**; not adopted as a dependency. Strongest real use = index the reference corpus (`Amber26.pdf` + mailing-list + 66-skill lib), decision-gated on conceptual-navigation-vs-precise-lookup. Open questions + threads banked in [[Next_Session_Prompt_Graphify_ReferenceCorpus]] ([[Research_graphify]]).
-- **mdin-edit test/oracle update** — the heat-3 demo is now coherent `300/300`, but `mdin-edit`'s acceptance suite used the old `300/310` mismatch as its fixture → update the tests/oracle to the coherent ground-truth (do **not** re-introduce the mismatch). Design discussion pending with the user (detect-and-handle vs fixture). 2026-06-26.
+- **mdin-edit coherence fix + needs_human confirm** — diagnosed (verified by running): ONE failing guard (`oracle.py` ground-truth drift canary); `test_acceptance.sh` already green. Fix (flip the guard + hermetic repair fixture + 3 doc rewrites) **plus** a new `needs_human` confirm gate for a pre-existing `temp0`/`&wt` mismatch — banked as a ready handoff → [[Next_Session_Prompt_mdin_edit_CoherenceFix]]. Arbitrary-mdin-shape support is a separate candidate → [[Future_Work_mdin_edit_Arbitrary_Shapes]]. 2026-06-26.
 
 ## ⛔ Blocked
 
