@@ -29,6 +29,7 @@ status: active
 - **Hermes-Agent eval** — research + verdict, not migration ([[Next_Session_Prompt_HermesAgent_Eval]], ready).
 - **Proposer agent** — outer propose-then-verify supervisory agent, oracle-first build plan ([[Future_Work_Proposer_Agent]], candidate-not-started).
 - **Headroom context-compression** — route OpenClaw tool-output through Headroom; low urgency on free tier ([[Future_Work_Headroom_ContextCompression]], candidate).
+- **Run-confirmation gate** — confirm-before-launch for agent/Discord runs; decision banked (agent-layer or staged-spec `stage-run`/`confirm-run` handshake, not an in-skill blocking prompt), approach pick pending ([[Future_Work_Run_Confirmation_Gate]], candidate). 2026-06-26.
 - **graphify spikes** (2026-06-26) — vault structural-only god-node/orphan analysis + index `Amber26.pdf` into a queryable graph (banked, [[Research_graphify]]).
 - **mdin-edit test/oracle update** — the heat-3 demo is now coherent `300/300`, but `mdin-edit`'s acceptance suite used the old `300/310` mismatch as its fixture → update the tests/oracle to the coherent ground-truth (do **not** re-introduce the mismatch). Design discussion pending with the user (detect-and-handle vs fixture). 2026-06-26.
 

@@ -9,6 +9,19 @@ type: log
 
 ---
 
+## 2026-06-26 (cont. 2) — mdin-edit point #4 walkthrough (read-only); run-confirmation gate design decision banked ✅
+
+**Context:** Conceptual session — walked the advisor's `nstlim`-vs-output-frequency feedback (point #4) + the per-file status contract, verifying behavior against `mdin-edit`'s `wrapper.py` (no code touched). Then a design discussion: should a run-confirmation "Proceed?" be a literal blocking prompt in the skill?
+
+**Done:**
+- **Verified (read-only)** that `mdin-edit`'s `output_schedule` presentation + sparse/zero/uneven-sampling warnings fire **only on `nstlim` edits**, judged against the file's **read-only** `ntwx`/`ntpr`; `ntwx`/`ntpr` are **not editable** (`UNSUPPORTED_PARAM`; editable set = `dt`/`temp0`/`restraint_wt`/`nstlim`/`cut`); the schedule is emitted on every `nstlim` edit (clean or not). No code changed.
+- **Decision banked → [[Future_Work_Run_Confirmation_Gate]]** (candidate-not-started): a confirm-before-**launch** gate belongs at the **agent/conversation layer** (or a staged-spec `stage-run`/`confirm-run` handshake), **not** a default blocking prompt in any skill — `input()` would deadlock `exec`-driven agent turns, the detached Discord pipeline, `md-planner`'s executor, and the ~240k-assertion test harness. `--dry-run` is already the non-blocking confirm-before-apply; opt-in TTY-guarded `--confirm` is the human-CLI option. **Approach pick pending.**
+- **Sync (this pass):** `handoffs/README` + [[MAP]] forward queue + this entry + auto-memory `project_prime_status.md`. **project-prime UNCHANGED** (no code result).
+
+See [[Definition_of_Done]] §2 · [[Research_Advisor_Feedback_mdin_edit]] (point #4) · [[multi-agent-scope]] (not reopened).
+
+---
+
 ## 2026-06-26 (cont.) — Re-orientation pass; pending vault batch committed + pushed; parallel-session reconciliation ✅
 
 **Context:** Fresh re-orientation session running **concurrently** with the audit session below — a separate Claude Code instance sharing the same vault + project-prime working tree and `main` branch. Asked for a precise multi-front status, then to wrap up per [[Definition_of_Done]].
