@@ -9,6 +9,18 @@ type: log
 
 ---
 
+## 2026-06-26 (cont.) — Re-orientation pass; pending vault batch committed + pushed; parallel-session reconciliation ✅
+
+**Context:** Fresh re-orientation session running **concurrently** with the audit session below — a separate Claude Code instance sharing the same vault + project-prime working tree and `main` branch. Asked for a precise multi-front status, then to wrap up per [[Definition_of_Done]].
+
+**Done:**
+- **Multi-front status report** (read-only) across the vault, project-prime, the forward queue (`handoffs/`), and the gate backlog.
+- **State reconciliation.** Initially flagged project-prime's uncommitted `env.sh` + antechamber `wrapper.py` edits as undocumented half-work; **corrected mid-pass** — they are the parallel audit session's committed, oracle-backed fixes (audit #1–#6 on `fix/audit-gates-and-tests-20260626`, since merged → `fb6c1a9`). Did **not** revert: the `git restore`/`git add` attempts were no-ops (already committed), so nothing was damaged; project-prime left untouched.
+- **Committed + pushed the previously-uncommitted vault batch — `51e15c1`:** graphify assessment ([[Research_graphify]]), the mdin-edit advisor explainer (`Research_Advisor_Feedback_mdin_edit.md`), two handoffs ([[Next_Session_Prompt_ntx_irest_CoherenceGate]] + [[Future_Work_Headroom_ContextCompression]]), the `heat-3.in` `wt.value2 310→300` coherence fix (+ its `mdin-edit.log` provenance), `Memory_Drift_Audit_2026-06-24.md`, `Workflow_Feature_Guide.md`, and `.gitignore` hardening. **Review-before-push caught** a 71 MB `deliverables-skillbase-*.zip` wrongly staged (trailing-slash gitignore gap) + the stray `claude-config-kit/` → fixed both; text-only commit.
+- **Surgical DoD under concurrency:** staged only this entry; left the audit session's in-flight `Gap_Gate_Coverage.md` edit untouched. heat-3 + audit bookkeeping are owned by the entry below; auto-memory (`project_prime_status.md`) is current via that session.
+
+---
+
 ## 2026-06-26 — Audit branch verified + merged; heat-3 mismatch resolved ✅
 
 **Context:** With the Definition-of-Done discipline in place (entry below), surfaced two pending project-prime items: the `fix/audit-gates-and-tests-20260626` branch (3 commits, unpushed) and the `heat-3.in` oracle question. User confirmed the **`heat-3` `300/300` coherence is correct** — the advisor's original `value2=310` was a **mistake**, not a deliberate fixture — and asked to push the high-confidence commits first, then discuss `mdin-edit`.
