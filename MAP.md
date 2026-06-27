@@ -30,7 +30,7 @@ status: active
 - **Proposer agent** — outer propose-then-verify supervisory agent, oracle-first build plan ([[Future_Work_Proposer_Agent]], candidate-not-started).
 - **Headroom context-compression** — route OpenClaw tool-output through Headroom; low urgency on free tier ([[Future_Work_Headroom_ContextCompression]], candidate).
 - **Run-confirmation gate** — confirm-before-launch for agent/Discord runs; decision banked (agent-layer or staged-spec `stage-run`/`confirm-run` handshake, not an in-skill blocking prompt), approach pick pending ([[Future_Work_Run_Confirmation_Gate]], candidate). 2026-06-26.
-- **graphify** (2026-06-26) — assessed + **shelved, to be called when ready**; not adopted as a dependency. Strongest real use = index the reference corpus (`Amber26.pdf` + mailing-list + 66-skill lib), decision-gated on conceptual-navigation-vs-precise-lookup. Open questions + threads banked in [[Next_Session_Prompt_Graphify_ReferenceCorpus]] ([[Research_graphify]]).
+
 ## ⛔ Blocked
 
 - **[[Gap_Remote_HPC_Backend]]** (open) — whether a production remote HPC backend (Scenario B) ever becomes available. Externally blocked; needs confirmation from Single Particle. Local (Scenario A) is the confirmed current path.
@@ -45,3 +45,4 @@ status: active
 - **mdin-edit coherence fix + `needs_human` gate** — DONE 2026-06-27. Suite was RED (a stale heat-3 ground-truth canary asserting the *old* mismatch); flipped it + fixed an exposed py3.11 harness break + corrected the 310-typo docs (project-prime `174ca3f`), then added the `needs_human` coherence gate + `--couple`/`--keep-value2` (`be656a4`, value2-only). Green py3.11+3.14 (full fuzz 245522/0, acceptance, mutation 14/14); 3-agent adversarial review passed. [[Next_Session_Prompt_mdin_edit_CoherenceFix]] consumed; parser-scope follow-ups in [[Gap_Gate_Coverage]].
 - **`heat-3.in` temp0/&wt mismatch** — RESOLVED. The coherent `300/300` is correct; the advisor's original `value2=310` was a **mistake**, not a deliberate fixture (user's call). Knock-on `mdin-edit` test update **DONE** 2026-06-27 (above).
 - **project-prime audit branch** — DONE. `fix/audit-gates-and-tests-20260626` verified (210 assertions) + merged to `origin/main` (`fb6c1a9`) + pushed. The local branch is now an ancestor of `origin/main` — safe to delete (`git branch -d`).
+- **graphify** — **TRIALED → REJECTED** 2026-06-27 (tested as a navigable-Amber-manual backend for the future proposer): no parameter-level concepts (dt/ntt/igb/mbondi absent) + ~60% hallucinated edges → precise-lookup beats concept-graph, with evidence. [[Next_Session_Prompt_Graphify_ReferenceCorpus]] resolved-rejected; [[Research_graphify]]; memory `graphify-assessment`.

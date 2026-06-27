@@ -41,7 +41,6 @@ updated: 2026-06-27
 | **Run_Confirmation_Gate** | Confirm-before-launch; **approach picked 2026-06-27 = Level 2 + TTY**; low-urgency (advisor #4 shipped at edit level) | `candidate` |
 | **Proposer_Agent** | Outer propose-then-verify agent around the frozen core (oracle-first plan); biggest agentic expansion | `candidate` |
 | **Headroom_ContextCompression** | Compress tool-output for token savings; low urgency on free tier | `candidate` |
-| **Graphify_ReferenceCorpus** | Shelved tool; possible = index `Amber26.pdf` + ref library; gated on Q1–Q4 first | `candidate-decision-gated` |
 
 ## 🔵 Big open directions (Gap notes — not paste-ready)
 
@@ -67,3 +66,4 @@ updated: 2026-06-27
 - **HermesAgent_Eval** (2026-06-27) — evaluated → **declined** (research only, no migration). Produced [[Research_Hermes_Agent]]; engine room stays frozen; the one thesis-compatible coupling (a gated recovery *proposer*) folds into **Proposer_Agent** + `Gap_Gate_Coverage`.
 - **AMBER_Gate_Encoding** (2026-06-27) — all **4 P1 gates encoded** (project-prime `f188b79`/`7582194`, merged `origin/main`): `SOLVENT_NOT_ADDED` + `CROSS_GAP_SPURIOUS_BOND` (tleap-build, FATAL) + PLIP `--nohydro` guard + non-fatal `GB_RADII_IGB_MISMATCH` detector. The detector's actual fix → newly-Ready **GB_Radii_Fix**.
 - **mdin_edit_CoherenceFix** (2026-06-27) — flipped the stale heat-3 ground-truth canary (+ fixed an exposed py3.11 harness break) + added the `needs_human` coherence gate (`--couple`/`--keep-value2`, value2-only). Green py3.11+3.14; merged `origin/main` (project-prime `be656a4`). Parser-scope follow-up banked in [[Gap_Gate_Coverage]].
+- **Graphify_ReferenceCorpus** (2026-06-27) — graphify **TRIALED** as a navigable-Amber-manual backend for the future proposer → **REJECTED**: software-centric ontology has zero parameter-level concepts (dt/ntt/igb/mbondi absent) → baseline lookup wins; pairwise edges ~60% hallucinated / ~20% fabricated. Confirms precise-lookup > concept-graph, with evidence. [[Research_graphify]] (trial-rejected); memory `graphify-assessment`.
