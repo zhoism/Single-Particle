@@ -1,0 +1,20 @@
+ILLEGAL: golden-path/prod.in with ONLY ntx flipped 5->1 (irest=1 kept) — pmemd must abort
+ &cntrl
+  imin    = 0,
+  irest   = 1,
+  ntx     = 1,        ! coords only — INCOHERENT with irest=1 (no velocities to restart)
+  nstlim  = 10,
+  dt      = 0.002,
+  ntc     = 2,
+  ntf     = 2,
+  cut     = 8.0,
+  ntb     = 1,
+  ntp     = 0,
+  ntt     = 3,
+  gamma_ln= 1.0,
+  temp0   = 300.0,
+  ntpr    = 1,
+  ntwx    = 0,
+  ntwr    = 0,
+  ioutfm  = 1,
+ /

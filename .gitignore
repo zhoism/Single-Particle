@@ -17,6 +17,10 @@
 .claude/settings.local.json
 .claude/*.lock
 
+# Python bytecode caches (e.g. from running the md-param-check oracle tests)
+__pycache__/
+*.pyc
+
 # Redundant archive — extracted dir phase3-explicit-solvent-md/ is tracked instead
 phase3-explicit-solvent-md.zip
 

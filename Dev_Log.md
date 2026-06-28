@@ -9,6 +9,21 @@ type: log
 
 ---
 
+## 2026-06-27 ~21:00 PDT — `ntx`↔`irest` restart-coherence gate ENCODED + a HIGH parser-truncation bug found & fixed ✅
+
+**Context:** Consumed [[Next_Session_Prompt_ntx_irest_CoherenceGate]] (the last real verifier hole — an illegal `irest=1, ntx=1` namelist, a restart that reads coordinates only, passed every gate). Opened with the handoff's 4-question scope gate ([[feedback-verify-and-eval]]); user chose all recommended: **gate-only · dynamics-only (imin=0) · permissive ntx {4,5,6,7} · hard-fail in canonical + all 3 vendored copies.**
+
+**Done (full [[Eval_Criteria]] discipline):**
+- **Gate** in `check_amber.py` (canonical `.claude/skills/md-param-check/checks/`) + propagated to the 3 vendored `check_amber_vendored.py` (md-planner/amber-recover byte-identical via `cp`; mdin-edit hand-merged, provenance header preserved → byte-identity drift-guard green). Emits `Finding("FAIL", "irest/ntx incoherent")` iff `imin==0 & irest==1 & ntx∉{4,5,6,7}`, AMBER defaults applied (catches an *omitted* ntx); reverse `ntx=5, irest=0` stays legal.
+- **3-tier test** `tests/test_restart_coherence.py` (NEW): Tier-1 oracle (19 cases incl. defaults / reverse / imin-skip / `/`-in-comment / `!`-mask, independent reimpl) · Tier-2 regression (19 real GREEN mdins, 7 restart stages, **0 false-alarms**) · **Tier-3 real pmemd ground truth** — induced `ntx 5→1` on `golden-path/prod.in`; pmemd 26.0 **aborts** `"ntx and irest are inconsistent!"` while the ntx=5 control runs clean; committed `tests/fixtures/restart_irest1_ntx1_illegal.in` + `*_pmemd_abort.txt`. Green **py3.9/3.11/3.14**; mutation RED-on-revert confirms the suite evaluates.
+- **🚩 Adversarial review found a HIGH** (empirically verified, then fixed): `parse_namelists` strips `!` comments only AFTER its `&.../` block regex, so a `/` inside a comment **truncates the cntrl block** — and because the gate defaults-then-fires, it could **false-FIRE a legal restart** (`/` before ntx → ntx dropped → default 1) or **false-PASS an illegal one** (`/` before irest). `golden-path/heat.in` is already truncated today (its `temp0`/`&wt` check is silently dead). **Fixed locally** (gate re-parses comment-stripped text), scoped to the gate — a global `parse_namelists` fix would ripple into mdin-edit's heat-3-tuned advisory, so it's deferred → [[Gap_Gate_Coverage]].
+- **Consuming suites green** (the new finding perturbs nothing): md-planner registry · mdin-edit oracle/mutation 14/14/acceptance · **amber-recover acceptance 7/7** (the consumer that HALTs on `has_fail`). Reviewer re-review → **PASS**.
+- **#2 editor toggle / #3 re-thermalization advisory stay DEFERRED** (document-only; 2026-06-22 decision holds).
+
+**Pointers:** [[Gap_Gate_Coverage]] (gate encoded + the `parse_namelists` truncation/`&end` parser follow-up) · [[Research_AMBER_Failure_Modes]] · handoff removed (consumed). project-prime: 3 vendored copies (was HEAD `fee1fbe`). Vault: gate + test + fixtures + docs + memory `project-prime-status`.
+
+---
+
 ## 2026-06-27 ~05:00 PDT — handoffs/ housekeeping: removed the 6 consumed handoff files + reconciled both dashboards 🧹
 
 **Context:** Rundown-of-what's-next pass over `handoffs/`. Per-file `status:` frontmatter audited as source of truth → 4 `ready`, 5 `candidate`, 6 `consumed`/done. User directive: completed tasks should be **removed** from the folder (superseding the old "keep consumed for the record" convention — the Outcome record is preserved in the dashboards + memory + Research/Gap notes).

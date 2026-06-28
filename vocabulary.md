@@ -63,6 +63,7 @@ This list is *adopted selectively* from the "Knowledge Network" CLAUDE.md patter
 - **cut** — non-bonded cutoff distance.
 - **SHAKE** — bond-length constraint enabling 2 fs steps.
 - **mdin** — AMBER MD input file (the structure skills parse/modify).
+- **ntx / irest** — restart controls. `ntx` = what's read from the start-coordinate file (`1` = coords only; `4/5/6/7` = coords **+ velocities**, `5` standard). `irest` = `0` new run / `1` continue the step counter. **restart coherence** = the rule that `irest=1` needs velocities, so it is only legal with `ntx∈{4,5,6,7}`; `irest=1, ntx=1` is illegal (pmemd aborts `"ntx and irest are inconsistent!"`) — gated by `check_amber` since 2026-06-27 ([[Gap_Gate_Coverage]]).
 - **minimization / heat / equilibration / production** — the standard MD stage sequence.
 - **NVT** — constant-volume ensemble (`ntb=1, ntp=0`); used for heat and production here.
 - **NPT** — constant-pressure ensemble (`ntb=2, ntp=1` + a **barostat**); the equilibration stage that settles solvent density. The **MC barostat** (`barostat=2`) is the one in use.

@@ -7,7 +7,7 @@ updated: 2026-06-27
 
 # Forward queue — status & priority dashboard
 
-> At-a-glance view of every open handoff / future-work / gap, so we always know **what's next**. The per-file `status:` frontmatter is the **source of truth**; `README.md` has the richer per-item annotations; this is the compact dashboard. Snapshot **2026-06-27** (project-prime `fee1fbe`, both clean + pushed). The 3 concurrent 2026-06-27 sessions (Hermes-eval · AMBER-gate-encoding · mdin-coherence-fix) plus the graphify trial and the parallel-session code review all **merged + consumed**; the **6 consumed handoff files were removed from this folder 2026-06-27** (Outcome record retained in the Consumed section below + memory + `Dev_Log.md`).
+> At-a-glance view of every open handoff / future-work / gap, so we always know **what's next**. The per-file `status:` frontmatter is the **source of truth**; `README.md` has the richer per-item annotations; this is the compact dashboard. Snapshot **2026-06-27** (project-prime `fee1fbe`, both clean + pushed). The 3 concurrent 2026-06-27 sessions (Hermes-eval · AMBER-gate-encoding · mdin-coherence-fix) plus the graphify trial and the parallel-session code review all **merged + consumed**; the **7 consumed handoff files were removed from this folder 2026-06-27** (ntx_irest_CoherenceGate landed same day; Outcome record retained in the Consumed section below + memory + `Dev_Log.md`).
 
 ## ⭐ Priority queue (set the order here)
 
@@ -15,20 +15,19 @@ updated: 2026-06-27
 
 | Order | Item | Why here |
 |---|---|---|
-| 1 | **ntx_irest_CoherenceGate** | Real verifier hole; one gate in the `Gap_Gate_Coverage` family (the P1 batch already landed). |
+| 1 | **GB_Radii_Fix** | The remaining `Gap_Gate_Coverage` gate work (ntx_irest landed 2026-06-27): apply `mbondi2` + re-baseline ΔG + flip the GB-radii detector fatal. |
 | 2 | **RunOutput_Convention** | Cheap hygiene — stops recurring git-noise; needs one verifying re-run. |
 | 3 | **mdin_edit_Whitelist** | Incremental capability (more editable params). |
 | — | *candidates (4–8)* | Decision-gated — promote when you decide to start one (see below). |
 
 *Newly Ready — **slot into the order where you want**: **GB_Radii_Fix** (apply the `mbondi2` fix + re-baseline ΔG + flip the GB-radii detector fatal; gates' deferred 4th-P1 follow-up) · **GateHardening_Followups** (non-blocking durability/test-quality nits from the 2026-06-27 code review — PASS, no blockers). Order above is the prior seed minus the items consumed today — re-rank as you like.*
 
-*(Consumed 2026-06-27 → see Consumed below: HermesAgent_Eval, AMBER_Gate_Encoding, mdin_edit_CoherenceFix, Graphify_ReferenceCorpus, CodeReview_Parallel_Sessions.)*
+*(Consumed 2026-06-27 → see Consumed below: ntx_irest_CoherenceGate, HermesAgent_Eval, AMBER_Gate_Encoding, mdin_edit_CoherenceFix, Graphify_ReferenceCorpus, CodeReview_Parallel_Sessions.)*
 
 ## 🟢 Ready — paste-and-go
 
 | Handoff | What | Status |
 |---|---|---|
-| **ntx_irest_CoherenceGate** | Encode the `ntx`↔`irest` restart-coherence gate (real verifier hole) | `ready` |
 | **GB_Radii_Fix** | Apply the `mbondi2` fix + re-baseline ΔG, then flip the GB-radii detector fatal | `ready` |
 | **mdin_edit_Whitelist** | Expand mdin-edit's editable-parameter set | `ready` |
 | **GateHardening_Followups** | Non-blocking durability/test-quality/doc nits from the 2026-06-27 code review (6 small test-first tasks; tasks 1–3 carry the value) | `ready` |
@@ -54,15 +53,16 @@ updated: 2026-06-27
 ## Dependencies / sequencing
 
 - **Arbitrary_Shapes** follows the now-landed **CoherenceFix** (consumed 2026-06-27).
-- **ntx_irest & GB_Radii_Fix draw from Gap_Gate_Coverage** — the P1 batch landed 2026-06-27 (`AMBER_Gate_Encoding` consumed); these two are the remaining gate work.
+- **GB_Radii_Fix draws from Gap_Gate_Coverage** — the P1 batch + `ntx_irest_CoherenceGate` landed 2026-06-27 (both consumed); GB_Radii_Fix is the remaining gate work.
 - **Gap_Remote_HPC** is externally blocked — priority can't make it happen.
 
 ## 🔀 Concurrency — parallel-safe map (RETIRED 2026-06-27)
 
 ✅ The three concurrent 2026-06-27 sessions (Hermes-eval · AMBER-gate-encoding · mdin-coherence-fix) all **merged to `main` + cleaned up** (worktrees removed, branches deleted in both repos). The live collision map is retired. The reusable principle for the next parallel burst: sessions clash if they share **files** (stage explicit paths; isolate worktrees), **runtime** (one OpenClaw gateway / one toolchain runner), or **vault/memory** (Dev_Log/MAP/Gap are git-mergeable — stack newest-first; `MEMORY.md`/`project_prime_status.md` are outside git → serialize, re-read before edit).
 
-## ✔ Consumed (done, for the record — the 6 handoff files were removed from this folder 2026-06-27; the record below + memory + `Dev_Log.md` are now canonical)
+## ✔ Consumed (done, for the record — the 7 handoff files were removed from this folder 2026-06-27; the record below + memory + `Dev_Log.md` are now canonical)
 
+- **ntx_irest_CoherenceGate** (2026-06-27) — `ntx`↔`irest` restart-coherence gate **ENCODED** (`check_amber.py` + 3 vendored copies; FATAL `irest/ntx incoherent`, real-pmemd-ground-truthed — pmemd aborts `"ntx and irest are inconsistent!"`). Review found+fixed a HIGH `parse_namelists` comment-truncation bug (gate hardened locally; shared-parser fix deferred). #2 editor-toggle / #3 advisory stay deferred. [[Gap_Gate_Coverage]].
 - **AMBER_FailureMode_Sweep** — produced `Research_AMBER_Failure_Modes` + `Gap_Gate_Coverage` (the gate backlog above).
 - **HermesAgent_Eval** (2026-06-27) — evaluated → **declined** (research only, no migration). Produced [[Research_Hermes_Agent]]; engine room stays frozen; the one thesis-compatible coupling (a gated recovery *proposer*) folds into **Proposer_Agent** + `Gap_Gate_Coverage`.
 - **AMBER_Gate_Encoding** (2026-06-27) — all **4 P1 gates encoded** (project-prime `f188b79`/`7582194`, merged `origin/main`): `SOLVENT_NOT_ADDED` + `CROSS_GAP_SPURIOUS_BOND` (tleap-build, FATAL) + PLIP `--nohydro` guard + non-fatal `GB_RADII_IGB_MISMATCH` detector. The detector's actual fix → newly-Ready **GB_Radii_Fix**.

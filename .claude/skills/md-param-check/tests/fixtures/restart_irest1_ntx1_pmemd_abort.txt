@@ -1,0 +1,43 @@
+GROUND TRUTH — pmemd rejects irest=1 with ntx=1
+================================================
+
+This file records the REAL pmemd run that proves `irest=1, ntx=1` is genuinely
+illegal (not a synthetic assumption). It is the ground truth behind the
+`irest/ntx incoherent` FAIL gate in ../../checks/check_amber.py. The companion
+fixture `restart_irest1_ntx1_illegal.in` is the exact namelist pmemd choked on;
+the oracle test (../test_restart_coherence.py, Tier C) asserts the gate FAILs on
+those exact bytes — so the gate and its test cannot both be wrong.
+
+Induction (single variable)
+---------------------------
+Base namelist : project-prime/golden-path/prod.in  (a real GREEN production
+                restart stage: imin=0, irest=1, ntx=5, reads equil.rst).
+Change        : ONLY ntx flipped 5 -> 1 (irest=1 kept); nstlim trimmed 5000 -> 10
+                for speed. Nothing else changed.
+Topology      : project-prime/golden-path/system.prmtop
+Restart (vel) : project-prime/golden-path/equil.rst  (NetCDF AMBERRESTART,
+                carries coordinates + velocities + box)
+Engine        : pmemd Version 26.0  (local build, ~/Downloads/pmemd26)
+Date          : 2026-06-27
+
+Command
+-------
+pmemd -O -i prod_ntx1_illegal.in -o illegal.mdout \
+      -p system.prmtop -c equil.rst -r illegal.rst
+
+Result — ILLEGAL (ntx=1, irest=1)
+---------------------------------
+pmemd mdout (verbatim):
+    | ERROR:   ntx and irest are inconsistent!
+
+     Input errors occurred. Terminating execution.
+pmemd stderr:
+    STOP PMEMD Terminated Abnormally!
+exit code: 1
+
+Control — identical namelist but ntx=5 (legal)
+----------------------------------------------
+Ran all 10 steps to completion. exit code: 0.
+Because ntx is the ONLY difference between the two runs, it is unambiguously the
+cause: pmemd itself names the `ntx and irest are inconsistent!` failure, which is
+exactly the condition the gate fires on (imin=0, irest=1, ntx not in {4,5,6,7}).
