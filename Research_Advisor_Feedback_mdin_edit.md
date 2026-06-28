@@ -15,6 +15,10 @@ changed in response. Code landed in `project-prime/skills/mdin-edit/`; verificat
 [[Dev_Log]] (2026-06-22 entry). Companion to [[Research_AMBER_Failure_Modes]] and the
 [[md-param-check]] validator; the SOP §3 limits it leans on are in `Eval_Criteria.md`.
 
+> **Packaged for the advisor (2026-06-27):** this explainer is distilled into a quick report +
+> the whole current skill code in `deliverables-mdin-edit-advisor-20260627/`
+> (`Advisor_Report_mdin_edit.md` + `mdin-edit/` snapshot at project-prime `5d500b0`).
+
 The 10-stage chain referenced throughout (from [[phase3-advisor-demo]]):
 `min1 → min2 → heat-1 → press-1 → heat-2 → press-2 → heat-3 → press-3 → relax → prod`.
 

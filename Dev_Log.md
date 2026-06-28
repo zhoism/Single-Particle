@@ -9,6 +9,19 @@ type: log
 
 ---
 
+## 2026-06-27 ~22:45 PDT — advisor deliverable: mdin-edit feedback report + current code snapshot 📦
+
+**Context:** Built a self-contained advisor package demonstrating the `mdin-edit` feedback fixes, with the whole current skill code as proof. The existing `deliverables-mdin-edit-20260619/` was stale — it predates *both* the 4-point fixes (`246b06f`) and the coherence gate (`be656a4`). **Vault-only** work (a parallel session held project-prime — the `ntx`/`irest` gate below); read project-prime, wrote nothing there. Scope confirmed first: **no pending mdin-edit _fix_ work** (CoherenceFix consumed/merged); open mdin-edit items are features only ([[Next_Session_Prompt_mdin_edit_Whitelist|Whitelist]] ready, [[Future_Work_mdin_edit_Arbitrary_Shapes|Arbitrary_Shapes]] candidate, parser-scope gap P2).
+
+**Done (new `deliverables-mdin-edit-advisor-20260627/`):**
+- **`Advisor_Report_mdin_edit.md`** — quick report: the 4-point feedback (`temp0`↔`tempi`, SHAKE-aware `dt`, bidirectional restraints, `nstlim` schedule) + the coherence/`needs_human` gate, each with a verbatim `wrapper.py` proof excerpt. The `heat-3` `310` is framed as a halt-and-confirm safety gate (not "the advisor was wrong").
+- **`mdin-edit/`** code snapshot (15 files, **byte-identical** to project-prime `5d500b0` via `diff -r`; excludes `test-runs/` + the stale `last-overnight-summary.json`) + **`mdin-edit-skill-code-20260627.zip`** + **`README.md`** manifest.
+- **Verification re-run from scratch** against the shipped bytes (py3.14, no AMBER needed): oracle-selftest **38/0** · mutation **14/14** · fuzz **245,522/0** · acceptance **27/27** (incl. coherence cases 5d–5k). Real-`pmemd` **10/10** edit→run smoke cited (previously verified).
+
+**Pointers:** [[Research_Advisor_Feedback_mdin_edit]] (the detailed 4-point explainer this distills) · prior `deliverables-mdin-edit-20260619/` superseded · code pinned project-prime `5d500b0` (UNCHANGED by this session — no project-prime writes).
+
+---
+
 ## 2026-06-27 ~21:00 PDT — `ntx`↔`irest` restart-coherence gate ENCODED + a HIGH parser-truncation bug found & fixed ✅
 
 **Context:** Consumed [[Next_Session_Prompt_ntx_irest_CoherenceGate]] (the last real verifier hole — an illegal `irest=1, ntx=1` namelist, a restart that reads coordinates only, passed every gate). Opened with the handoff's 4-question scope gate ([[feedback-verify-and-eval]]); user chose all recommended: **gate-only · dynamics-only (imin=0) · permissive ntx {4,5,6,7} · hard-fail in canonical + all 3 vendored copies.**
