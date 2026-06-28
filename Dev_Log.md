@@ -9,6 +9,16 @@ type: log
 
 ---
 
+## 2026-06-28 ~01:15 PDT — gitignore: catch advisor `.zip` bundles 🧹
+
+**Context:** Status double-check this session surfaced an untracked `deliverables-mdin-edit-advisor-20260627.zip` at vault root showing as uncommitted work. User confirmed it's a self-created deliverable bundle → ignore it. The existing rule `deliverables-mdin-edit-*/` has a trailing slash → matches dirs only, so the `.zip` file slipped through.
+
+**Done (vault-only, hygiene — no status moved):** added `deliverables-mdin-edit-*.zip` and a general `deliverables-*.zip` to `.gitignore`; `git check-ignore` confirms the bundle is now ignored (commit `48f5f82`). No memory/MAP/Gap change — pure repo hygiene. (Also this session: verified STATUS.md against live repo state — project-prime HEAD `5d500b0`, both repos clean+pushed — all accurate; no record change needed for a read-only check.)
+
+**Pointers:** [[Definition_of_Done]] (the gate this satisfies) · next up: [[handoffs/Next_Session_Prompt_GB_Radii_Fix|GB_Radii_Fix]] (discussed, awaiting route decision).
+
+---
+
 ## 2026-06-28 ~00:30 PDT — added a public-facing README.md to the vault 📄
 
 **Context:** The companion code repo (`Single-Particle-pipeline`) has a `README.md` for public viewing; this vault (also public) had none. User asked for a short README "just to add something" for browsers landing on the GitHub page.
