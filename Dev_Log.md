@@ -9,6 +9,16 @@ type: log
 
 ---
 
+## 2026-06-28 ~00:30 PDT — added a public-facing README.md to the vault 📄
+
+**Context:** The companion code repo (`Single-Particle-pipeline`) has a `README.md` for public viewing; this vault (also public) had none. User asked for a short README "just to add something" for browsers landing on the GitHub page.
+
+**Done (vault-only, no project-prime writes):** new **`README.md`** at vault root — frames the repo as the *design side* (an Obsidian graph, not runnable code), links to the companion code repo, states the decoupled-hybrid / deterministic-gate thesis, explains the `Arch_*`/`Research_*`/`Gap_*` prefix taxonomy (points to [[CLAUDE]] + [[MAP]]), a short where-it-stands (9 skills complete, local CPU-only, remote-HPC the open gap), and an honest scope/caveat (demo project; ΔG figures are illustrative sanity numbers). Tone matched to the code repo's README. No status moved — pure documentation addition, so no memory/MAP/Gap change.
+
+**Pointers:** [[MAP]] (project state this summarizes) · companion code repo `zhoism/Single-Particle-pipeline`.
+
+---
+
 ## 2026-06-27 ~23:10 PDT — handoffs/STATUS.md: bumped a stale snapshot pin 🧹
 
 **Context:** Verify-and-relay pass over [[handoffs/STATUS|STATUS.md]] caught one drift: the snapshot pin read project-prime `fee1fbe`, but that's the *mdin-coherence-fix* merge — HEAD is one commit further at `5d500b0` (the `ntx`/`irest` gate, which STATUS itself lists as **consumed**). So the doc claimed ntx_irest landed *and* pinned the commit before it landed.
