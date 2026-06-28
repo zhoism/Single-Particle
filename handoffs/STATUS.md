@@ -7,7 +7,7 @@ updated: 2026-06-27
 
 # Forward queue — status & priority dashboard
 
-> At-a-glance view of every open handoff / future-work / gap, so we always know **what's next**. The per-file `status:` frontmatter is the **source of truth**; `README.md` has the richer per-item annotations; this is the compact dashboard. Snapshot **2026-06-27** (project-prime `fee1fbe`, both clean + pushed). The 3 concurrent 2026-06-27 sessions (Hermes-eval · AMBER-gate-encoding · mdin-coherence-fix) plus the graphify trial and the parallel-session code review all **merged + consumed**; the **7 consumed handoff files were removed from this folder 2026-06-27** (ntx_irest_CoherenceGate landed same day; Outcome record retained in the Consumed section below + memory + `Dev_Log.md`).
+> At-a-glance view of every open handoff / future-work / gap, so we always know **what's next**. The per-file `status:` frontmatter is the **source of truth**; `README.md` has the richer per-item annotations; this is the compact dashboard. Snapshot **2026-06-27** (project-prime `5d500b0`, both clean + pushed). The 3 concurrent 2026-06-27 sessions (Hermes-eval · AMBER-gate-encoding · mdin-coherence-fix) plus the graphify trial and the parallel-session code review all **merged + consumed**; the **7 consumed handoff files were removed from this folder 2026-06-27** (ntx_irest_CoherenceGate landed same day; Outcome record retained in the Consumed section below + memory + `Dev_Log.md`).
 
 ## ⭐ Priority queue (set the order here)
 
@@ -62,7 +62,7 @@ updated: 2026-06-27
 
 ## ✔ Consumed (done, for the record — the 7 handoff files were removed from this folder 2026-06-27; the record below + memory + `Dev_Log.md` are now canonical)
 
-- **ntx_irest_CoherenceGate** (2026-06-27) — `ntx`↔`irest` restart-coherence gate **ENCODED** (`check_amber.py` + 3 vendored copies; FATAL `irest/ntx incoherent`, real-pmemd-ground-truthed — pmemd aborts `"ntx and irest are inconsistent!"`). Review found+fixed a HIGH `parse_namelists` comment-truncation bug (gate hardened locally; shared-parser fix deferred). #2 editor-toggle / #3 advisory stay deferred. [[Gap_Gate_Coverage]].
+- **ntx_irest_CoherenceGate** (2026-06-27) — `ntx`↔`irest` restart-coherence gate **ENCODED** (project-prime `5d500b0`; `check_amber.py` + 3 vendored copies; FATAL `irest/ntx incoherent`, real-pmemd-ground-truthed — pmemd aborts `"ntx and irest are inconsistent!"`). Review found+fixed a HIGH `parse_namelists` comment-truncation bug (gate hardened locally; shared-parser fix deferred). #2 editor-toggle / #3 advisory stay deferred. [[Gap_Gate_Coverage]].
 - **AMBER_FailureMode_Sweep** — produced `Research_AMBER_Failure_Modes` + `Gap_Gate_Coverage` (the gate backlog above).
 - **HermesAgent_Eval** (2026-06-27) — evaluated → **declined** (research only, no migration). Produced [[Research_Hermes_Agent]]; engine room stays frozen; the one thesis-compatible coupling (a gated recovery *proposer*) folds into **Proposer_Agent** + `Gap_Gate_Coverage`.
 - **AMBER_Gate_Encoding** (2026-06-27) — all **4 P1 gates encoded** (project-prime `f188b79`/`7582194`, merged `origin/main`): `SOLVENT_NOT_ADDED` + `CROSS_GAP_SPURIOUS_BOND` (tleap-build, FATAL) + PLIP `--nohydro` guard + non-fatal `GB_RADII_IGB_MISMATCH` detector. The detector's actual fix → newly-Ready **GB_Radii_Fix**.

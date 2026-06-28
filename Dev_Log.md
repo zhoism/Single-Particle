@@ -9,6 +9,16 @@ type: log
 
 ---
 
+## 2026-06-27 ~23:10 PDT — handoffs/STATUS.md: bumped a stale snapshot pin 🧹
+
+**Context:** Verify-and-relay pass over [[handoffs/STATUS|STATUS.md]] caught one drift: the snapshot pin read project-prime `fee1fbe`, but that's the *mdin-coherence-fix* merge — HEAD is one commit further at `5d500b0` (the `ntx`/`irest` gate, which STATUS itself lists as **consumed**). So the doc claimed ntx_irest landed *and* pinned the commit before it landed.
+
+**Done (reconciliation only — repo state unchanged, no substantive result):** STATUS.md line 10 pin `fee1fbe`→`5d500b0`; added `5d500b0` to the ntx_irest Consumed entry for traceability. README verified clean (its `fee1fbe` is the CodeReview *range* `b375f39..fee1fbe`, correct as-is). No memory/MAP change — nothing about project state moved.
+
+**Pointers:** [[handoffs/STATUS]] · prior ntx_irest entry below (the commit now correctly pinned).
+
+---
+
 ## 2026-06-27 ~22:45 PDT — advisor deliverable: mdin-edit feedback report + current code snapshot 📦
 
 **Context:** Built a self-contained advisor package demonstrating the `mdin-edit` feedback fixes, with the whole current skill code as proof. The existing `deliverables-mdin-edit-20260619/` was stale — it predates *both* the 4-point fixes (`246b06f`) and the coherence gate (`be656a4`). **Vault-only** work (a parallel session held project-prime — the `ntx`/`irest` gate below); read project-prime, wrote nothing there. Scope confirmed first: **no pending mdin-edit _fix_ work** (CoherenceFix consumed/merged); open mdin-edit items are features only ([[Next_Session_Prompt_mdin_edit_Whitelist|Whitelist]] ready, [[Future_Work_mdin_edit_Arbitrary_Shapes|Arbitrary_Shapes]] candidate, parser-scope gap P2).
