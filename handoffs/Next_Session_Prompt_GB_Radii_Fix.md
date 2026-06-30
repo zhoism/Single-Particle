@@ -1,13 +1,24 @@
 ---
 tags: [project-prime, openclaw, amber, mmgbsa, gates, gb-radii, session-handoff]
 type: handoff
-status: ready
+status: consumed
 created: 2026-06-27
+consumed: 2026-06-29
 ---
 
 # Next Session Starter — Apply the GB-radii (mbondi2) fix + re-baseline ΔG, then flip the detector fatal
 
 > Created 2026-06-27 during the AMBER P1 gate-encoding session ([[Next_Session_Prompt_AMBER_Gate_Encoding]]). The GB-radii ↔ igb mismatch was the 4th P1. The **detector ships now as a NON-FATAL finding** (decision banked below); the **actual fix is deferred to this session** because it changes the reported MM-GBSA ΔG and needs a fresh baseline. This is a small, well-scoped follow-up.
+
+## ✅ Outcome (2026-06-29 — CONSUMED)
+
+**Route A (parmed `changeRadii`)** landed in `a_mmgbsa` (project-prime `61f6a2f`, pushed): the dry MM-GBSA component tops (`comp_dry`/`protein`/`ligand`) are retyped mbondi→mbondi2 right before MM-GBSA; `comp_oct` and the tleap build untouched. `TARGET_RADIUS_SET = IGB_RADIUS_SET[MMGBSA_IGB]` (single source of truth). **Detector flipped FATAL** via new `suite_ok` (a surviving mismatch reds the suite, closing the `ok=core_ok`/MM-GBSA-not-core trap). Hardening: parmed stdout redirected, `setOverwrite`+rc+descriptor-recheck, fix-failure fatal even with no readable RADIUS_SET, `requires.bins`+=`parmed`,`MMPBSA.py`.
+
+**New ΔG baselines (user-signed-off, supersede the old mbondi numbers):** **1L2Y −17.78** (was −18.16) · **3HTB −25.85** (was −27.41). Small sane shifts (+0.38/+1.56), relative ranking preserved; single-traj 100 ps sanity numbers.
+
+**Verification:** pure oracle 73/0; acceptance Cases 1 (consistent + `comp_dry_mbondi2.top` reads `(mbondi2)`) & 4 (forced-off fix → `ok:false`, core produced) GREEN under AMBER; two adversarial reviews (design + final diff) → SOUND-WITH-FIXES (all folded in, incl. a MED fatal-gate hole closed). ParmEd 4.3.1 source-confirmed the descriptor rewrite. **P1 batch fully closed.** See [[Dev_Log]] 2026-06-29, memory [[project-prime-status]].
+
+---
 
 ## The problem (already detected, not yet fixed)
 

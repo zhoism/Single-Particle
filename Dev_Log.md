@@ -9,6 +9,20 @@ type: log
 
 ---
 
+## 2026-06-29 — GB-radii (mbondi2) fix + detector→FATAL; ΔG re-baselined ✅
+
+**Context:** Consumed [[Next_Session_Prompt_GB_Radii_Fix]] — the last open P1 from the failure-mode sweep. The 4th P1 (GB radii ↔ igb) shipped 2026-06-27 as a NON-FATAL detector; the fix + re-baseline + fatal-flip were deferred because the fix shifts the reported ΔG. Planned and adversarially reviewed *before* coding; route + re-baseline scope chosen via a pre-run gate ([[Eval_Criteria]]).
+
+**Done (project-prime `61f6a2f`, pushed):** **Route A (parmed, user-chosen)** — `a_mmgbsa` retypes the dry MM-GBSA component tops (`comp_dry`/`protein`/`ligand`; `-cp`/`-rp`/`-lp`) mbondi→mbondi2 via `parmed changeRadii` right before MM-GBSA; `comp_oct` (`-sp`, solvent-strip only) and the tleap build left UNTOUCHED (frozen core). `TARGET_RADIUS_SET = IGB_RADIUS_SET[MMGBSA_IGB]` makes the build target *derive* from the check requirement (can't drift). **Detector→FATAL** via new `suite_ok` — a surviving mismatch reds the suite, closing the trap that `ok=core_ok` while MM-GBSA isn't core. Hardening from the final review: parmed stdout redirected (envelope safety), `setOverwrite`+rc+descriptor-recheck guard the fix, fix-failure fatal even when the unfixed top has no readable RADIUS_SET, `requires.bins`+=`parmed`,`MMPBSA.py`.
+
+**Verification:** pure oracle **73/0** (+`target_radius_set`/`parmed_radii_script`/`suite_ok`); acceptance **Cases 1–4 GREEN under AMBER** — Case 1 empirically confirms `comp_dry_mbondi2.top` reads `(mbondi2)` + `consistent:true` (ParmEd 4.3.1 source-confirmed `changeRadii` rewrites the RADIUS_SET descriptor), Case 4 proves the fatal gate (forced-off fix → `ok:false`, core still produced). **Two adversarial reviews** (design + final applied-diff) → SOUND-WITH-FIXES, all findings folded in (incl. a MED fatal-gate hole on the no-RADIUS_SET path, closed).
+
+**Re-baselined ΔG (mbondi2, user-signed-off):** **1L2Y −17.78** (was −18.16) · **3HTB −25.85** (was −27.41) — small sane shifts (+0.38 / +1.56, less-negative as expected from mbondi2's larger polar-H radii), relative ranking preserved; old numbers annotated pre-mbondi2-fix; single-traj 100 ps sanity numbers, not converged affinities. **P1 batch now fully closed (4/4 fatal/encoded).**
+
+**Pointers:** memory [[project-prime-status]] (new top marker) · [[Research_AMBER_Failure_Modes]] P1 #1 → fixed-fatal · [[Gap_Gate_Coverage]] · [[Skill_CPPTraj_Analysis]] (ΔG range) · [[Next_Session_Prompt_GB_Radii_Fix]] → consumed · [[handoffs/STATUS]] · [[MAP]].
+
+---
+
 ## 2026-06-28 ~01:15 PDT — gitignore: catch advisor `.zip` bundles 🧹
 
 **Context:** Status double-check this session surfaced an untracked `deliverables-mdin-edit-advisor-20260627.zip` at vault root showing as uncommitted work. User confirmed it's a self-created deliverable bundle → ignore it. The existing rule `deliverables-mdin-edit-*/` has a trailing slash → matches dirs only, so the `.zip` file slipped through.
