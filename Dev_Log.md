@@ -9,6 +9,24 @@ type: log
 
 ---
 
+## 2026-06-30 — Gate-hardening follow-ups: durability pass on the P1 gates ✅
+
+**Context:** Consumed [[Next_Session_Prompt_GateHardening_Followups]] — the LOW/INFO durability + test-quality + doc-accuracy nits from the 2026-06-27 independent review (which had returned PASS). Priority per user: **security + rigor** → prefer fail-CLOSED / structural / empirically-grounded over verbatim application of the handoff text. Plan + two scope decisions gated via [[Eval_Criteria]] before coding.
+
+**Done (project-prime `61f6a2f → fc14443`, 4 commits, each RED→GREEN + independently reviewed + pushed):**
+- **`mdin-edit` — mutation coverage + hygiene + doc** (`212d535`): new `verify_needs_human_halt` ambient fixture + `drop-needs-human-gate` mutant, proven **SURVIVE→KILLED** (14/15→15/15) — closes the mutation hole on the safety-critical coherence halt. Test hygiene: `sys.executable` (root-fixes the interpreter-mix flake) + per-run isolated scratch. Doc: corrected `mdin-params.md` parser-scope wording, **empirically grounded** against the running wrapper (a `d`-exponent `value2` truncates to `3.05` → phantom mismatch → *trips* the halt, not "falls through ungated"; `--couple` corrupts to `305.0d2`, ships `ok:true`; vendored `check_amber` reads double-quoted `"TEMP0"` while the gate's single-quoted `temp0_wt_span` does not → validator is *broader*, not co-scoped).
+- **`tleap-build` — structural CROSS_GAP (fail-CLOSED)** (`760c1fa`): `prmtop_bonds` + `read_amber_coords` + `structural_long_bonds` compute bond lengths from comp_dry's BONDS blocks + `.crd` coords as the PRIMARY signal (log-scrape kept as backstop; gate fires if EITHER trips) + `\b` regex anchor. **Validated against parmed** (bond-pair set IDENTICAL, 311 bonds, real 1L2Y build) + real-build acceptance (no false-fire). A **3-agent adversarial review** hardened the fail-closed paths (mandatory-block→None, crd-NATOM cross-check, `%COMMENT` tolerance).
+- **`cpptraj-analysis` — real-format fixture + comment** (`11c3678`): committed a genuine parmed-retyped mbondi2 RADIUS_SET excerpt (`.txt`) pinning `prmtop_radius_set` to real layout; fixed the wrong `(Bondi2)` comment (mbondi3's Bondi2 is UNparenthesized).
+- **`plip-profile` — salt-bridge comment** (`fc14443`): scoped the `--nohydro` sensitivity wording (H-bonds directly H-dependent; salt bridges charged-group-distance-defined, only secondarily affected). Task 4's substantive ask was already satisfied.
+
+**Two rigor findings** (deviations from the handoff, confirmed against code): task 4's "zero regression" claim didn't exist (already determinism-scoped); the [[Gap_Gate_Coverage]] `d`-exponent description is **accurate, not stale** — empirically re-confirmed (my initial "stale" read was wrong; the truncation lives in the namelist value-regex, upstream of `num()`).
+
+**Verification:** mdin mutation 15/15 + acceptance all-pass; tleap oracle 96/96 + parmed-identical + real-build acceptance; cpptraj 74/74; plip 61/61.
+
+**Pointers:** [[Next_Session_Prompt_GateHardening_Followups]] → consumed · [[Gap_Gate_Coverage]] (durability items closed) · memory [[project-prime-status]] · [[MAP]].
+
+---
+
 ## 2026-06-29 — GB-radii (mbondi2) fix + detector→FATAL; ΔG re-baselined ✅
 
 **Context:** Consumed [[Next_Session_Prompt_GB_Radii_Fix]] — the last open P1 from the failure-mode sweep. The 4th P1 (GB radii ↔ igb) shipped 2026-06-27 as a NON-FATAL detector; the fix + re-baseline + fatal-flip were deferred because the fix shifts the reported ΔG. Planned and adversarially reviewed *before* coding; route + re-baseline scope chosen via a pre-run gate ([[Eval_Criteria]]).

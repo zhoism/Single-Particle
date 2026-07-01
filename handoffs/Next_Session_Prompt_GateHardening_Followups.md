@@ -1,10 +1,26 @@
 ---
 tags: [project-prime, code-review, gates, test-quality, session-handoff]
 type: handoff
-status: ready
+status: consumed
 created: 2026-06-27
+consumed: 2026-06-30
 scope: non-blocking-hardening
 ---
+
+> **Outcome (2026-06-30, [[Dev_Log]]):** All 6 tasks done in project-prime
+> `61f6a2f → fc14443` (4 commits, each RED→GREEN + independently reviewed + pushed).
+> **(1)** `needs_human` mutation mutant added, proven SURVIVE→KILLED (15/15).
+> **(2)** CROSS_GAP made fail-CLOSED with a structural bond-length detector
+> (parmed-validated bond-for-bond, no false-fire on the real build) + `\b` anchor;
+> a 3-agent review hardened its parse paths. **(3)** committed real-format mbondi2
+> prmtop excerpt for `prmtop_radius_set` + fixed the `(Bondi2)` comment.
+> **(4)** plip salt-bridge wording scoped (the "zero regression" claim was already
+> gone — determinism-scoped). **(5)** `mdin-params.md` corrected, empirically
+> grounded (validator is *broader* than the gate; `d`-exponent *trips* the halt) —
+> the [[Gap_Gate_Coverage]] `d`-exponent note was re-confirmed **accurate, not
+> stale**. **(6)** test interpreter pinned (`sys.executable`) + scratch isolated.
+> Deviations: task 4 already satisfied; task 6 bash rewrite skipped (no
+> cross-process interpreter mix in the single-shell acceptance script).
 
 # Next Session — Gate-hardening follow-ups from the 2026-06-27 independent code review
 
