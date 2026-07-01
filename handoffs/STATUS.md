@@ -2,12 +2,12 @@
 tags: [project-prime, handoffs, status, priority, index]
 type: status
 status: active
-updated: 2026-06-27
+updated: 2026-06-30
 ---
 
 # Forward queue — status & priority dashboard
 
-> At-a-glance view of every open handoff / future-work / gap, so we always know **what's next**. The per-file `status:` frontmatter is the **source of truth**; `README.md` has the richer per-item annotations; this is the compact dashboard. Snapshot **2026-06-29** (project-prime `61f6a2f`, both clean + pushed). **GB_Radii_Fix consumed 2026-06-29 → the P1 gate batch is fully closed (4/4).** The 3 concurrent 2026-06-27 sessions (Hermes-eval · AMBER-gate-encoding · mdin-coherence-fix) plus the graphify trial and the parallel-session code review all **merged + consumed**; the **7 consumed handoff files were removed from this folder 2026-06-27** (ntx_irest_CoherenceGate landed same day; Outcome record retained in the Consumed section below + memory + `Dev_Log.md`).
+> At-a-glance view of every open handoff / future-work / gap, so we always know **what's next**. The per-file `status:` frontmatter is the **source of truth**; `README.md` has the richer per-item annotations; this is the compact dashboard. Snapshot **2026-06-30** (project-prime `fc14443`, vault + code both clean + pushed). **GateHardening_Followups consumed 2026-06-30 → the gate-durability pass is done** (structural fail-CLOSED CROSS_GAP parmed-validated · `needs_human` mutation coverage · cpptraj real-format fixture · doc fixes); its handoff file was **removed from this folder**, Outcome retained in Consumed below. Earlier: **GB_Radii_Fix consumed 2026-06-29 → the P1 gate batch fully closed (4/4)**; the 3 concurrent 2026-06-27 sessions (Hermes-eval · AMBER-gate-encoding · mdin-coherence-fix) + the graphify trial + the parallel-session code review all **merged + consumed** (their handoff files removed 2026-06-27). Outcome records for all consumed items live in the Consumed section below + memory + `Dev_Log.md`.
 
 ## ⭐ Priority queue (set the order here)
 
@@ -15,21 +15,19 @@ updated: 2026-06-27
 
 | Order | Item | Why here |
 |---|---|---|
+| ✓ | ~~**GateHardening_Followups**~~ | **CONSUMED 2026-06-30** — the durability pass; all 6 nits done (project-prime `fc14443`). File removed. |
 | ✓ | ~~**GB_Radii_Fix**~~ | **CONSUMED 2026-06-29** — mbondi2 retype + ΔG re-baseline (1L2Y −17.78 / 3HTB −25.85) + detector→fatal all landed (project-prime `61f6a2f`). P1 batch fully closed. |
 | 2 | **RunOutput_Convention** | Cheap hygiene — stops recurring git-noise; needs one verifying re-run. |
 | 3 | **mdin_edit_Whitelist** | Incremental capability (more editable params). |
 | — | *candidates (4–8)* | Decision-gated — promote when you decide to start one (see below). |
 
-*Newly Ready — **slot into the order where you want**: **GateHardening_Followups** (non-blocking durability/test-quality nits from the 2026-06-27 code review — PASS, no blockers). (GB_Radii_Fix consumed 2026-06-29 — see Consumed.) Re-rank as you like.*
-
-*(Consumed 2026-06-27 → see Consumed below: ntx_irest_CoherenceGate, HermesAgent_Eval, AMBER_Gate_Encoding, mdin_edit_CoherenceFix, Graphify_ReferenceCorpus, CodeReview_Parallel_Sessions.)*
+*(Consumed 2026-06-30: **GateHardening_Followups**. Consumed 2026-06-29: **GB_Radii_Fix**. Consumed 2026-06-27: ntx_irest_CoherenceGate, HermesAgent_Eval, AMBER_Gate_Encoding, mdin_edit_CoherenceFix, Graphify_ReferenceCorpus, CodeReview_Parallel_Sessions. → see Consumed below.)*
 
 ## 🟢 Ready — paste-and-go
 
 | Handoff | What | Status |
 |---|---|---|
 | **mdin_edit_Whitelist** | Expand mdin-edit's editable-parameter set | `ready` |
-| **GateHardening_Followups** | Non-blocking durability/test-quality/doc nits from the 2026-06-27 code review (6 small test-first tasks; tasks 1–3 carry the value) | `ready` |
 
 ## 🟡 Candidate — needs a "go" / approach decision first
 
@@ -59,8 +57,9 @@ updated: 2026-06-27
 
 ✅ The three concurrent 2026-06-27 sessions (Hermes-eval · AMBER-gate-encoding · mdin-coherence-fix) all **merged to `main` + cleaned up** (worktrees removed, branches deleted in both repos). The live collision map is retired. The reusable principle for the next parallel burst: sessions clash if they share **files** (stage explicit paths; isolate worktrees), **runtime** (one OpenClaw gateway / one toolchain runner), or **vault/memory** (Dev_Log/MAP/Gap are git-mergeable — stack newest-first; `MEMORY.md`/`project_prime_status.md` are outside git → serialize, re-read before edit).
 
-## ✔ Consumed (done, for the record — the 7 handoff files were removed from this folder 2026-06-27; the record below + memory + `Dev_Log.md` are now canonical)
+## ✔ Consumed (done, for the record — a handoff's file is removed from this folder when it is consumed; the record below + memory + `Dev_Log.md` are canonical)
 
+- **GateHardening_Followups** (2026-06-30) — the LOW/INFO durability / test-quality / doc nits from the 2026-06-27 review, all 6 done (project-prime `61f6a2f → fc14443`, 4 commits, each RED→GREEN + independently reviewed + pushed). **CROSS_GAP made fail-CLOSED** — a structural bond-length detector (`prmtop_bonds`+`read_amber_coords`+`structural_long_bonds`) from comp_dry `BONDS`+`.crd` as the primary signal, log-scrape backstop, `\b` anchor — **parmed-validated bond-for-bond** (311 bonds, real 1L2Y) + no false-fire on the real build; a 3-agent review hardened its parse paths (mandatory-block→None, crd-NATOM cross-check, `%COMMENT` tolerance). **`needs_human` halt now has a mutation mutant** (`drop-needs-human-gate`, SURVIVE→KILLED 15/15). **`prmtop_radius_set` pinned to a committed real-format fixture**; mbondi3 `(Bondi2)` comment fixed; plip salt-bridge wording scoped; `mdin-params.md` corrected (empirically grounded — validator BROADER than the gate; `d`-exp `value2` *trips* the halt). Test hygiene: `sys.executable` + isolated scratch. Rigor findings: task 4's "zero regression" claim was already gone; the [[Gap_Gate_Coverage]] `d`-exponent note re-confirmed **accurate, not stale**. See [[Dev_Log]] 2026-06-30, [[Gap_Gate_Coverage]].
 - **GB_Radii_Fix** (2026-06-29) — the last open P1 from the failure-mode sweep. **Route A (parmed):** `a_mmgbsa` retypes the dry MM-GBSA tops mbondi→mbondi2 via `parmed changeRadii` before MM-GBSA; detector **flipped FATAL** via `suite_ok` (closes the `ok=core_ok`/MM-GBSA-not-core trap). ΔG re-baselined (user-signed-off): **1L2Y −17.78** (was −18.16) · **3HTB −25.85** (was −27.41). Oracle 73/0 + acceptance Cases 1 & 4 + two adversarial reviews (SOUND-WITH-FIXES; ParmEd-source-confirmed descriptor rewrite). project-prime `61f6a2f` (pushed). **P1 batch now 4/4 fully closed.** [[Gap_Gate_Coverage]].
 - **ntx_irest_CoherenceGate** (2026-06-27) — `ntx`↔`irest` restart-coherence gate **ENCODED** (project-prime `5d500b0`; `check_amber.py` + 3 vendored copies; FATAL `irest/ntx incoherent`, real-pmemd-ground-truthed — pmemd aborts `"ntx and irest are inconsistent!"`). Review found+fixed a HIGH `parse_namelists` comment-truncation bug (gate hardened locally; shared-parser fix deferred). #2 editor-toggle / #3 advisory stay deferred. [[Gap_Gate_Coverage]].
 - **AMBER_FailureMode_Sweep** — produced `Research_AMBER_Failure_Modes` + `Gap_Gate_Coverage` (the gate backlog above).
